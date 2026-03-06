@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { resumeApi } from '../../services/listingsService';
 import { useToast } from '../../context/ToastContext';
 import { ROUTES } from '../../constants';
+import { ListingCardSkeleton } from '../../components/listings/ListingCardSkeleton';
 
 export default function ResumeAnalyzer() {
   const [file, setFile] = useState(null);
@@ -39,8 +40,8 @@ export default function ResumeAnalyzer() {
         <meta name="description" content="Upload your resume and get matched with top jobs based on your skills and experience." />
       </Helmet>
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">Resume Analyzer</h1>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">Upload your resume (PDF or DOCX). We extract skills and experience and suggest matching jobs.</p>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">AI Job Matching Resume Scanner</h1>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">Upload your resume (PDF or DOCX). We extract skills, education, and experience and suggest top matching jobs with improvement tips.</p>
 
         <form onSubmit={handleSubmit} className="mb-8 p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select file (PDF or DOCX, max 5MB)</label>
@@ -59,8 +60,30 @@ export default function ResumeAnalyzer() {
           </button>
         </form>
 
-        {result && (
+        {loading && (
+          <div className="space-y-6">
+            <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse" />
+            <div className="grid sm:grid-cols-2 gap-4">
+              {[...Array(4)].map((_, i) => (
+                <ListingCardSkeleton key={i} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {result && !loading && (
           <div className="space-y-8">
+            {result.suggestions?.length > 0 && (
+              <section className="p-4 rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-900/10">
+                <h2 className="text-lg font-semibold text-amber-800 dark:text-amber-200 mb-3">Suggestions to improve your match</h2>
+                <ul className="list-disc list-inside space-y-1 text-sm text-amber-700 dark:text-amber-300">
+                  {result.suggestions.map((s, i) => (
+                    <li key={i}>{s}</li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
             <section className="p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Extracted from your resume</h2>
               <div className="grid sm:grid-cols-3 gap-4">
@@ -89,9 +112,6 @@ export default function ResumeAnalyzer() {
                   </ul>
                 </div>
               </div>
-              {result.suggestions?.length > 0 && (
-                <p className="mt-4 text-sm text-amber-600 dark:text-amber-400">{result.suggestions.join(' ')}</p>
-              )}
             </section>
 
             <section>
@@ -108,7 +128,7 @@ export default function ResumeAnalyzer() {
                         <span className="font-semibold text-gray-900 dark:text-white">{job.title}</span>
                         <span className="text-gray-600 dark:text-gray-400"> · {job.organization || job.company}</span>
                         {matched?.matched?.length > 0 && (
-                          <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1">Matched: {matched.matched.join(', ')}</p>
+                          <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1">Matched skills: {matched.matched.join(', ')}</p>
                         )}
                       </Link>
                     </li>
@@ -116,6 +136,10 @@ export default function ResumeAnalyzer() {
                 })}
               </ul>
             </section>
+
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">
+          <Link to={ROUTES.DASHBOARD} className="text-emerald-600 dark:text-emerald-400 hover:underline">← Back to Dashboard</Link>
+        </p>
           </div>
         )}
       </div>

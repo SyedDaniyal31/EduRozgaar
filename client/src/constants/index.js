@@ -14,6 +14,13 @@ export const ROUTES = {
   SAVED_JOBS: '/saved-jobs',
   ADMIN: '/admin',
   RESUME_ANALYZER: '/resume-analyzer',
+  EXAM_PREP: '/exam-prep',
+  EXAM_DETAIL: '/exam-prep/:slug',
+  QUIZ_TAKE: '/exam-prep/quiz/:quizId',
+  INTERNSHIPS: '/internships',
+  WEBINARS: '/webinars',
+  INTL_SCHOLARSHIPS: '/intl-scholarships',
+  BADGES_LEADERBOARD: '/badges',
 };
 
 export const ROLES = { ADMIN: 'Admin', USER: 'User' };

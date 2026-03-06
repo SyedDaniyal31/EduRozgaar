@@ -188,9 +188,12 @@ export default function Jobs() {
                     <Fragment key={job._id}>
                       {index > 0 && index % 5 === 0 && <AdInFeed slotId="jobs-infeed" index={index} />}
                       <article
-                      className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-md transition-shadow flex flex-col"
+                      className={`p-4 rounded-xl border flex flex-col transition-shadow ${job.source === 'scraper' && job.scrapedAt ? 'border-emerald-400 dark:border-emerald-600 bg-emerald-50/30 dark:bg-emerald-900/10' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'} hover:shadow-md`}
                     >
                       <Link to={`${ROUTES.JOBS}/${job.slug || job._id}`} className="flex-1 block">
+                        {job.source === 'scraper' && job.scrapedAt && (
+                          <span className="inline-block text-xs font-medium px-2 py-0.5 rounded bg-emerald-500 text-white dark:bg-emerald-600 mb-2">New</span>
+                        )}
                         {job.logoUrl && (
                           <div className="h-10 w-10 rounded-lg bg-gray-100 dark:bg-gray-700 mb-2 flex items-center justify-center text-xs text-gray-400">Logo</div>
                         )}

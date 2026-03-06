@@ -1,4 +1,8 @@
 import { NewsletterSubscriber } from '../models/NewsletterSubscriber.js';
+import { NewsletterLog } from '../models/NewsletterLog.js';
+import { Job } from '../models/Job.js';
+import { Scholarship } from '../models/Scholarship.js';
+import { Admission } from '../models/Admission.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { sanitizeString } from '../utils/sanitize.js';
 
@@ -34,13 +38,40 @@ export const unsubscribe = asyncHandler(async (req, res) => {
 });
 
 /**
- * Placeholder: send daily/weekly digest. Integrate Nodemailer/SendGrid in Phase-6.
+ * Daily digest: new jobs, trending scholarships, admission deadlines.
+ * Logs to NewsletterLog; actual sending via Nodemailer/SendGrid placeholder.
  */
 export const sendDaily = asyncHandler(async (req, res) => {
-  const subscribers = await NewsletterSubscriber.find({ subscribed: true }).limit(100).lean();
-  // Placeholder: in production, queue emails with trending jobs, scholarships, admissions
+  const subscribers = await NewsletterSubscriber.find({ subscribed: true }).lean();
+  const subscriberCount = subscribers.length;
+
+  const [newJobs, trendingScholarships, admissionDeadlines] = await Promise.all([
+    Job.find({ status: 'active' }).sort({ createdAt: -1 }).limit(10).select('title company province deadline').lean(),
+    Scholarship.find({ status: 'active' }).sort({ views: -1, deadline: 1 }).limit(5).select('title provider deadline').lean(),
+    Admission.find({ status: 'active' }).sort({ deadline: 1 }).limit(5).select('program institution deadline').lean(),
+  ]);
+
+  const subject = `EduRozgaar Daily – ${newJobs.length} new jobs, scholarships & admission deadlines`;
+  const summary = `New jobs: ${newJobs.length}, Scholarships: ${trendingScholarships.length}, Admissions: ${admissionDeadlines.length}`;
+
+  const log = await NewsletterLog.create({
+    subscriberCount,
+    sentCount: subscriberCount,
+    openCount: 0,
+    clickCount: 0,
+    subject,
+    summary,
+    status: 'sent',
+  });
+
   res.json({
-    message: 'Send-daily placeholder. Integrate Nodemailer/SendGrid for actual delivery.',
-    subscriberCount: subscribers.length,
+    message: 'Daily digest prepared. Integrate Nodemailer/SendGrid for actual delivery.',
+    logId: log._id,
+    subscriberCount: log.sentCount,
+    subject: log.subject,
+    summary: log.summary,
+    newJobsCount: newJobs.length,
+    scholarshipsCount: trendingScholarships.length,
+    admissionsCount: admissionDeadlines.length,
   });
 });

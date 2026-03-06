@@ -13,6 +13,10 @@ const navItems = [
   {
     labelKey: 'nav.education',
     mega: [
+      { labelKey: 'nav.examPrep', path: ROUTES.EXAM_PREP },
+      { labelKey: 'nav.internships', path: ROUTES.INTERNSHIPS },
+      { labelKey: 'nav.webinars', path: ROUTES.WEBINARS },
+      { labelKey: 'nav.intlScholarships', path: ROUTES.INTL_SCHOLARSHIPS },
       { labelKey: 'nav.schoolsAndColleges', path: ROUTES.SCHOOLS_AND_COLLEGES },
       { labelKey: 'nav.foreign', path: ROUTES.FOREIGN_STUDIES },
     ],

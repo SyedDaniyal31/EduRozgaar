@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link, useParams } from 'react-router-dom';
-import { jobsApi, savedApi, recentViewedApi } from '../../services/listingsService';
+import { jobsApi, savedApi, recentViewedApi, coverLetterApi } from '../../services/listingsService';
 import { ROUTES } from '../../constants';
 import { SaveButton } from '../../components/listings/SaveButton';
 import { ListingCardSkeleton } from '../../components/listings/ListingCardSkeleton';
@@ -16,6 +16,8 @@ export default function JobDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [savedIds, setSavedIds] = useState(new Set());
+  const [coverLetter, setCoverLetter] = useState(null);
+  const [coverLetterLoading, setCoverLetterLoading] = useState(false);
 
   useEffect(() => {
     jobsApi.get(slug).then(({ data }) => {
@@ -83,8 +85,35 @@ export default function JobDetail() {
             </div>
             <div className="flex flex-wrap gap-2">
               <SaveButton type="job" id={job._id} saved={savedIds.has(job._id)} onToggle={handleSaveToggle} />
+              {isAuthenticated && (
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setCoverLetterLoading(true);
+                    setCoverLetter(null);
+                    try {
+                      const { data } = await coverLetterApi.generate(job._id);
+                      setCoverLetter(data.coverLetter);
+                    } catch (e) {
+                      window.alert(e.response?.data?.error || 'Failed to generate');
+                    } finally {
+                      setCoverLetterLoading(false);
+                    }
+                  }}
+                  disabled={coverLetterLoading}
+                  className="inline-flex items-center px-4 py-2 rounded-lg border border-emerald-600 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 font-medium disabled:opacity-50"
+                >
+                  {coverLetterLoading ? 'Generating…' : 'Generate cover letter'}
+                </button>
+              )}
               <a href={job.applicationLink || '#'} className="inline-flex items-center px-4 py-2 rounded-lg bg-emerald-600 text-white font-medium hover:bg-emerald-700" target="_blank" rel="noopener noreferrer">Apply</a>
             </div>
+            {coverLetter && (
+              <section className="mt-6 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Generated cover letter</h2>
+                <pre className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap font-sans">{coverLetter}</pre>
+              </section>
+            )}
           </div>
           {job.description && (
             <section className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">

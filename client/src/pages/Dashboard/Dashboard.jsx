@@ -6,6 +6,7 @@ import { dashboardApi } from '../../services/listingsService';
 import { ROUTES } from '../../constants';
 import { formatDate } from '../../utils/formatDate';
 import { ListingCardSkeleton } from '../../components/listings/ListingCardSkeleton';
+import { Chatbot } from '../../components/chatbot/Chatbot';
 
 const SITE_URL = import.meta.env.VITE_APP_URL || 'https://edurozgaar.pk';
 
@@ -55,6 +56,8 @@ export default function Dashboard() {
   const savedJobs = saved?.savedJobs || [];
   const savedScholarships = saved?.savedScholarships || [];
   const savedAdmissions = saved?.savedAdmissions || [];
+  const savedInternships = saved?.savedInternships || [];
+  const savedIntlScholarships = saved?.savedIntlScholarships || [];
   const recentJobs = recentlyViewed?.jobs || [];
   const recentScholarships = recentlyViewed?.scholarships || [];
   const recentAdmissions = recentlyViewed?.admissions || [];
@@ -74,7 +77,28 @@ export default function Dashboard() {
 
       <div className="max-w-5xl mx-auto px-4 py-8">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">Dashboard</h1>
-        <p className="text-gray-600 dark:text-gray-400 mb-8">Welcome back, {profile?.name || profile?.email}.</p>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">Welcome back, {profile?.name || profile?.email}.</p>
+
+        <div className="flex flex-wrap gap-3 mb-8">
+          <Link to={ROUTES.RESUME_ANALYZER} className="inline-flex items-center px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 text-sm font-medium">
+            Resume Scanner
+          </Link>
+          <Link to={ROUTES.EXAM_PREP} className="inline-flex items-center px-4 py-2 rounded-lg border border-emerald-600 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 text-sm font-medium">
+            Exam Preparation
+          </Link>
+          <Link to={ROUTES.INTERNSHIPS} className="inline-flex items-center px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 text-sm font-medium">
+            Internships & Trainings
+          </Link>
+          <Link to={ROUTES.WEBINARS} className="inline-flex items-center px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 text-sm font-medium">
+            Webinars
+          </Link>
+          <Link to={ROUTES.INTL_SCHOLARSHIPS} className="inline-flex items-center px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 text-sm font-medium">
+            International Scholarships
+          </Link>
+          <Link to={ROUTES.BADGES_LEADERBOARD} className="inline-flex items-center px-4 py-2 rounded-lg border border-amber-500/50 text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 text-sm font-medium">
+            Badges & Leaderboard
+          </Link>
+        </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
@@ -106,7 +130,7 @@ export default function Dashboard() {
                   View all →
                 </Link>
               </div>
-              {savedJobs.length + savedScholarships.length + savedAdmissions.length === 0 ? (
+              {savedJobs.length + savedScholarships.length + savedAdmissions.length + (savedInternships?.length || 0) + (savedIntlScholarships?.length || 0) === 0 ? (
                 <p className="text-gray-500 dark:text-gray-400 text-sm">No saved listings. Browse jobs and scholarships to save.</p>
               ) : (
                 <ul className="space-y-2">
@@ -131,6 +155,22 @@ export default function Dashboard() {
                       <Link to={`${ROUTES.ADMISSIONS}/${a.slug || a._id}`} className="block p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-sm transition text-sm">
                         <span className="font-medium text-gray-900 dark:text-white">{a.program}</span>
                         <span className="text-gray-500 dark:text-gray-400"> · {a.institution}</span>
+                      </Link>
+                    </li>
+                  ))}
+                  {(savedInternships || []).slice(0, 2).map((i) => (
+                    <li key={i._id}>
+                      <Link to={`${ROUTES.INTERNSHIPS}/${i.slug || i._id}`} className="block p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-sm transition text-sm">
+                        <span className="font-medium text-gray-900 dark:text-white">{i.title}</span>
+                        <span className="text-gray-500 dark:text-gray-400"> · {i.organization}</span>
+                      </Link>
+                    </li>
+                  ))}
+                  {(savedIntlScholarships || []).slice(0, 2).map((s) => (
+                    <li key={s._id}>
+                      <Link to={`${ROUTES.INTL_SCHOLARSHIPS}/${s._id}`} className="block p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-sm transition text-sm">
+                        <span className="font-medium text-gray-900 dark:text-white">{s.title}</span>
+                        <span className="text-gray-500 dark:text-gray-400"> · {s.country}</span>
                       </Link>
                     </li>
                   ))}
@@ -192,6 +232,7 @@ export default function Dashboard() {
           </div>
 
           <aside className="space-y-6">
+            <Chatbot className="mb-6" />
             <section className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Profile overview</h2>
               <dl className="space-y-2 text-sm">

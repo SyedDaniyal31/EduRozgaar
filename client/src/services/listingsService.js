@@ -30,6 +30,11 @@ export const admissionsApi = {
   unsave: (id) => axiosInstance.delete(`/admissions/${id}/save`),
 };
 
+export const blogsApi = {
+  list: (params) => axiosInstance.get(`/blogs${buildParams(params || {})}`),
+  get: (idOrSlug) => axiosInstance.get(`/blogs/${encodeURIComponent(idOrSlug)}`),
+};
+
 export const savedApi = {
   get: () => axiosInstance.get('/auth/saved'),
   getBookmarks: () => axiosInstance.get('/auth/bookmarks'),
@@ -74,6 +79,47 @@ export const resumeApi = {
   analyze: (formData) => axiosInstance.post('/users/resume-analyze', formData, { headers: { 'Content-Type': 'multipart/form-data' } }),
 };
 
+export const coverLetterApi = {
+  generate: (jobId) => axiosInstance.post('/users/cover-letter', { jobId }),
+};
+
+export const internshipsApi = {
+  list: (params) => axiosInstance.get(`/internships${buildParams(params)}`),
+  get: (idOrSlug) => axiosInstance.get(`/internships/${encodeURIComponent(idOrSlug)}`),
+  apply: (idOrSlug) => axiosInstance.post(`/internships/${encodeURIComponent(idOrSlug)}/apply`),
+  myApplications: () => axiosInstance.get('/internships/my/applications'),
+  save: (id) => axiosInstance.post(`/internships/${id}/save`),
+  unsave: (id) => axiosInstance.delete(`/internships/${id}/save`),
+};
+
+export const chatbotApi = {
+  query: (message) => axiosInstance.post('/chatbot/query', { message }),
+  history: () => axiosInstance.get('/chatbot/history'),
+};
+
+export const webinarsApi = {
+  list: (params) => axiosInstance.get(`/webinars${buildParams(params)}`),
+  upcoming: () => axiosInstance.get('/webinars/upcoming'),
+  recorded: (params) => axiosInstance.get(`/webinars/recorded${buildParams(params)}`),
+  get: (id) => axiosInstance.get(`/webinars/${id}`),
+  register: (id) => axiosInstance.post(`/webinars/${id}/register`),
+  myRegistrations: () => axiosInstance.get('/webinars/my/registrations'),
+};
+
+export const intlScholarshipsApi = {
+  list: (params) => axiosInstance.get(`/intl-scholarships${buildParams(params)}`),
+  get: (id) => axiosInstance.get(`/intl-scholarships/${id}`),
+  universities: () => axiosInstance.get('/intl-scholarships/universities'),
+  save: (id) => axiosInstance.post(`/intl-scholarships/${id}/save`),
+  unsave: (id) => axiosInstance.delete(`/intl-scholarships/${id}/save`),
+};
+
+export const badgesApi = {
+  myBadges: () => axiosInstance.get('/badges/me'),
+  leaderboard: (params) => axiosInstance.get('/badges/leaderboard', { params }),
+  myRank: () => axiosInstance.get('/badges/rank'),
+};
+
 const v1 = (path) => `/v1${path}`;
 export const recommendationsApi = {
   get: (userId = 'me') => axiosInstance.get(v1(`/recommendations/${userId}`)),
@@ -90,4 +136,26 @@ export const v1Api = {
   analyticsDashboard: () => axiosInstance.get(v1('/analytics/dashboard')),
   alertsTelegram: (body) => axiosInstance.post(v1('/alerts/telegram/send'), body),
   alertsWhatsApp: (body) => axiosInstance.post(v1('/alerts/whatsapp/send'), body),
+};
+
+export const adminApi = {
+  growthDashboard: () => axiosInstance.get('/admin/growth-dashboard'),
+  scraperRun: () => axiosInstance.post('/admin/scraper/run'),
+  scraperRuns: (params) => axiosInstance.get('/admin/scraper/runs' + (params ? '?' + new URLSearchParams(params).toString() : '')),
+  autoGenerateBlog: (body) => axiosInstance.post('/blogs/auto-generate', body || {}),
+};
+
+export const examsApi = {
+  listExams: () => axiosInstance.get('/exams'),
+  getExam: (slug) => axiosInstance.get(`/exams/${encodeURIComponent(slug)}`),
+  listPastPapers: (examId) => axiosInstance.get(`/exams/${encodeURIComponent(examId)}/past-papers`),
+  listQuizzes: (examId) => axiosInstance.get(`/exams/${encodeURIComponent(examId)}/quizzes`),
+  getQuiz: (quizId) => axiosInstance.get(`/quizzes/${encodeURIComponent(quizId)}`),
+  submitQuiz: (body) => axiosInstance.post('/quizzes/submit', body),
+  leaderboard: (params) => axiosInstance.get('/quizzes/leaderboard', { params }),
+  myProgress: () => axiosInstance.get('/quizzes/my-progress'),
+};
+
+export const resumeScansApi = {
+  getHistory: (params) => axiosInstance.get('/users/resume-scans', { params }),
 };

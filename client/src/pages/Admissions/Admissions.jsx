@@ -86,8 +86,11 @@ export default function Admissions() {
                   {data.map((a) => {
                     const days = daysUntil(a.deadline);
                     return (
-                      <article key={a._id} className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-md transition-shadow flex flex-col">
+                      <article key={a._id} className={`p-4 rounded-xl border flex flex-col transition-shadow ${a.source === 'scraper' && a.scrapedAt ? 'border-emerald-400 dark:border-emerald-600 bg-emerald-50/30 dark:bg-emerald-900/10' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'} hover:shadow-md`}>
                         <Link to={`${ROUTES.ADMISSIONS}/${a.slug || a._id}`} className="flex-1 block">
+                          {a.source === 'scraper' && a.scrapedAt && (
+                            <span className="inline-block text-xs font-medium px-2 py-0.5 rounded bg-emerald-500 text-white dark:bg-emerald-600 mb-2">New</span>
+                          )}
                           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{a.program}</h2>
                           <p className="text-gray-600 dark:text-gray-400">{a.institution}</p>
                           {a.department && <p className="text-sm text-gray-500">{a.department}</p>}

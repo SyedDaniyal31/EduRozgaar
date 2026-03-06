@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { analyzeResume } from '../controllers/resumeAnalyzerController.js';
+import { analyzeResume, getScanHistory } from '../controllers/resumeAnalyzerController.js';
+import { generateCoverLetter } from '../controllers/coverLetterController.js';
 import { uploadResume } from '../middleware/upload.js';
 import { requireAuth } from '../middleware/auth.js';
 
@@ -11,3 +12,5 @@ usersRouter.post('/users/resume-analyze', requireAuth, (req, res, next) => {
     next();
   });
 }, analyzeResume);
+usersRouter.get('/users/resume-scans', requireAuth, getScanHistory);
+usersRouter.post('/users/cover-letter', requireAuth, generateCoverLetter);

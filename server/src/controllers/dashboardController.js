@@ -14,6 +14,8 @@ export const getDashboard = asyncHandler(async (req, res) => {
     .populate('savedJobs')
     .populate('savedScholarships')
     .populate('savedAdmissions')
+    .populate('savedInternships')
+    .populate('savedIntlScholarships')
     .populate('recentlyViewedJobs')
     .populate('recentlyViewedScholarships')
     .populate('recentlyViewedAdmissions')
@@ -23,6 +25,8 @@ export const getDashboard = asyncHandler(async (req, res) => {
   const savedJobs = (user.savedJobs || []).filter((j) => j && j.status === 'active');
   const savedScholarships = (user.savedScholarships || []).filter((s) => s && s.status === 'active');
   const savedAdmissions = (user.savedAdmissions || []).filter((a) => a && a.status === 'active');
+  const savedInternships = (user.savedInternships || []).filter((i) => i && i.status === 'active');
+  const savedIntlScholarships = (user.savedIntlScholarships || []).filter((s) => s && s.status === 'active');
   const recentlyViewedJobs = (user.recentlyViewedJobs || []).filter((j) => j && j.status === 'active').slice(-10).reverse();
   const recentlyViewedScholarships = (user.recentlyViewedScholarships || []).filter((s) => s && s.status === 'active').slice(-10).reverse();
   const recentlyViewedAdmissions = (user.recentlyViewedAdmissions || []).filter((a) => a && a.status === 'active').slice(-10).reverse();
@@ -54,6 +58,8 @@ export const getDashboard = asyncHandler(async (req, res) => {
       savedJobs,
       savedScholarships,
       savedAdmissions,
+      savedInternships,
+      savedIntlScholarships,
     },
     recentlyViewed: {
       jobs: recentlyViewedJobs,

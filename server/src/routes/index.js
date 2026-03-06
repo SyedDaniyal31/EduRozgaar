@@ -12,5 +12,11 @@ import { notificationsRouter } from './notifications.js';
 import { monetizationRouter } from './monetization.js';
 import { usersRouter } from './users.js';
 import { v1Router } from './v1/index.js';
+import { examsRouter } from './exams.js';
+import { internshipsRouter } from './internships.js';
+import { chatbotRouter } from './chatbot.js';
+import { webinarsRouter } from './webinars.js';
+import { intlScholarshipsRouter } from './intlScholarships.js';
+import { badgesRouter } from './badges.js';
 
-export { healthRouter, jobsRouter, scholarshipsRouter, admissionsRouter, blogsRouter, foreignStudiesRouter, authRouter, adminRouter, trendingRouter, newsletterRouter, notificationsRouter, monetizationRouter, usersRouter, v1Router };
+export { healthRouter, jobsRouter, scholarshipsRouter, admissionsRouter, blogsRouter, foreignStudiesRouter, authRouter, adminRouter, trendingRouter, newsletterRouter, notificationsRouter, monetizationRouter, usersRouter, v1Router, examsRouter, internshipsRouter, chatbotRouter, webinarsRouter, intlScholarshipsRouter, badgesRouter };

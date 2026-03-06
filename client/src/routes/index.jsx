@@ -25,10 +25,20 @@ const SavedJobs = lazyLoad(() => import('../pages/SavedJobs/SavedJobs'));
 const Admin = lazyLoad(() => import('../pages/Admin/Admin'));
 const AIJobGenerator = lazyLoad(() => import('../pages/Admin/AIJobGenerator'));
 const AnalyticsDashboard = lazyLoad(() => import('../pages/Admin/AnalyticsDashboard'));
+const GrowthDashboard = lazyLoad(() => import('../pages/Admin/GrowthDashboard'));
 const AlertsAdmin = lazyLoad(() => import('../pages/Admin/AlertsAdmin'));
 const JobsProvinceLanding = lazyLoad(() => import('../pages/Landing/JobsProvinceLanding'));
 const JobsCategoryLanding = lazyLoad(() => import('../pages/Landing/JobsCategoryLanding'));
 const ResumeAnalyzer = lazyLoad(() => import('../pages/ResumeAnalyzer/ResumeAnalyzer'));
+const ExamPrep = lazyLoad(() => import('../pages/ExamPrep/ExamPrep'));
+const ExamDetail = lazyLoad(() => import('../pages/ExamPrep/ExamDetail'));
+const QuizTake = lazyLoad(() => import('../pages/ExamPrep/QuizTake'));
+const Internships = lazyLoad(() => import('../pages/Internships/Internships'));
+const InternshipDetail = lazyLoad(() => import('../pages/Internships/InternshipDetail'));
+const Webinars = lazyLoad(() => import('../pages/Webinars/Webinars'));
+const IntlScholarships = lazyLoad(() => import('../pages/IntlScholarships/IntlScholarships'));
+const IntlScholarshipDetail = lazyLoad(() => import('../pages/IntlScholarships/IntlScholarshipDetail'));
+const Badges = lazyLoad(() => import('../pages/Badges/Badges'));
 
 function lazyLoad(importFn) {
   const Lazy = lazy(importFn);
@@ -102,6 +112,7 @@ export const routes = [
           </ProtectedRoute>
         ),
         children: [
+          { path: 'growth-dashboard', element: <GrowthDashboard /> },
           { path: 'ai-job-generator', element: <AIJobGenerator /> },
           { path: 'analytics', element: <AnalyticsDashboard /> },
           { path: 'alerts', element: <AlertsAdmin /> },
@@ -112,6 +123,22 @@ export const routes = [
         element: (
           <ProtectedRoute>
             <ResumeAnalyzer />
+          </ProtectedRoute>
+        ),
+      },
+      { path: ROUTES.EXAM_PREP, element: <ExamPrep /> },
+      { path: `${ROUTES.EXAM_PREP}/quiz/:quizId`, element: <QuizTake /> },
+      { path: `${ROUTES.EXAM_PREP}/:slug`, element: <ExamDetail /> },
+      { path: ROUTES.INTERNSHIPS, element: <Internships /> },
+      { path: `${ROUTES.INTERNSHIPS}/:idOrSlug`, element: <InternshipDetail /> },
+      { path: ROUTES.WEBINARS, element: <Webinars /> },
+      { path: ROUTES.INTL_SCHOLARSHIPS, element: <IntlScholarships /> },
+      { path: `${ROUTES.INTL_SCHOLARSHIPS}/:id`, element: <IntlScholarshipDetail /> },
+      {
+        path: ROUTES.BADGES_LEADERBOARD,
+        element: (
+          <ProtectedRoute>
+            <Badges />
           </ProtectedRoute>
         ),
       },

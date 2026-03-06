@@ -6,6 +6,7 @@ import { ROUTES } from '../../constants';
 
 const TABS = [
   { path: ROUTES.ADMIN, label: 'Overview' },
+  { path: `${ROUTES.ADMIN}/growth-dashboard`, label: 'Growth' },
   { path: `${ROUTES.ADMIN}/ai-job-generator`, label: 'AI Job Generator' },
   { path: `${ROUTES.ADMIN}/analytics`, label: 'Analytics' },
   { path: `${ROUTES.ADMIN}/alerts`, label: 'Alerts' },

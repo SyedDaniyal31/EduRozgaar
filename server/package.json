@@ -12,6 +12,9 @@
     "seed:phase4": "node src/scripts/seedPhase4.js",
     "seed:phase5": "node src/scripts/seedPhase5.js",
     "seed:phase7": "node src/scripts/seedPhase7.js",
+    "seed:phase8": "node src/scripts/seedPhase8.js",
+    "seed:exam-prep": "node src/scripts/seedExamPrep.js",
+    "seed:phase9": "node src/scripts/seedPhase9.js",
     "lint": "eslint src --ext js"
   },
   "dependencies": {
@@ -26,7 +29,8 @@
     "ioredis": "^5.3.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.1.1",
-    "multer": "^1.4.5-lts.1"
+    "multer": "^1.4.5-lts.1",
+    "node-cron": "^4.2.1"
   },
   "devDependencies": {
     "eslint": "^8.56.0"

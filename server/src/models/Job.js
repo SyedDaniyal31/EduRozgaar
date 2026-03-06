@@ -21,6 +21,10 @@ const jobSchema = new mongoose.Schema(
     views: { type: Number, default: 0 },
     isFeatured: { type: Boolean, default: false },
     isSponsored: { type: Boolean, default: false },
+    paidUntil: { type: Date },
+    source: { type: String, enum: ['manual', 'scraper'], default: 'manual' },
+    scrapedAt: { type: Date },
+    sourceUrl: { type: String },
   },
   { timestamps: true }
 );

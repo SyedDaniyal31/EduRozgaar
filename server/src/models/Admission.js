@@ -17,6 +17,9 @@ const admissionSchema = new mongoose.Schema(
     status: { type: String, enum: ['draft', 'active', 'closed'], default: 'active' },
     logoUrl: { type: String },
     views: { type: Number, default: 0 },
+    source: { type: String, enum: ['manual', 'scraper'], default: 'manual' },
+    scrapedAt: { type: Date },
+    sourceUrl: { type: String },
   },
   { timestamps: true }
 );

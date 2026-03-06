@@ -31,3 +31,7 @@ export function blogSlug(title) {
 export function foreignStudySlug(country, program) {
   return slugify([country, program].filter(Boolean).join(' '));
 }
+
+export function examSlug(name) {
+  return slugify(name || '');
+}

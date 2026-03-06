@@ -1,8 +1,12 @@
 import { Job } from '../models/Job.js';
+import { ResumeScan } from '../models/ResumeScan.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
+import { cacheGet, cacheSet } from '../config/redis.js';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_MIMES = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+const CACHE_TTL = 300;
+const CACHE_PREFIX = 'resume:match:';
 
 /**
  * Placeholder NLP extraction. In production use pdf-parse + mammoth for DOCX + NLP/lib for skills.
@@ -26,20 +30,71 @@ async function matchJobs(skills, limit = 10) {
   return jobs.length >= limit ? jobs : await Job.find({ status: 'active', _id: { $nin: jobs.map((j) => j._id) } }).sort({ createdAt: -1 }).limit(limit - jobs.length).lean().then((extra) => [...jobs, ...extra]);
 }
 
+/**
+ * Build suggestions to improve match: missing skills from top jobs, add more keywords, etc.
+ */
+function buildSuggestions(extracted, jobs, matchedSkills) {
+  const suggestions = [];
+  if (!extracted.skills || extracted.skills.length < 3) {
+    suggestions.push('Add more skills to your resume for better matches.');
+  }
+  const allJobReqs = new Set();
+  jobs.forEach((j) => {
+    (j.requirements || []).forEach((r) => allJobReqs.add(String(r).toLowerCase()));
+    if (j.category) allJobReqs.add(String(j.category).toLowerCase());
+  });
+  const userSkillsLower = new Set((extracted.skills || []).map((s) => s.toLowerCase()));
+  const missing = [...allJobReqs].filter((r) => !userSkillsLower.has(r) && r.length > 2).slice(0, 5);
+  if (missing.length) {
+    suggestions.push('Consider highlighting these skills to match more jobs: ' + missing.join(', ') + '.');
+  }
+  const lowMatchCount = (matchedSkills || []).filter((m) => !m.matched || m.matched.length === 0).length;
+  if (lowMatchCount > 5) {
+    suggestions.push('Expand your experience section with measurable achievements to improve job fit.');
+  }
+  if (suggestions.length === 0) suggestions.push('Your resume is well aligned with current listings. Keep it updated.');
+  return suggestions;
+}
+
 export const analyzeResume = asyncHandler(async (req, res) => {
   if (!req.file || !req.file.buffer) return res.status(400).json({ error: 'No file uploaded' });
   const mimetype = req.file.mimetype || '';
   if (!ALLOWED_MIMES.includes(mimetype)) return res.status(400).json({ error: 'Only PDF and DOCX files are allowed' });
   if (req.file.size > MAX_FILE_SIZE) return res.status(400).json({ error: 'File too large (max 5MB)' });
 
+  const userId = req.user?.userId;
   const extracted = extractFromFile(req.file.buffer, mimetype);
-  const jobs = await matchJobs(extracted.skills, 10);
+  const cacheKey = userId ? `${CACHE_PREFIX}${userId}:${extracted.skills?.length || 0}` : null;
+  let jobs; let matchedSkills;
+  if (cacheKey) {
+    const cached = await cacheGet(cacheKey);
+    if (cached?.jobs?.length) {
+      jobs = cached.jobs;
+      matchedSkills = cached.matchedSkills || [];
+    }
+  }
+  if (!jobs || !jobs.length) {
+    jobs = await matchJobs(extracted.skills, 10);
+    matchedSkills = jobs.map((job) => {
+      const jobSkills = [...(job.requirements || []), job.category, job.title].filter(Boolean).map((s) => String(s).toLowerCase());
+      const found = (extracted.skills || []).filter((s) => jobSkills.some((js) => js.includes(s.toLowerCase())));
+      return { jobId: job._id, matched: found.length ? found : ['Relevant background'] };
+    });
+    if (cacheKey) await cacheSet(cacheKey, { jobs, matchedSkills }, CACHE_TTL);
+  }
 
-  const matchedSkills = jobs.map((job) => {
-    const jobSkills = [...(job.requirements || []), job.category, job.title].filter(Boolean).map((s) => String(s).toLowerCase());
-    const found = extracted.skills.filter((s) => jobSkills.some((js) => js.includes(s.toLowerCase())));
-    return { jobId: job._id, matched: found.length ? found : ['Relevant background'] };
-  });
+  const suggestions = buildSuggestions(extracted, jobs, matchedSkills);
+
+  if (userId) {
+    await ResumeScan.create({
+      userId,
+      type: 'scan',
+      extracted: { skills: extracted.skills, education: extracted.education, experience: extracted.experience },
+      jobIds: jobs.map((j) => j._id),
+      matchedSkills: matchedSkills.map((m) => ({ jobId: m.jobId, matched: m.matched })),
+      suggestions,
+    });
+  }
 
   res.json({
     extracted: {
@@ -49,6 +104,14 @@ export const analyzeResume = asyncHandler(async (req, res) => {
     },
     jobs,
     matchedSkills,
-    suggestions: extracted.skills.length < 3 ? ['Add more skills to your resume for better matches'] : [],
+    suggestions,
   });
+});
+
+export const getScanHistory = asyncHandler(async (req, res) => {
+  const userId = req.user?.userId;
+  if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+  const limit = Math.min(20, parseInt(req.query.limit, 10) || 10);
+  const scans = await ResumeScan.find({ userId }).sort({ createdAt: -1 }).limit(limit).lean();
+  res.json({ data: scans });
 });

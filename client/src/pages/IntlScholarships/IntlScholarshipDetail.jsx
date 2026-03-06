@@ -1,0 +1,109 @@
+import { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { useParams, Link } from 'react-router-dom';
+import { intlScholarshipsApi, savedApi } from '../../services/listingsService';
+import { ROUTES } from '../../constants';
+import { SaveButton } from '../../components/listings/SaveButton';
+import { useAuth } from '../../context/AuthContext';
+import { formatDate } from '../../utils/formatDate';
+
+export default function IntlScholarshipDetail() {
+  const { id } = useParams();
+  const { isAuthenticated } = useAuth();
+  const [item, setItem] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    intlScholarshipsApi.get(id).then(({ data }) => setItem(data)).catch((e) => setError(e.response?.data?.error || 'Not found')).finally(() => setLoading(false));
+  }, [id]);
+
+  useEffect(() => {
+    if (!isAuthenticated || !item) return;
+    savedApi.get().then(({ data: d }) => {
+      const ids = (d.savedIntlScholarships || []).map((s) => s._id);
+      setSaved(ids.includes(item._id));
+    }).catch(() => {});
+  }, [isAuthenticated, item]);
+
+  const handleSaveToggle = async (id, save) => {
+    if (!id) return;
+    if (save) await intlScholarshipsApi.save(id);
+    else await intlScholarshipsApi.unsave(id);
+    setSaved(!!save);
+  };
+
+  if (loading) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-8">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2" />
+          <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded" />
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !item) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-8">
+        <p className="text-red-600 dark:text-red-400">{error || 'Not found.'}</p>
+        <Link to={ROUTES.INTL_SCHOLARSHIPS} className="text-emerald-600 dark:text-emerald-400 hover:underline mt-2 inline-block">← International Scholarships</Link>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <Helmet>
+        <title>{item.title} – EduRozgaar</title>
+        <meta name="description" content={`${item.title} - ${item.country}. Deadline ${item.deadline ? formatDate(item.deadline) : 'TBA'}.`} />
+      </Helmet>
+      <div className="max-w-3xl mx-auto px-4 py-6 md:py-8">
+        <Link to={ROUTES.INTL_SCHOLARSHIPS} className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline mb-4 inline-block">← International Scholarships</Link>
+
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{item.title}</h1>
+            <p className="text-lg text-gray-600 dark:text-gray-400 mt-1">{item.country}{item.university ? ` · ${item.university}` : ''}</p>
+            {item.deadline && <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Deadline: {formatDate(item.deadline)}</p>}
+          </div>
+          {isAuthenticated && <SaveButton id={item._id} saved={saved} onToggle={(id, save) => handleSaveToggle(id, save)} />}
+        </div>
+
+        {item.description && (
+          <div className="mt-6 prose dark:prose-invert max-w-none">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Description</h2>
+            <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{item.description}</p>
+          </div>
+        )}
+
+        {item.eligibility?.length > 0 && (
+          <div className="mt-6">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Eligibility</h2>
+            <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mt-2 space-y-1">
+              {item.eligibility.map((e, i) => (
+                <li key={i}>{e}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {item.visaRequirements && (
+          <div className="mt-6">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Visa requirements</h2>
+            <p className="text-gray-700 dark:text-gray-300 mt-2">{item.visaRequirements}</p>
+          </div>
+        )}
+
+        {item.link && (
+          <a href={item.link} target="_blank" rel="noopener noreferrer" className="inline-block mt-6 px-4 py-2 rounded-lg bg-emerald-600 text-white font-medium hover:bg-emerald-700">
+            Apply on official site →
+          </a>
+        )}
+      </div>
+    </>
+  );
+}
