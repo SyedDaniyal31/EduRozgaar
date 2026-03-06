@@ -1,0 +1,124 @@
+import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { Link } from 'react-router-dom';
+import { resumeApi } from '../../services/listingsService';
+import { useToast } from '../../context/ToastContext';
+import { ROUTES } from '../../constants';
+
+export default function ResumeAnalyzer() {
+  const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
+  const { toast } = useToast();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!file) {
+      toast.error('Please select a PDF or DOCX file');
+      return;
+    }
+    setLoading(true);
+    setResult(null);
+    try {
+      const formData = new FormData();
+      formData.append('resume', file);
+      const { data } = await resumeApi.analyze(formData);
+      setResult(data);
+      toast.success('Resume analyzed. See matching jobs below.');
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Analysis failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <>
+      <Helmet>
+        <title>Resume Analyzer – EduRozgaar</title>
+        <meta name="description" content="Upload your resume and get matched with top jobs based on your skills and experience." />
+      </Helmet>
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">Resume Analyzer</h1>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">Upload your resume (PDF or DOCX). We extract skills and experience and suggest matching jobs.</p>
+
+        <form onSubmit={handleSubmit} className="mb-8 p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select file (PDF or DOCX, max 5MB)</label>
+          <input
+            type="file"
+            accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            onChange={(e) => setFile(e.target.files?.[0] || null)}
+            className="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-emerald-50 file:text-emerald-700 dark:file:bg-emerald-900/30 dark:file:text-emerald-300"
+          />
+          <button
+            type="submit"
+            disabled={loading || !file}
+            className="mt-4 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 font-medium disabled:opacity-50"
+          >
+            {loading ? 'Analyzing…' : 'Analyze resume'}
+          </button>
+        </form>
+
+        {result && (
+          <div className="space-y-8">
+            <section className="p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Extracted from your resume</h2>
+              <div className="grid sm:grid-cols-3 gap-4">
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Skills</h3>
+                  <ul className="list-disc list-inside text-sm text-gray-700 dark:text-gray-300">
+                    {(result.extracted?.skills || []).map((s, i) => (
+                      <li key={i}>{s}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Education</h3>
+                  <ul className="list-disc list-inside text-sm text-gray-700 dark:text-gray-300">
+                    {(result.extracted?.education || []).map((e, i) => (
+                      <li key={i}>{e}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Experience</h3>
+                  <ul className="list-disc list-inside text-sm text-gray-700 dark:text-gray-300">
+                    {(result.extracted?.experience || []).map((e, i) => (
+                      <li key={i}>{e}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+              {result.suggestions?.length > 0 && (
+                <p className="mt-4 text-sm text-amber-600 dark:text-amber-400">{result.suggestions.join(' ')}</p>
+              )}
+            </section>
+
+            <section>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Top matching jobs</h2>
+              <ul className="space-y-3">
+                {(result.jobs || []).map((job, idx) => {
+                  const matched = (result.matchedSkills || [])[idx];
+                  return (
+                    <li key={job._id}>
+                      <Link
+                        to={`${ROUTES.JOBS}/${job.slug || job._id}`}
+                        className="block p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-md transition"
+                      >
+                        <span className="font-semibold text-gray-900 dark:text-white">{job.title}</span>
+                        <span className="text-gray-600 dark:text-gray-400"> · {job.organization || job.company}</span>
+                        {matched?.matched?.length > 0 && (
+                          <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1">Matched: {matched.matched.join(', ')}</p>
+                        )}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          </div>
+        )}
+      </div>
+    </>
+  );
+}

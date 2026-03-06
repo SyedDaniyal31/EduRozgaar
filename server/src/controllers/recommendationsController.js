@@ -1,0 +1,93 @@
+import { Job } from '../models/Job.js';
+import { Scholarship } from '../models/Scholarship.js';
+import { Admission } from '../models/Admission.js';
+import { User } from '../models/User.js';
+import { asyncHandler } from '../utils/asyncHandler.js';
+import { cacheGet, cacheSet } from '../config/redis.js';
+import { CACHE_KEYS } from '../utils/cacheKeys.js';
+
+const RECOMMEND_LIMIT = 8;
+const CACHE_TTL = 600; // 10 min
+
+/**
+ * Placeholder scoring: match by province, then interests (category/level), then recency.
+ * Replace with ML model in Phase-8.
+ */
+function scoreJob(job, user) {
+  let score = 0;
+  if (user.province && job.province && String(job.province).toLowerCase() === String(user.province).toLowerCase()) score += 50;
+  if (user.interests?.length && job.category && user.interests.some((i) => String(i).toLowerCase() === String(job.category).toLowerCase())) score += 30;
+  if (job.views) score += Math.min(job.views, 20);
+  if (job.deadline && new Date(job.deadline) > new Date()) score += 10;
+  return score;
+}
+
+function scoreScholarship(s, user) {
+  let score = 0;
+  if (user.interests?.length && s.level && user.interests.some((i) => String(i).toLowerCase().includes(String(s.level).toLowerCase()))) score += 40;
+  if (user.interests?.length && s.title && user.interests.some((i) => String(s.title).toLowerCase().includes(String(i).toLowerCase()))) score += 30;
+  if (s.views) score += Math.min(s.views, 20);
+  if (s.deadline && new Date(s.deadline) > new Date()) score += 10;
+  return score;
+}
+
+function scoreAdmission(a, user) {
+  let score = 0;
+  if (user.province && a.province && String(a.province).toLowerCase() === String(user.province).toLowerCase()) score += 50;
+  if (user.interests?.length && a.program && user.interests.some((i) => String(a.program).toLowerCase().includes(String(i).toLowerCase()))) score += 30;
+  if (a.views) score += Math.min(a.views, 20);
+  if (a.deadline && new Date(a.deadline) > new Date()) score += 10;
+  return score;
+}
+
+export const getRecommendations = asyncHandler(async (req, res) => {
+  const userId = req.params.userId === 'me' ? req.user?.userId : req.params.userId;
+  if (!userId) return res.status(401).json({ error: 'Authentication required' });
+  if (req.params.userId !== 'me' && req.user?.userId !== userId && req.user?.role !== 'Admin') {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+
+  const cacheKey = `${CACHE_KEYS.PREFIX_RECOMMENDATIONS || 'recommendations:'}${userId}`;
+  let cached = await cacheGet(cacheKey);
+  if (cached) return res.json(cached);
+
+  const user = await User.findById(userId)
+    .select('province interests savedJobs savedScholarships savedAdmissions recentlyViewedJobs recentlyViewedScholarships recentlyViewedAdmissions')
+    .lean();
+  if (!user) return res.status(404).json({ error: 'User not found' });
+
+  const excludeJobs = [...(user.savedJobs || []), ...(user.recentlyViewedJobs || [])].map((id) => id.toString());
+  const excludeScholarships = [...(user.savedScholarships || []), ...(user.recentlyViewedScholarships || [])].map((id) => id.toString());
+  const excludeAdmissions = [...(user.savedAdmissions || []), ...(user.recentlyViewedAdmissions || [])].map((id) => id.toString());
+
+  const [allJobs, allScholarships, allAdmissions] = await Promise.all([
+    Job.find({ status: 'active' }).lean(),
+    Scholarship.find({ status: 'active' }).lean(),
+    Admission.find({ status: 'active' }).lean(),
+  ]);
+
+  const jobs = allJobs
+    .filter((j) => !excludeJobs.includes(j._id.toString()))
+    .map((j) => ({ ...j, _score: scoreJob(j, user) }))
+    .sort((a, b) => b._score - a._score)
+    .slice(0, RECOMMEND_LIMIT)
+    .map(({ _score, ...j }) => j);
+
+  const scholarships = allScholarships
+    .filter((s) => !excludeScholarships.includes(s._id.toString()))
+    .map((s) => ({ ...s, _score: scoreScholarship(s, user) }))
+    .sort((a, b) => b._score - a._score)
+    .slice(0, RECOMMEND_LIMIT)
+    .map(({ _score, ...s }) => s);
+
+  const admissions = allAdmissions
+    .filter((a) => !excludeAdmissions.includes(a._id.toString()))
+    .map((a) => ({ ...a, _score: scoreAdmission(a, user) }))
+    .sort((a, b) => b._score - a._score)
+    .slice(0, RECOMMEND_LIMIT)
+    .map(({ _score, ...a }) => a);
+
+  const payload = { jobs, scholarships, admissions };
+  await cacheSet(cacheKey, payload, CACHE_TTL);
+  res.json(payload);
+});

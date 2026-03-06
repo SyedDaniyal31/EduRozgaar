@@ -1,0 +1,23 @@
+import { Outlet } from 'react-router-dom';
+import { Navbar } from '../components/layout/Navbar';
+import { Footer } from '../components/layout/Footer';
+
+export function MainLayout({ children }) {
+  return (
+    <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900">
+      <Navbar />
+      <main className="flex-1">
+        {children || <Outlet />}
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+export function MainLayoutWrapper() {
+  return (
+    <MainLayout>
+      <Outlet />
+    </MainLayout>
+  );
+}

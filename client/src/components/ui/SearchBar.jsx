@@ -1,0 +1,34 @@
+import { useState } from 'react';
+
+export function SearchBar({ placeholder = 'Search...', className = '', onSearch }) {
+  const [query, setQuery] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSearch?.(query);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className={className}>
+      <div className="relative">
+        <input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={placeholder}
+          className="w-full pl-4 pr-10 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition"
+          aria-label="Search"
+        />
+        <button
+          type="submit"
+          className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400 rounded-lg"
+          aria-label="Submit search"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </button>
+      </div>
+    </form>
+  );
+}

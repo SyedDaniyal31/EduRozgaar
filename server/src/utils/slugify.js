@@ -1,0 +1,33 @@
+/**
+ * Generate URL-safe slug from text (for SEO-friendly listing URLs).
+ */
+export function slugify(text) {
+  if (!text || typeof text !== 'string') return '';
+  return text
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+export function jobSlug(title, location) {
+  return slugify([title, location].filter(Boolean).join(' '));
+}
+
+export function scholarshipSlug(title, country) {
+  return slugify([title, country].filter(Boolean).join(' '));
+}
+
+export function admissionSlug(program, institution) {
+  return slugify([program, institution].filter(Boolean).join(' '));
+}
+
+export function blogSlug(title) {
+  return slugify(title || '');
+}
+
+export function foreignStudySlug(country, program) {
+  return slugify([country, program].filter(Boolean).join(' '));
+}

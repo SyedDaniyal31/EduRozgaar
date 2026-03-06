@@ -1,0 +1,16 @@
+import { healthRouter } from './health.js';
+import { jobsRouter } from './jobs.js';
+import { scholarshipsRouter } from './scholarships.js';
+import { admissionsRouter } from './admissions.js';
+import { blogsRouter } from './blogs.js';
+import { foreignStudiesRouter } from './foreignStudies.js';
+import { authRouter } from './auth.js';
+import { adminRouter } from './admin.js';
+import { trendingRouter } from './trending.js';
+import { newsletterRouter } from './newsletter.js';
+import { notificationsRouter } from './notifications.js';
+import { monetizationRouter } from './monetization.js';
+import { usersRouter } from './users.js';
+import { v1Router } from './v1/index.js';
+
+export { healthRouter, jobsRouter, scholarshipsRouter, admissionsRouter, blogsRouter, foreignStudiesRouter, authRouter, adminRouter, trendingRouter, newsletterRouter, notificationsRouter, monetizationRouter, usersRouter, v1Router };
