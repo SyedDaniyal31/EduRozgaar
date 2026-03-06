@@ -159,7 +159,7 @@ export default function Home() {
       </Helmet>
 
       {/* 1. HERO */}
-      <section className="relative bg-gradient-to-br from-edur-steel via-edur-blue to-edur-steel dark:from-edur-steel dark:via-edur-blue dark:to-edur-steel py-14 md:py-24 px-4 overflow-hidden">
+      <section className="relative bg-gradient-to-br from-edur-steel via-edur-blue to-edur-steel dark:from-edur-steel dark:via-edur-blue dark:to-edur-steel py-12 sm:py-14 md:py-24 px-4 sm:px-6 overflow-hidden">
         <div className="absolute inset-0 bg-[#31708E]/10 dark:bg-black/20" aria-hidden />
         <div className="relative max-w-4xl mx-auto text-center animate-fade-in-up">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 drop-shadow-sm">
@@ -213,7 +213,7 @@ export default function Home() {
       </section>
 
       {isAuthenticated && (recommended.jobs.length > 0 || recommended.scholarships.length > 0 || recommended.admissions.length > 0) && (
-        <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
+        <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10 border-t border-gray-200 dark:border-gray-700">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">{t('home.recommendedForYou')}</h2>
           {loadingRecommended ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -259,12 +259,12 @@ export default function Home() {
         </ScrollReveal>
       )}
 
-      <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-6">
+      <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
         <AdBanner slotId="home-top" className="mb-6" />
       </ScrollReveal>
 
       {/* 2. TRENDING JOBS */}
-      <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
+      <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10 border-t border-gray-200 dark:border-gray-700">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Trending Jobs</h2>
         {loadingTrending ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -289,7 +289,7 @@ export default function Home() {
       <ScrollReveal><AdInFeed slotId="home-mid" index={1} /></ScrollReveal>
 
       {/* 3. LATEST SCHOLARSHIPS */}
-      <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
+      <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10 border-t border-gray-200 dark:border-gray-700">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Latest Scholarships</h2>
         {loadingTrending ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -312,7 +312,7 @@ export default function Home() {
       </ScrollReveal>
 
       {/* 4. UPCOMING ADMISSIONS */}
-      <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
+      <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10 border-t border-gray-200 dark:border-gray-700">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Upcoming Admissions</h2>
         {loadingTrending ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -335,7 +335,7 @@ export default function Home() {
       </ScrollReveal>
 
       {/* 5. FOREIGN STUDY OPPORTUNITIES */}
-      <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
+      <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10 border-t border-gray-200 dark:border-gray-700">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Foreign Study Opportunities</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
           {FOREIGN_STUDY_COUNTRIES.map(({ name, path, query }) => (
@@ -354,7 +354,7 @@ export default function Home() {
       </ScrollReveal>
 
       {/* 6. STUDENT RESOURCES */}
-      <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
+      <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10 border-t border-gray-200 dark:border-gray-700">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Student Resources</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {STUDENT_RESOURCES.map(({ label, to, icon, description }) => (
@@ -372,7 +372,7 @@ export default function Home() {
       </ScrollReveal>
 
       {/* 7. CAREER BLOG / ARTICLES */}
-      <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
+      <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10 border-t border-gray-200 dark:border-gray-700">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Career Blog & Articles</h2>
         {loadingBlogs ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -406,7 +406,7 @@ export default function Home() {
       </ScrollReveal>
 
       {/* 8. NEWSLETTER */}
-      <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-12 border-t border-gray-200 dark:border-gray-700">
+      <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-12 border-t border-gray-200 dark:border-gray-700">
         <div className="max-w-xl mx-auto text-center p-8 rounded-2xl bg-gradient-to-br from-edur-steel/10 to-edur-blue/10 dark:from-edur-steel/20 dark:to-edur-blue/20 border border-edur-sky/30">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Get Daily Job & Scholarship Alerts</h2>
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">Subscribe and we’ll send you the latest opportunities.</p>

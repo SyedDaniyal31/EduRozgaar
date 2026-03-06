@@ -60,7 +60,7 @@ export default function Register() {
   return (
     <>
       <meta name="description" content="Create your EduRozgaar account." />
-      <div className="max-w-md mx-auto px-4 py-8 md:py-12">
+      <div className="max-w-md mx-auto px-4 sm:px-6 py-8 md:py-12">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">Create account</h1>
         <p className="text-gray-600 dark:text-gray-400 mb-6">Register to save jobs, scholarships, and get alerts.</p>
 

@@ -117,7 +117,7 @@ export default function JobDetail() {
         <meta property="og:description" content={job.description || `${job.title} at ${job.organization || job.company}`} />
         <meta property="og:url" content={canonicalUrl} />
       </Helmet>
-      <article className="max-w-3xl mx-auto px-4 py-6 md:py-8">
+      <article className="max-w-3xl mx-auto px-4 sm:px-6 py-6 md:py-8">
         <Link to={ROUTES.JOBS} className="text-sm text-primary dark:text-mint hover:underline mb-4 inline-block">← Back to Jobs</Link>
         <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 md:p-8 shadow-sm">
           <div className="flex flex-wrap items-start justify-between gap-4">
@@ -205,7 +205,7 @@ export default function JobDetail() {
           {job.description && (
             <section className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Description</h2>
-              <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{job.description}</p>
+              <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap break-words">{job.description}</p>
             </section>
           )}
           {job.requirements && job.requirements.length > 0 && (

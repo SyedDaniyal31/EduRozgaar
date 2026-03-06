@@ -1,9 +1,11 @@
+import crypto from 'crypto';
 import { User } from '../models/User.js';
 import { signAccessToken, signRefreshToken, verifyToken } from '../utils/jwt.js';
-import { validateAuthRegister, validateAuthLogin } from '../validators/authValidator.js';
+import { validateAuthRegister, validateAuthLogin, validateForgotPassword, validateResetPassword } from '../validators/authValidator.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { ensureReferralCode } from '../utils/referralCode.js';
 import { awardBadge } from './badgesController.js';
+import { sendPasswordResetEmail } from '../services/emailService.js';
 
 function toSafeUser(user) {
   if (!user) return null;
@@ -11,8 +13,13 @@ function toSafeUser(user) {
   delete u.password;
   delete u.refreshToken;
   delete u.refreshTokenExpires;
+  delete u.passwordResetToken;
+  delete u.passwordResetExpires;
   return u;
 }
+
+const RESET_TOKEN_EXPIRY_MS = 60 * 60 * 1000; // 1 hour
+const FRONTEND_BASE = process.env.FRONTEND_URL || process.env.APP_URL || process.env.SITE_URL || 'http://localhost:5173';
 
 export const register = asyncHandler(async (req, res) => {
   const { emailError, passwordError, name } = validateAuthRegister(req.body);
@@ -124,4 +131,50 @@ export const refreshToken = asyncHandler(async (req, res) => {
     refreshToken: newRefreshToken,
     expiresIn: process.env.JWT_EXPIRES_IN || '1h',
   });
+});
+
+export const forgotPassword = asyncHandler(async (req, res) => {
+  const { emailError } = validateForgotPassword(req.body);
+  if (emailError) {
+    return res.status(400).json({ error: 'Validation failed', details: { email: emailError } });
+  }
+  const email = req.body.email.trim().toLowerCase();
+  const user = await User.findOne({ email }).select('+passwordResetToken +passwordResetExpires');
+  const message = 'If an account exists with this email, you will receive a password reset link shortly.';
+  if (!user) {
+    return res.status(200).json({ message });
+  }
+  const token = crypto.randomBytes(32).toString('hex');
+  user.passwordResetToken = token;
+  user.passwordResetExpires = new Date(Date.now() + RESET_TOKEN_EXPIRY_MS);
+  await user.save({ validateBeforeSave: false });
+  const resetUrl = `${FRONTEND_BASE.replace(/\/$/, '')}/auth/reset-password?token=${token}`;
+  await sendPasswordResetEmail(user.email, resetUrl).catch((err) => {
+    console.error('[forgotPassword] sendEmail failed:', err);
+  });
+  return res.status(200).json({ message });
+});
+
+export const resetPassword = asyncHandler(async (req, res) => {
+  const { tokenError, passwordError } = validateResetPassword(req.body);
+  if (tokenError || passwordError) {
+    return res.status(400).json({
+      error: 'Validation failed',
+      details: { token: tokenError, password: passwordError },
+    });
+  }
+  const token = req.body.token.trim();
+  const user = await User.findOne({
+    passwordResetToken: token,
+    passwordResetExpires: { $gt: new Date() },
+  })
+    .select('+password +passwordResetToken +passwordResetExpires');
+  if (!user) {
+    return res.status(400).json({ error: 'Invalid or expired reset link. Please request a new password reset.' });
+  }
+  user.password = req.body.password;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+  await user.save();
+  return res.status(200).json({ message: 'Password reset successfully. You can now sign in with your new password.' });
 });

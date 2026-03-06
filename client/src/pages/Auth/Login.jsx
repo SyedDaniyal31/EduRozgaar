@@ -52,7 +52,7 @@ export default function Login() {
   return (
     <>
       <meta name="description" content="Login to EduRozgaar account." />
-      <div className="max-w-md mx-auto px-4 py-8 md:py-12">
+      <div className="max-w-md mx-auto px-4 sm:px-6 py-8 md:py-12">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">Login</h1>
         <p className="text-gray-600 dark:text-gray-400 mb-6">Sign in to access your profile and saved items.</p>
 
@@ -85,6 +85,11 @@ export default function Login() {
               placeholder="••••••••"
             />
           </FormField>
+          <div className="flex justify-end">
+            <Link to={ROUTES.FORGOT_PASSWORD} className="text-sm text-primary dark:text-mint hover:underline link-hover">
+              Forgot password?
+            </Link>
+          </div>
           <Button type="submit" disabled={submitting} className="w-full">
             {submitting ? 'Signing in...' : 'Sign in'}
           </Button>

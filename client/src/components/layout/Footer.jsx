@@ -99,15 +99,15 @@ function LinkColumn({ title, links }) {
 
 export function Footer() {
   return (
-    <footer className="border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 mt-auto">
-      <div className="max-w-7xl mx-auto px-4 py-10 sm:py-12">
+    <footer className="border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 mt-auto safe-area-inset-bottom">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8 lg:gap-10">
           <LinkColumn title="Platform" links={platformLinks} />
           <LinkColumn title="Student Resources" links={studentResourcesLinks} />
           <LinkColumn title="Company" links={companyLinks} />
           <LinkColumn title="Support" links={supportLinks} />
           <LinkColumn title="Legal" links={legalLinks} />
-          <div className="col-span-2 sm:col-span-3 md:col-span-4 lg:col-span-1 space-y-4">
+          <div className="col-span-2 sm:col-span-3 md:col-span-4 lg:col-span-1 space-y-4 min-w-0">
             <h3 className="font-semibold text-gray-900 dark:text-white text-sm uppercase tracking-wider">
               Connect With Us
             </h3>

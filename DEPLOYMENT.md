@@ -97,6 +97,7 @@ Use this URI as `MONGO_URI` in the server `.env` (see below).
 | `JWT_EXPIRES_IN` | No     | Access token expiry (default `1h`). |
 | `REFRESH_EXPIRES_IN` | No  | Refresh token expiry (default `7d`). |
 | `SITE_URL`     | No       | Public site URL (for sitemap, referrals; e.g. `https://edurozgaar.pk`). |
+| `FRONTEND_URL` | No       | Frontend app URL for password-reset emails (defaults to `http://localhost:5173` if unset). Set to your client URL in production (e.g. `https://edurozgaar.pk`). |
 | `DISABLE_SCRAPER_CRON` | No  | Set to `1` to disable the 6-hour scraper cron. |
 | `REDIS_URL`    | No       | Optional Redis; if not set, in-memory store is used. |
 
@@ -108,6 +109,7 @@ NODE_ENV=development
 MONGO_URI=mongodb://localhost:27017/edurozgaar
 JWT_SECRET=your-very-long-random-secret-at-least-32-characters
 SITE_URL=http://localhost:5173
+FRONTEND_URL=http://localhost:5173
 ```
 
 **Important:** Never commit `.env` files. Only the root `.env.template` (no secrets) is committed.

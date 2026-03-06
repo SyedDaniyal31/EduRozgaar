@@ -42,7 +42,7 @@ export default function Blog() {
         <title>Blog – Career Advice, Scholarships, Job Tips – EduRozgaar Pakistan</title>
         <meta name="description" content="EduRozgaar blog – career tips, admission guides, scholarships, and education news for Pakistan." />
       </Helmet>
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
         <ScrollReveal>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Blog & Career Articles</h1>
           <p className="text-gray-600 dark:text-gray-400 mb-6">Tips, guides, and updates for students and job seekers.</p>

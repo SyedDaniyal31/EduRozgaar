@@ -21,6 +21,8 @@ const userSchema = new mongoose.Schema(
     },
     refreshToken: { type: String, select: false },
     refreshTokenExpires: { type: Date, select: false },
+    passwordResetToken: { type: String, select: false },
+    passwordResetExpires: { type: Date, select: false },
     lastLoginAt: { type: Date },
     savedJobs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Job' }],
     savedScholarships: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Scholarship' }],

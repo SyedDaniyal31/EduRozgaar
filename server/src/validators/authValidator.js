@@ -35,3 +35,15 @@ export function validateAuthLogin(body) {
   const passwordError = validatePassword(body.password, false);
   return { emailError, passwordError };
 }
+
+export function validateForgotPassword(body) {
+  const emailError = validateEmail(body.email);
+  return { emailError };
+}
+
+export function validateResetPassword(body) {
+  const token = body.token != null ? String(body.token).trim() : '';
+  const tokenError = !token ? 'Reset token is required' : null;
+  const passwordError = validatePassword(body.password, true);
+  return { tokenError, passwordError };
+}

@@ -99,7 +99,7 @@ export default function ResumeBuilder() {
 
   if (loading) {
     return (
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
         <div className="animate-pulse space-y-4">
           <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3" />
           <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded" />
@@ -114,7 +114,7 @@ export default function ResumeBuilder() {
         <title>Resume Builder – EduRozgaar</title>
         <meta name="description" content="Build a professional CV for jobs, scholarships, and admissions. Multiple templates, AI suggestions, PDF export." />
       </Helmet>
-      <div className="max-w-6xl mx-auto px-4 py-6 md:py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 md:py-8">
         <Link to={ROUTES.DASHBOARD} className="text-primary dark:text-mint hover:underline text-sm mb-4 inline-block">← Dashboard</Link>
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">Resume Builder</h1>
         <p className="text-gray-600 dark:text-gray-400 mb-6">
@@ -135,8 +135,8 @@ export default function ResumeBuilder() {
           </div>
         )}
 
-        <div className="grid lg:grid-cols-5 gap-8">
-          <div className="lg:col-span-3 space-y-6">
+        <div className="grid lg:grid-cols-5 gap-6 lg:gap-8">
+          <div className="lg:col-span-3 space-y-6 min-w-0">
             <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
               <div className="mb-3">
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Resume name</label>
@@ -173,7 +173,7 @@ export default function ResumeBuilder() {
               )}
             </div>
           </div>
-          <div className="lg:col-span-2 space-y-4">
+          <div className="lg:col-span-2 space-y-4 min-w-0">
             <ResumePreview ref={previewRef} resume={resume} template={resume.template} />
             <ResumeScore resume={resume} />
             <ResumeDownload previewRef={previewRef} fileName={fileName} />

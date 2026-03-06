@@ -19,6 +19,8 @@ const BlogPost = lazyLoad(() => import('../pages/Blog/BlogPost'));
 const Contact = lazyLoad(() => import('../pages/Contact/Contact'));
 const Login = lazyLoad(() => import('../pages/Auth/Login'));
 const Register = lazyLoad(() => import('../pages/Auth/Register'));
+const ForgotPassword = lazyLoad(() => import('../pages/Auth/ForgotPassword'));
+const ResetPassword = lazyLoad(() => import('../pages/Auth/ResetPassword'));
 const Profile = lazyLoad(() => import('../pages/Profile/Profile'));
 const Dashboard = lazyLoad(() => import('../pages/Dashboard/Dashboard'));
 const SavedJobs = lazyLoad(() => import('../pages/SavedJobs/SavedJobs'));
@@ -107,6 +109,8 @@ export const routes = [
       { path: ROUTES.COOKIES, element: <Cookies /> },
       { path: ROUTES.LOGIN, element: <Login /> },
       { path: ROUTES.REGISTER, element: <Register /> },
+      { path: ROUTES.FORGOT_PASSWORD, element: <ForgotPassword /> },
+      { path: ROUTES.RESET_PASSWORD, element: <ResetPassword /> },
       {
         path: ROUTES.PROFILE,
         element: (

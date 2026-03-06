@@ -39,13 +39,13 @@ export default function Admissions() {
         <meta name="description" content="University and college admissions in Pakistan. Deadlines and application guides." />
         <meta property="og:title" content="Admissions – EduRozgaar Pakistan" />
       </Helmet>
-      <div className="max-w-6xl mx-auto px-4 py-6 md:py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 md:py-8">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">Admissions</h1>
         <p className="text-gray-600 dark:text-gray-400 mb-6">Current admission cycles and deadlines.</p>
 
         <div className="flex flex-col lg:flex-row gap-4 mb-6">
-          <div className="flex-1">
-            <SearchBar placeholder="Search by program or institution..." onSearch={handleSearch} className="max-w-xl" />
+          <div className="flex-1 w-full min-w-0">
+            <SearchBar placeholder="Search by program or institution..." onSearch={handleSearch} className="w-full max-w-xl" />
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <label className="text-sm text-gray-600 dark:text-gray-400">Sort:</label>

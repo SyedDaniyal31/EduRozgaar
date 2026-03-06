@@ -33,10 +33,10 @@ export function Navbar() {
   const { lang, setLang, t } = useLanguage();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-gray-200 dark:border-gray-800 bg-surface/98 dark:bg-surface-dark/98 backdrop-blur">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between h-14 md:h-16">
-          <Link to={ROUTES.HOME} className="font-bold text-lg text-gray-900 dark:text-white link-hover hover:text-primary dark:hover:text-mint">
+    <header className="sticky top-0 z-40 border-b border-gray-200 dark:border-gray-800 bg-surface/98 dark:bg-surface-dark/98 backdrop-blur safe-area-inset-top">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6">
+        <div className="flex items-center justify-between h-14 md:h-16 gap-2 min-h-[56px]">
+          <Link to={ROUTES.HOME} className="font-bold text-base sm:text-lg text-gray-900 dark:text-white link-hover hover:text-primary dark:hover:text-mint truncate min-w-0 shrink">
             EduRozgaar
           </Link>
 
@@ -57,7 +57,7 @@ export function Navbar() {
                     {item.labelKey ? t(item.labelKey) : 'Education'} ▾
                   </button>
                   {megaOpen === (item.labelKey || 'edu') && (
-                    <div className="absolute left-0 top-full pt-1 w-56 animate-fade-in">
+                    <div className="absolute left-0 top-full pt-1 w-56 animate-dropdown-enter">
                       <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg py-2">
                         {item.mega.map((sub) => (
                           <Link
@@ -84,12 +84,12 @@ export function Navbar() {
             )}
           </nav>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             <div className="flex rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
               <button
                 type="button"
                 onClick={() => setLang('en')}
-                className={`px-2 py-1 text-sm ${lang === 'en' ? 'bg-mint/30 dark:bg-mint/20 text-primary dark:text-mint' : 'text-gray-600 dark:text-gray-400'}`}
+                className={`min-w-[36px] min-h-[36px] sm:px-2 sm:py-1 flex items-center justify-center text-xs sm:text-sm ${lang === 'en' ? 'bg-mint/30 dark:bg-mint/20 text-primary dark:text-mint' : 'text-gray-600 dark:text-gray-400'}`}
                 aria-label="English"
               >
                 EN
@@ -97,7 +97,7 @@ export function Navbar() {
               <button
                 type="button"
                 onClick={() => setLang('ur')}
-                className={`px-2 py-1 text-sm ${lang === 'ur' ? 'bg-mint/30 dark:bg-mint/20 text-primary dark:text-mint' : 'text-gray-600 dark:text-gray-400'}`}
+                className={`min-w-[36px] min-h-[36px] sm:px-2 sm:py-1 flex items-center justify-center text-xs sm:text-sm ${lang === 'ur' ? 'bg-mint/30 dark:bg-mint/20 text-primary dark:text-mint' : 'text-gray-600 dark:text-gray-400'}`}
                 aria-label="Urdu"
               >
                 UR
@@ -106,7 +106,7 @@ export function Navbar() {
             <button
               type="button"
               onClick={toggleTheme}
-              className="p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+              className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700"
               aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
             >
               {theme === 'dark' ? '☀️' : '🌙'}
@@ -165,11 +165,12 @@ export function Navbar() {
             )}
             <button
               type="button"
-              className="lg:hidden p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
-              onClick={() => setDrawerOpen(true)}
+              className="lg:hidden min-w-[48px] min-h-[48px] flex items-center justify-center rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700 cursor-pointer"
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); setDrawerOpen(true); }}
               aria-label="Open menu"
+              aria-expanded={drawerOpen}
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>

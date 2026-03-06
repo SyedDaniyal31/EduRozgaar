@@ -30,19 +30,19 @@ export function NewsletterSubscribe({ compact = false }) {
 
   if (compact) {
     return (
-      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2 max-w-md">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-2 w-full min-w-0 max-w-md">
         <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Your email"
-          className="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2 text-sm"
+          className="w-full min-w-0 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2 text-sm"
           disabled={loading}
         />
         <button
           type="submit"
           disabled={loading}
-          className="rounded-lg bg-primary hover:bg-primary-hover text-white btn-theme px-4 py-2 text-sm font-medium disabled:opacity-50"
+          className="w-full shrink-0 rounded-lg bg-primary hover:bg-primary-hover text-white btn-theme px-4 py-2 text-sm font-medium disabled:opacity-50"
         >
           {loading ? '…' : 'Subscribe'}
         </button>

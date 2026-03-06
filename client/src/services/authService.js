@@ -7,6 +7,9 @@ export const authApi = {
   me: () => axiosInstance.get('/auth/me'),
   refreshToken: (refreshToken) =>
     axiosInstance.post('/auth/refresh-token', { refreshToken }),
+  forgotPassword: (email) =>
+    axiosInstance.post('/auth/forgot-password', { email }),
+  resetPassword: (data) => axiosInstance.post('/auth/reset-password', data),
   getProfile: () => axiosInstance.get('/auth/profile'),
   updateProfile: (data) => axiosInstance.patch('/auth/profile', data),
 };
