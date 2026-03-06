@@ -3,9 +3,13 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   darkMode: 'class',
   safelist: [
-    // Theme colors used in index.css @apply – ensure they are always generated
     'bg-surface',
     'dark:bg-surface-dark',
+    'bg-bg-main',
+    'bg-bg-section',
+    'text-text-heading',
+    'text-text-body',
+    'text-text-muted',
   ],
   theme: {
     container: {
@@ -15,23 +19,46 @@ export default {
     },
     extend: {
       colors: {
-        // EduRozgaar brand palette (startup-grade)
-        primary: '#026670',       // dark teal – main actions, links (kept for compatibility)
-        'primary-hover': '#035a63',
-        mint: '#9FEDD7',          // light aqua – hover, accents
-        cream: '#FEF9C7',
-        golden: '#FCE181',
-        surface: '#EDEAE5',
-        'surface-dark': '#1a2528',
-        // Image-inspired palette: professional blues & cool grey
-        'edur-olive': '#687864',   // muted green-grey – accents, secondary bg
-        'edur-steel': '#31708E',   // deep steel blue – hero, primary dark
-        'edur-blue': '#5085A5',    // medium blue – secondary buttons, links
-        'edur-sky': '#8FC1E3',     // light pastel blue – hover, highlights
-        'edur-bg': '#F7F9FB',      // cool off-white – sections, cards
+        // Professional startup palette (LinkedIn / Stripe style)
+        primary: '#2563EB',
+        'primary-hover': '#1D4ED8',
+        'primary-light': '#DBEAFE',
+        secondary: '#0F172A',
+        'secondary-light': '#1E293B',
+        // Backgrounds
+        'bg-main': '#F8FAFC',
+        'bg-card': '#FFFFFF',
+        'bg-section': '#F1F5F9',
+        // Text
+        'text-heading': '#0F172A',
+        'text-body': '#334155',
+        'text-muted': '#64748B',
+        // Footer (dark)
+        'footer-bg': '#020617',
+        'footer-text': '#94A3B8',
+        'footer-heading': '#CBD5F5',
+        // Legacy aliases (map to new palette for compatibility)
+        surface: '#F8FAFC',
+        'surface-dark': '#0F172A',
+        mint: '#DBEAFE',
+        'edur-steel': '#1D4ED8',
+        'edur-blue': '#2563EB',
+        'edur-sky': '#DBEAFE',
+        'edur-bg': '#F8FAFC',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+      },
+      fontSize: {
+        'h1': ['2.25rem', { lineHeight: '1.2' }],
+        'h2': ['1.875rem', { lineHeight: '1.3' }],
+        'h3': ['1.5rem', { lineHeight: '1.35' }],
+        'h4': ['1.25rem', { lineHeight: '1.4' }],
+      },
+      boxShadow: {
+        'card': '0 4px 20px rgba(0, 0, 0, 0.05)',
+        'card-hover': '0 10px 25px rgba(0, 0, 0, 0.08)',
+        'btn-primary': '0 4px 12px rgba(0, 0, 0, 0.1)',
       },
       spacing: {
         '18': '4.5rem',

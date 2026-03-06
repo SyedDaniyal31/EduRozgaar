@@ -9,12 +9,16 @@
     -webkit-text-size-adjust: 100%;
   }
   body {
-    background-color: #F7F9FB; /* edur-bg – cool off-white */
-    @apply text-gray-900 dark:text-gray-100 antialiased overflow-x-hidden min-w-0;
+    background-color: #F8FAFC;
+    color: #334155;
+    font-size: 16px;
+    line-height: 1.6;
+    @apply antialiased overflow-x-hidden min-w-0;
     -webkit-tap-highlight-color: transparent;
   }
   .dark body {
-    background-color: #1a2528; /* surface-dark */
+    background-color: #0F172A;
+    color: #e2e8f0;
   }
   /* Better touch response on mobile: remove 300ms tap delay */
   button,
@@ -37,14 +41,18 @@
 }
 
 @layer components {
-  /* Unified button animation: slight lift + shadow, press down – same on all pages */
-  .btn-theme {
-    @apply transition-all duration-200 ease-out;
+  /* Primary button: blue, 12px 20px, rounded-lg, hover lift + shadow */
+  .btn-theme,
+  .btn-primary {
+    @apply transition-all duration-200 ease-out font-semibold rounded-lg;
   }
-  .btn-theme:hover:not(:disabled) {
-    @apply -translate-y-0.5 shadow-md;
+  .btn-theme:hover:not(:disabled),
+  .btn-primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
-  .btn-theme:active:not(:disabled) {
+  .btn-theme:active:not(:disabled),
+  .btn-primary:active:not(:disabled) {
     @apply translate-y-0 scale-[0.98];
   }
   .btn-hover-lift {
@@ -56,11 +64,16 @@
   .btn-hover-lift:active:not(:disabled) {
     @apply translate-y-0 scale-[0.98];
   }
-  .card-hover {
-    @apply transition-all duration-200 ease-out;
+  /* Card: white bg, rounded-xl, shadow, hover lift */
+  .card-hover,
+  .card-theme {
+    @apply transition-all duration-200 ease-out rounded-xl bg-white dark:bg-gray-800;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   }
-  .card-hover:hover {
-    @apply -translate-y-0.5 shadow-lg;
+  .card-hover:hover,
+  .card-theme:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
   }
   .link-hover {
     @apply transition-colors duration-200;
