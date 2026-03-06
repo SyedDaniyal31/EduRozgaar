@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { dashboardApi } from '../../services/listingsService';
+import { dashboardApi, applicationsApi, referralsApi } from '../../services/listingsService';
 import { ROUTES } from '../../constants';
 import { formatDate } from '../../utils/formatDate';
 import { ListingCardSkeleton } from '../../components/listings/ListingCardSkeleton';
@@ -13,6 +13,8 @@ const SITE_URL = import.meta.env.VITE_APP_URL || 'https://edurozgaar.pk';
 export default function Dashboard() {
   const { user } = useAuth();
   const [dashboard, setDashboard] = useState(null);
+  const [applications, setApplications] = useState([]);
+  const [referralData, setReferralData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -22,6 +24,13 @@ export default function Dashboard() {
       .then(({ data }) => setDashboard(data))
       .catch((err) => setError(err.response?.data?.error || 'Failed to load dashboard'))
       .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    applicationsApi.getMy().then(({ data }) => setApplications(data.data || [])).catch(() => setApplications([]));
+  }, []);
+  useEffect(() => {
+    referralsApi.getMy().then(({ data }) => setReferralData(data)).catch(() => setReferralData(null));
   }, []);
 
   if (loading) {
@@ -80,8 +89,14 @@ export default function Dashboard() {
         <p className="text-gray-600 dark:text-gray-400 mb-6">Welcome back, {profile?.name || profile?.email}.</p>
 
         <div className="flex flex-wrap gap-3 mb-8">
-          <Link to={ROUTES.RESUME_ANALYZER} className="inline-flex items-center px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary-hover btn-theme text-sm font-medium">
+          <Link to={ROUTES.RESUME_BUILDER} className="inline-flex items-center px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary-hover btn-theme text-sm font-medium">
+            Resume Builder
+          </Link>
+          <Link to={ROUTES.RESUME_ANALYZER} className="inline-flex items-center px-4 py-2 rounded-lg border-2 border-primary text-primary dark:text-mint hover:bg-mint/20 btn-theme text-sm font-medium">
             Resume Scanner
+          </Link>
+          <Link to={ROUTES.CAREER_GUIDANCE} className="inline-flex items-center px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 text-sm font-medium">
+            Career Guidance
           </Link>
           <Link to={ROUTES.EXAM_PREP} className="inline-flex items-center px-4 py-2 rounded-lg border-2 border-primary text-primary dark:text-mint hover:bg-mint/20 dark:hover:bg-mint/10 btn-theme text-sm font-medium">
             Exam Preparation
@@ -178,6 +193,23 @@ export default function Dashboard() {
               )}
             </section>
 
+            {applications.length > 0 && (
+              <section>
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Applied Jobs</h2>
+                <ul className="space-y-2">
+                  {applications.slice(0, 5).map((a) => (
+                    <li key={a._id}>
+                      <Link to={`${ROUTES.JOBS}/${a.job?.slug || a.job?._id}`} className="block p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-sm transition text-sm">
+                        <span className="font-medium text-gray-900 dark:text-white">{a.job?.title}</span>
+                        <span className="text-gray-500 dark:text-gray-400"> · {a.job?.organization}</span>
+                        <span className="ml-2 text-xs text-amber-600 dark:text-amber-400">{a.status}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
             <section>
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Recently viewed</h2>
               {(recentJobs.length + recentScholarships.length + recentAdmissions.length) === 0 ? (
@@ -210,7 +242,7 @@ export default function Dashboard() {
             </section>
 
             <section>
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Trending for you</h2>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Recommended Opportunities</h2>
               <div className="grid sm:grid-cols-2 gap-3">
                 {[...trendingJobs.slice(0, 2), ...trendingScholarships.slice(0, 2), ...trendingAdmissions.slice(0, 2)].map((item) => {
                   const isAdmission = item.program && item.institution;
@@ -233,6 +265,19 @@ export default function Dashboard() {
 
           <aside className="space-y-6">
             <Chatbot className="mb-6" />
+            {referralData && (
+              <section className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Referral Stats</h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Invite friends: share your link to earn points.</p>
+                <p className="text-xs font-mono bg-gray-100 dark:bg-gray-700 p-2 rounded break-all text-gray-800 dark:text-gray-200">{referralData.referralLink}</p>
+                <p className="text-sm mt-2 text-gray-700 dark:text-gray-300">Referred: <strong>{referralData.referralCount || 0}</strong> · Points: <strong>{referralData.totalPoints || 0}</strong></p>
+              </section>
+            )}
+            <section className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Leaderboard &amp; Achievements</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">Compete by points, applications, and referrals.</p>
+              <Link to={ROUTES.BADGES_LEADERBOARD} className="inline-block text-sm text-primary dark:text-mint hover:underline font-medium">View Leaderboard →</Link>
+            </section>
             <section className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Profile overview</h2>
               <dl className="space-y-2 text-sm">

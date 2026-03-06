@@ -7,20 +7,20 @@ import { useLanguage } from '../../context/LanguageContext';
 import { DrawerMenu } from './DrawerMenu';
 
 const navItems = [
+  { labelKey: 'nav.home', path: ROUTES.HOME },
   { labelKey: 'nav.jobs', path: ROUTES.JOBS },
   { labelKey: 'nav.scholarships', path: ROUTES.SCHOLARSHIPS },
   { labelKey: 'nav.admissions', path: ROUTES.ADMISSIONS },
+  { labelKey: 'nav.internships', path: ROUTES.INTERNSHIPS },
   {
     labelKey: 'nav.education',
     mega: [
-      { labelKey: 'nav.examPrep', path: ROUTES.EXAM_PREP },
-      { labelKey: 'nav.internships', path: ROUTES.INTERNSHIPS },
-      { labelKey: 'nav.webinars', path: ROUTES.WEBINARS },
-      { labelKey: 'nav.intlScholarships', path: ROUTES.INTL_SCHOLARSHIPS },
       { labelKey: 'nav.schoolsAndColleges', path: ROUTES.SCHOOLS_AND_COLLEGES },
+      { labelKey: 'nav.universities', path: ROUTES.INTL_SCHOLARSHIPS },
       { labelKey: 'nav.foreign', path: ROUTES.FOREIGN_STUDIES },
     ],
   },
+  { labelKey: 'nav.examPrep', path: ROUTES.EXAM_PREP },
   { labelKey: 'nav.blog', path: ROUTES.BLOG },
   { labelKey: 'nav.contact', path: ROUTES.CONTACT },
 ];
@@ -148,12 +148,20 @@ export function Navbar() {
                 </button>
               </>
             ) : (
-              <Link
-                to={ROUTES.LOGIN}
-                className="hidden sm:inline px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-primary"
-              >
-                Login
-              </Link>
+              <>
+                <Link
+                  to={ROUTES.LOGIN}
+                  className="hidden sm:inline px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-primary"
+                >
+                  {t('nav.login')}
+                </Link>
+                <Link
+                  to={ROUTES.REGISTER}
+                  className="hidden sm:inline px-3 py-2 rounded-lg text-sm font-medium bg-primary text-white hover:bg-primary-hover btn-theme"
+                >
+                  {t('nav.register')}
+                </Link>
+              </>
             )}
             <button
               type="button"

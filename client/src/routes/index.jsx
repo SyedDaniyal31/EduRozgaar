@@ -39,6 +39,10 @@ const Webinars = lazyLoad(() => import('../pages/Webinars/Webinars'));
 const IntlScholarships = lazyLoad(() => import('../pages/IntlScholarships/IntlScholarships'));
 const IntlScholarshipDetail = lazyLoad(() => import('../pages/IntlScholarships/IntlScholarshipDetail'));
 const Badges = lazyLoad(() => import('../pages/Badges/Badges'));
+const ResumeBuilder = lazyLoad(() => import('../pages/ResumeBuilder/ResumeBuilder'));
+const CareerGuidance = lazyLoad(() => import('../pages/CareerGuidance/CareerGuidance'));
+const SEOJobsPage = lazyLoad(() => import('../pages/SEO/SEOJobsPage'));
+const SEOScholarshipsPage = lazyLoad(() => import('../pages/SEO/SEOScholarshipsPage'));
 
 function lazyLoad(importFn) {
   const Lazy = lazy(importFn);
@@ -66,9 +70,14 @@ export const routes = [
     children: [
       { index: true, element: <Home /> },
       { path: ROUTES.JOBS, element: <Jobs /> },
+      { path: '/jobs-in-:slug', element: <SEOJobsPage /> },
+      { path: '/government-jobs', element: <SEOJobsPage /> },
+      { path: '/private-jobs', element: <SEOJobsPage /> },
+      { path: '/internship-jobs', element: <SEOJobsPage /> },
       { path: `${ROUTES.JOBS}/province/:slug`, element: <JobsProvinceLanding /> },
       { path: `${ROUTES.JOBS}/category/:slug`, element: <JobsCategoryLanding /> },
       { path: `${ROUTES.JOBS}/:slug`, element: <JobDetail /> },
+      { path: '/scholarships-in-:country', element: <SEOScholarshipsPage /> },
       { path: ROUTES.SCHOLARSHIPS, element: <Scholarships /> },
       { path: `${ROUTES.SCHOLARSHIPS}/:slug`, element: <ScholarshipDetail /> },
       { path: ROUTES.ADMISSIONS, element: <Admissions /> },
@@ -126,6 +135,8 @@ export const routes = [
           </ProtectedRoute>
         ),
       },
+      { path: ROUTES.RESUME_BUILDER, element: <ResumeBuilder /> },
+      { path: ROUTES.CAREER_GUIDANCE, element: <CareerGuidance /> },
       { path: ROUTES.EXAM_PREP, element: <ExamPrep /> },
       { path: `${ROUTES.EXAM_PREP}/quiz/:quizId`, element: <QuizTake /> },
       { path: `${ROUTES.EXAM_PREP}/:slug`, element: <ExamDetail /> },

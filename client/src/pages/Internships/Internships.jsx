@@ -14,6 +14,8 @@ import { formatDate } from '../../utils/formatDate';
 const PER_PAGE = 10;
 const DURATIONS = ['2 months', '3 months', '4 months', '6 months'];
 const PROVINCES = ['Punjab', 'Sindh', 'KPK', 'Islamabad', 'Balochistan'];
+const CITIES = ['Lahore', 'Karachi', 'Islamabad', 'Rawalpindi', 'Faisalabad', 'Multan', 'Peshawar', 'Quetta'];
+const FIELDS = ['Software', 'Marketing', 'Finance', 'HR', 'Design', 'Data', 'Engineering', 'Content'];
 
 export default function Internships() {
   const { isAuthenticated } = useAuth();
@@ -55,7 +57,7 @@ export default function Internships() {
           <div className="flex-1">
             <SearchBar placeholder="Search internships..." onSearch={(q) => setFilters({ search: q || undefined })} />
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 items-center">
             <select
               className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2 text-sm"
               value={params.province || ''}
@@ -65,6 +67,35 @@ export default function Internships() {
               {PROVINCES.map((p) => (
                 <option key={p} value={p}>{p}</option>
               ))}
+            </select>
+            <select
+              className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2 text-sm"
+              value={params.location || ''}
+              onChange={(e) => setFilters({ location: e.target.value || undefined })}
+            >
+              <option value="">All cities</option>
+              {CITIES.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+            <select
+              className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2 text-sm"
+              value={params.skillset || ''}
+              onChange={(e) => setFilters({ skillset: e.target.value || undefined })}
+            >
+              <option value="">Any field</option>
+              {FIELDS.map((f) => (
+                <option key={f} value={f}>{f}</option>
+              ))}
+            </select>
+            <select
+              className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2 text-sm"
+              value={params.isPaid ?? ''}
+              onChange={(e) => setFilters({ isPaid: e.target.value === '' ? undefined : e.target.value })}
+            >
+              <option value="">Paid / Unpaid</option>
+              <option value="true">Paid</option>
+              <option value="false">Unpaid</option>
             </select>
             <select
               className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2 text-sm"

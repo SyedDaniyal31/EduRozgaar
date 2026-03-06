@@ -2,6 +2,8 @@ import { User } from '../models/User.js';
 import { signAccessToken, signRefreshToken, verifyToken } from '../utils/jwt.js';
 import { validateAuthRegister, validateAuthLogin } from '../validators/authValidator.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
+import { ensureReferralCode } from '../utils/referralCode.js';
+import { awardBadge } from './badgesController.js';
 
 function toSafeUser(user) {
   if (!user) return null;
@@ -21,22 +23,41 @@ export const register = asyncHandler(async (req, res) => {
     });
   }
   const email = req.body.email.trim().toLowerCase();
+  const referralCode = (req.body.referralCode || req.query.ref || '').trim();
   const existing = await User.findOne({ email });
   if (existing) {
     return res.status(409).json({ error: 'Email already registered' });
+  }
+  let referredBy = null;
+  if (referralCode) {
+    const referrer = await User.findOne({ referralCode });
+    if (referrer && referrer._id) referredBy = referrer._id;
   }
   const user = await User.create({
     email,
     password: req.body.password,
     name: name || email.split('@')[0],
     role: 'User',
+    referredBy,
   });
   user.lastLoginAt = new Date();
   await user.save({ validateBeforeSave: false });
+  await ensureReferralCode(user);
+
+  const REFERRER_POINTS = 25;
+  const REFEREE_POINTS = 10;
+  if (referredBy) {
+    await User.findByIdAndUpdate(referredBy, {
+      $inc: { referralCount: 1, totalPoints: REFERRER_POINTS, rewardPoints: REFERRER_POINTS },
+    });
+    await User.findByIdAndUpdate(user._id, { $inc: { totalPoints: REFEREE_POINTS, rewardPoints: REFEREE_POINTS } });
+    await awardBadge(referredBy, 'referral', 'Referral Champion', 'Referred a friend');
+  }
+
   const accessToken = signAccessToken({ userId: user._id.toString(), role: user.role });
   const refreshToken = signRefreshToken({ userId: user._id.toString() });
   res.status(201).json({
-    user: toSafeUser(user),
+    user: toSafeUser(await User.findById(user._id)),
     accessToken,
     refreshToken,
     expiresIn: process.env.JWT_EXPIRES_IN || '1h',

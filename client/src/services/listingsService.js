@@ -14,6 +14,21 @@ export const jobsApi = {
   get: (idOrSlug) => axiosInstance.get(`/jobs/${encodeURIComponent(idOrSlug)}`),
   save: (id) => axiosInstance.post(`/jobs/${id}/save`),
   unsave: (id) => axiosInstance.delete(`/jobs/${id}/save`),
+  apply: (id, formData) => axiosInstance.post(`/jobs/${id}/apply`, formData, formData instanceof FormData ? {} : {}),
+};
+
+export const applicationsApi = {
+  getMy: () => axiosInstance.get('/users/applications'),
+};
+
+export const referralsApi = {
+  getMy: () => axiosInstance.get('/auth/referrals'),
+};
+
+export const seoApi = {
+  jobsIn: (slug) => axiosInstance.get(`/seo/jobs-in/${encodeURIComponent(slug)}`),
+  jobsByCategory: (slug) => axiosInstance.get(`/seo/jobs-by-category/${encodeURIComponent(slug)}`),
+  scholarshipsIn: (country) => axiosInstance.get(`/seo/scholarships-in/${encodeURIComponent(country)}`),
 };
 
 export const scholarshipsApi = {
@@ -116,7 +131,7 @@ export const intlScholarshipsApi = {
 
 export const badgesApi = {
   myBadges: () => axiosInstance.get('/badges/me'),
-  leaderboard: (params) => axiosInstance.get('/badges/leaderboard', { params }),
+  leaderboard: (params) => axiosInstance.get('/badges/leaderboard', { params }), // params: { limit, by: 'points'|'referrals'|'applications' }
   myRank: () => axiosInstance.get('/badges/rank'),
 };
 

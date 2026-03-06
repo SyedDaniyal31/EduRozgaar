@@ -1,0 +1,93 @@
+import { Job } from '../models/Job.js';
+import { slugify } from '../utils/slugify.js';
+
+const PROVINCES = ['Punjab', 'Sindh', 'Khyber Pakhtunkhwa', 'Balochistan', 'Islamabad', 'Gilgit-Baltistan', 'AJK'];
+const CITIES = {
+  Punjab: ['Lahore', 'Faisalabad', 'Rawalpindi', 'Multan', 'Gujranwala', 'Sialkot'],
+  Sindh: ['Karachi', 'Hyderabad', 'Sukkur', 'Larkana'],
+  'Khyber Pakhtunkhwa': ['Peshawar', 'Abbottabad', 'Mardan', 'Swat'],
+  Balochistan: ['Quetta', 'Gwadar', 'Turbat'],
+  Islamabad: ['Islamabad'],
+  'Gilgit-Baltistan': ['Gilgit', 'Skardu'],
+  AJK: ['Muzaffarabad', 'Mirpur'],
+};
+
+function addDays(d, days) {
+  const out = new Date(d);
+  out.setDate(out.getDate() + days);
+  return out;
+}
+
+export const jobSeedData = [
+  // Government
+  { title: 'Assistant Director (BS-17)', organization: 'FPSC', province: 'Islamabad', city: 'Islamabad', jobType: 'Government', educationRequirement: 'Master\'s degree', experience: '2 years', deadline: addDays(new Date(), 45), applyType: 'external', applicationLink: 'https://www.fpsc.gov.pk', description: 'Federal Public Service Commission recruitment for Assistant Director posts.' },
+  { title: 'Lecturer in Computer Science', organization: 'Higher Education Department Punjab', province: 'Punjab', city: 'Lahore', jobType: 'Government', educationRequirement: 'PhD / MPhil', experience: '1 year', deadline: addDays(new Date(), 30), applyType: 'external', applicationLink: 'https://hed.punjab.gov.pk', description: 'Government college lecturer position in CS.' },
+  { title: 'Secondary School Teacher (SST)', organization: 'PPSC', province: 'Punjab', city: 'Lahore', jobType: 'Government', educationRequirement: 'Bachelor/Master with B.Ed', experience: '0-2 years', deadline: addDays(new Date(), 60), applyType: 'external', applicationLink: 'https://www.ppsc.gop.pk', description: 'Punjab Public Service Commission SST recruitment.' },
+  { title: 'Assistant Engineer Civil', organization: 'WAPDA', province: 'Punjab', city: 'Lahore', jobType: 'Government', educationRequirement: 'BE Civil', experience: '2 years', deadline: addDays(new Date(), 25), applyType: 'external', applicationLink: 'https://www.wapda.gov.pk', description: 'Water and Power Development Authority civil engineer.' },
+  { title: 'Data Entry Operator', organization: 'NADRA', province: 'Islamabad', city: 'Islamabad', jobType: 'Government', educationRequirement: 'Bachelor', experience: '0-1 year', deadline: addDays(new Date(), 20), applyType: 'external', applicationLink: 'https://www.nadra.gov.pk', description: 'National Database registration authority data entry.' },
+  { title: 'Medical Officer', organization: 'Health Department Sindh', province: 'Sindh', city: 'Karachi', jobType: 'Government', educationRequirement: 'MBBS', experience: '1 year', deadline: addDays(new Date(), 40), applyType: 'external', applicationLink: 'https://sindhhealth.gov.pk', description: 'Government medical officer position.' },
+  { title: 'Accountant (BPS-16)', organization: 'Accountant General Punjab', province: 'Punjab', city: 'Lahore', jobType: 'Government', educationRequirement: 'Bachelor in Commerce/ACCA', experience: '2 years', deadline: addDays(new Date(), 35), applyType: 'external', applicationLink: 'https://agp.gop.pk', description: 'Government accountant recruitment.' },
+  { title: 'Sub-Inspector Police', organization: 'Punjab Police', province: 'Punjab', city: 'Rawalpindi', jobType: 'Government', educationRequirement: 'Bachelor', experience: '0', deadline: addDays(new Date(), 50), applyType: 'external', applicationLink: 'https://punjabpolice.gov.pk', description: 'Police sub-inspector recruitment.' },
+  { title: 'Junior Clerk', organization: 'District Courts Lahore', province: 'Punjab', city: 'Lahore', jobType: 'Government', educationRequirement: 'Intermediate', experience: '0', deadline: addDays(new Date(), 15), applyType: 'external', applicationLink: 'https://lhc.gov.pk', description: 'District judiciary clerical staff.' },
+  { title: 'Lab Technician', organization: 'PIMS Islamabad', province: 'Islamabad', city: 'Islamabad', jobType: 'Government', educationRequirement: 'DMLT / BSc', experience: '1 year', deadline: addDays(new Date(), 22), applyType: 'external', applicationLink: 'https://pims.gov.pk', description: 'Hospital lab technician position.' },
+  // Private
+  { title: 'Software Engineer', organization: 'Techlogix Pakistan', province: 'Punjab', city: 'Lahore', jobType: 'Private', educationRequirement: 'BS Computer Science', experience: '2-4 years', deadline: addDays(new Date(), 30), applyType: 'internal', applicationLink: null, description: 'Full-stack development, React/Node.' },
+  { title: 'Digital Marketing Executive', organization: 'Daraz Pakistan', province: 'Sindh', city: 'Karachi', jobType: 'Private', educationRequirement: 'Bachelor', experience: '1-2 years', deadline: addDays(new Date(), 21), applyType: 'internal', applicationLink: null, description: 'Performance marketing and campaigns.' },
+  { title: 'HR Manager', organization: 'Jazz Pakistan', province: 'Punjab', city: 'Islamabad', jobType: 'Private', educationRequirement: 'MBA HR', experience: '5+ years', deadline: addDays(new Date(), 45), applyType: 'internal', applicationLink: null, description: 'Talent acquisition and HR operations.' },
+  { title: 'Content Writer', organization: 'Telenor Pakistan', province: 'Punjab', city: 'Lahore', jobType: 'Private', educationRequirement: 'Bachelor in Mass Comm/English', experience: '2 years', deadline: addDays(new Date(), 18), applyType: 'internal', applicationLink: null, description: 'Blogs, social media, and brand content.' },
+  { title: 'Accountant', organization: 'EFU Life Assurance', province: 'Sindh', city: 'Karachi', jobType: 'Private', educationRequirement: 'ACCA/CA inter', experience: '2-3 years', deadline: addDays(new Date(), 28), applyType: 'internal', applicationLink: null, description: 'Financial reporting and reconciliation.' },
+  { title: 'Frontend Developer', organization: 'Systems Limited', province: 'Punjab', city: 'Lahore', jobType: 'Private', educationRequirement: 'BS CS/IT', experience: '1-3 years', deadline: addDays(new Date(), 25), applyType: 'internal', applicationLink: null, description: 'React, TypeScript, responsive UI.' },
+  { title: 'Sales Executive', organization: 'Nestlé Pakistan', province: 'Punjab', city: 'Lahore', jobType: 'Private', educationRequirement: 'Bachelor', experience: '1-2 years', deadline: addDays(new Date(), 14), applyType: 'internal', applicationLink: null, description: 'FMCG sales and distribution.' },
+  { title: 'Quality Assurance Engineer', organization: '10Pearls', province: 'Sindh', city: 'Karachi', jobType: 'Private', educationRequirement: 'BS CS or related', experience: '2 years', deadline: addDays(new Date(), 20), applyType: 'internal', applicationLink: null, description: 'Manual and automation testing.' },
+  { title: 'Graphic Designer', organization: 'Orient MCL', province: 'Punjab', city: 'Lahore', jobType: 'Private', educationRequirement: 'Bachelor in Design', experience: '1-2 years', deadline: addDays(new Date(), 12), applyType: 'internal', applicationLink: null, description: 'Brand and digital design.' },
+  { title: 'Customer Support Representative', organization: 'Careem Pakistan', province: 'Sindh', city: 'Karachi', jobType: 'Private', educationRequirement: 'Bachelor', experience: '0-1 year', deadline: addDays(new Date(), 10), applyType: 'internal', applicationLink: null, description: 'In-app and phone support.' },
+  { title: 'Backend Developer', organization: 'Arbisoft', province: 'Punjab', city: 'Lahore', jobType: 'Private', educationRequirement: 'BS CS', experience: '2-4 years', deadline: addDays(new Date(), 35), applyType: 'internal', applicationLink: null, description: 'Python/Django or Node.js APIs.' },
+  { title: 'Business Development Associate', organization: 'Airlift', province: 'Punjab', city: 'Lahore', jobType: 'Private', educationRequirement: 'MBA/Bachelor', experience: '1-2 years', deadline: addDays(new Date(), 16), applyType: 'internal', applicationLink: null, description: 'B2B partnerships and growth.' },
+  { title: 'Data Analyst', organization: 'S&P Global Pakistan', province: 'Sindh', city: 'Karachi', jobType: 'Private', educationRequirement: 'BS Economics/CS/Statistics', experience: '2 years', deadline: addDays(new Date(), 24), applyType: 'internal', applicationLink: null, description: 'Data modeling and reporting.' },
+  { title: 'Legal Associate', organization: 'AGHS Legal Aid', province: 'Punjab', city: 'Lahore', jobType: 'Private', educationRequirement: 'LLB', experience: '0-2 years', deadline: addDays(new Date(), 19), applyType: 'internal', applicationLink: null, description: 'Legal research and drafting.' },
+  { title: 'Project Coordinator', organization: 'PTCL', province: 'Islamabad', city: 'Islamabad', jobType: 'Private', educationRequirement: 'Bachelor', experience: '2-3 years', deadline: addDays(new Date(), 32), applyType: 'internal', applicationLink: null, description: 'Telecom project coordination.' },
+  // More government
+  { title: 'Research Officer', organization: 'PIDE Islamabad', province: 'Islamabad', city: 'Islamabad', jobType: 'Government', educationRequirement: 'Master\'s in Economics', experience: '2 years', deadline: addDays(new Date(), 42), applyType: 'external', applicationLink: 'https://pide.org.pk', description: 'Policy research and data analysis.' },
+  { title: 'Agriculture Officer', organization: 'Agriculture Department Punjab', province: 'Punjab', city: 'Faisalabad', jobType: 'Government', educationRequirement: 'BSc Agriculture', experience: '1 year', deadline: addDays(new Date(), 38), applyType: 'external', applicationLink: 'https://agripunjab.gov.pk', description: 'Field and extension services.' },
+  { title: 'NTS Test Invigilator', organization: 'NTS', province: 'Punjab', city: 'Lahore', jobType: 'Government', educationRequirement: 'Bachelor', experience: '0', deadline: addDays(new Date(), 8), applyType: 'external', applicationLink: 'https://www.nts.org.pk', description: 'Temporary invigilation for NTS exams.' },
+  { title: 'Lady Health Visitor', organization: 'Health Department KP', province: 'Khyber Pakhtunkhwa', city: 'Peshawar', jobType: 'Government', educationRequirement: 'LHV diploma', experience: '0', deadline: addDays(new Date(), 26), applyType: 'external', applicationLink: 'https://health.kp.gov.pk', description: 'Community health and vaccination.' },
+  { title: 'Assistant Professor Mathematics', organization: 'University of Punjab', province: 'Punjab', city: 'Lahore', jobType: 'Government', educationRequirement: 'PhD Mathematics', experience: '3 years', deadline: addDays(new Date(), 55), applyType: 'external', applicationLink: 'https://pu.edu.pk', description: 'Teaching and research in mathematics.' },
+  // Internships
+  { title: 'Software Development Intern', organization: 'Tech Valley Lahore', province: 'Punjab', city: 'Lahore', jobType: 'Internship', educationRequirement: 'BS CS (final year)', experience: '0', deadline: addDays(new Date(), 14), applyType: 'internal', applicationLink: null, description: '6-month paid internship, React/Node.' },
+  { title: 'Marketing Intern', organization: 'Unilever Pakistan', province: 'Sindh', city: 'Karachi', jobType: 'Internship', educationRequirement: 'Bachelor/MBA', experience: '0', deadline: addDays(new Date(), 12), applyType: 'internal', applicationLink: null, description: 'Brand and digital marketing internship.' },
+  { title: 'Finance Intern', organization: 'HBL', province: 'Sindh', city: 'Karachi', jobType: 'Internship', educationRequirement: 'ACCA/CFA student', experience: '0', deadline: addDays(new Date(), 20), applyType: 'internal', applicationLink: null, description: 'Financial analysis and reporting.' },
+  { title: 'Graphic Design Intern', organization: 'Creative Chaos', province: 'Sindh', city: 'Karachi', jobType: 'Internship', educationRequirement: 'Design degree/diploma', experience: '0', deadline: addDays(new Date(), 10), applyType: 'internal', applicationLink: null, description: 'UI and brand design projects.' },
+  { title: 'Data Science Intern', organization: 'Naya Daur Analytics', province: 'Punjab', city: 'Lahore', jobType: 'Internship', educationRequirement: 'BS CS/Statistics', experience: '0', deadline: addDays(new Date(), 18), applyType: 'internal', applicationLink: null, description: 'Python, ML, and dashboards.' },
+  { title: 'HR Intern', organization: 'Engro Corporation', province: 'Sindh', city: 'Karachi', jobType: 'Internship', educationRequirement: 'Bachelor/MBA HR', experience: '0', deadline: addDays(new Date(), 22), applyType: 'internal', applicationLink: null, description: 'Recruitment and onboarding support.' },
+  { title: 'Civil Engineering Intern', organization: 'NESPAK', province: 'Punjab', city: 'Lahore', jobType: 'Internship', educationRequirement: 'BE Civil (final year)', experience: '0', deadline: addDays(new Date(), 28), applyType: 'external', applicationLink: 'https://nespak.com.pk', description: 'Site and design office training.' },
+  { title: 'Content Writing Intern', organization: 'ProPakistani', province: 'Punjab', city: 'Lahore', jobType: 'Internship', educationRequirement: 'Bachelor', experience: '0', deadline: addDays(new Date(), 7), applyType: 'internal', applicationLink: null, description: 'Tech and business articles.' },
+  { title: 'Social Media Intern', organization: 'Zameen.com', province: 'Punjab', city: 'Lahore', jobType: 'Internship', educationRequirement: 'Bachelor', experience: '0', deadline: addDays(new Date(), 11), applyType: 'internal', applicationLink: null, description: 'Content and community management.' },
+  { title: 'Electrical Engineer Trainee', organization: 'KE (K-Electric)', province: 'Sindh', city: 'Karachi', jobType: 'Internship', educationRequirement: 'BE Electrical', experience: '0', deadline: addDays(new Date(), 33), applyType: 'internal', applicationLink: null, description: 'Power distribution and projects.' },
+  // More private jobs to reach 50
+  { title: 'DevOps Engineer', organization: 'Contour Software', province: 'Sindh', city: 'Karachi', jobType: 'Private', educationRequirement: 'BS CS', experience: '3-5 years', deadline: addDays(new Date(), 27), applyType: 'internal', applicationLink: null, description: 'AWS, CI/CD, Kubernetes.' },
+  { title: 'Product Manager', organization: 'SadaPay', province: 'Punjab', city: 'Lahore', jobType: 'Private', educationRequirement: 'MBA/Bachelor', experience: '3+ years', deadline: addDays(new Date(), 23), applyType: 'internal', applicationLink: null, description: 'Fintech product roadmap.' },
+  { title: 'UX Designer', organization: 'Tintash', province: 'Punjab', city: 'Lahore', jobType: 'Private', educationRequirement: 'Bachelor in Design/HCI', experience: '2-3 years', deadline: addDays(new Date(), 17), applyType: 'internal', applicationLink: null, description: 'Mobile and web UX.' },
+  { title: 'Network Engineer', organization: 'Cybernet', province: 'Sindh', city: 'Karachi', jobType: 'Private', educationRequirement: 'BE Telecom/CS', experience: '2 years', deadline: addDays(new Date(), 29), applyType: 'internal', applicationLink: null, description: 'Enterprise networking and security.' },
+  { title: 'Tax Consultant', organization: 'EY Pakistan', province: 'Sindh', city: 'Karachi', jobType: 'Private', educationRequirement: 'CA/ACCA', experience: '2-4 years', deadline: addDays(new Date(), 36), applyType: 'internal', applicationLink: null, description: 'Corporate tax and compliance.' },
+  { title: 'Supply Chain Analyst', organization: 'Packages Limited', province: 'Punjab', city: 'Lahore', jobType: 'Private', educationRequirement: 'Bachelor/MBA', experience: '1-2 years', deadline: addDays(new Date(), 31), applyType: 'internal', applicationLink: null, description: 'Inventory and logistics analysis.' },
+  { title: 'Teaching Fellow', organization: 'LUMS', province: 'Punjab', city: 'Lahore', jobType: 'Private', educationRequirement: 'Master\'s', experience: '0-1 year', deadline: addDays(new Date(), 44), applyType: 'external', applicationLink: 'https://lums.edu.pk', description: 'Teaching and research support.' },
+  { title: 'Pharmacist', organization: 'Shaukat Khanum Hospital', province: 'Punjab', city: 'Lahore', jobType: 'Private', educationRequirement: 'Pharm-D', experience: '1 year', deadline: addDays(new Date(), 19), applyType: 'internal', applicationLink: null, description: 'Hospital pharmacy operations.' },
+  { title: 'Security Analyst', organization: 'SecureTech Solutions', province: 'Islamabad', city: 'Islamabad', jobType: 'Private', educationRequirement: 'BS CS/Cyber Security', experience: '2 years', deadline: addDays(new Date(), 26), applyType: 'internal', applicationLink: null, description: 'SOC and vulnerability assessment.' },
+  { title: 'Admin Officer', organization: 'Fauji Foundation', province: 'Punjab', city: 'Rawalpindi', jobType: 'Private', educationRequirement: 'Bachelor', experience: '2 years', deadline: addDays(new Date(), 34), applyType: 'internal', applicationLink: null, description: 'Administration and coordination.' },
+];
+
+export async function seedJobs() {
+  await Job.deleteMany({});
+  for (let i = 0; i < jobSeedData.length; i++) {
+    const j = jobSeedData[i];
+    const job = new Job({
+      ...j,
+      company: j.organization,
+      slug: `${slugify(j.title)}-${slugify(j.province || 'pk')}-${i}`,
+      status: 'active',
+    });
+    await job.save();
+  }
+  console.log(`Jobs: seeded ${jobSeedData.length} documents.`);
+  console.log(`Jobs: seeded ${toInsert.length} documents.`);
+}

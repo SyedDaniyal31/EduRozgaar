@@ -18,5 +18,6 @@ import { chatbotRouter } from './chatbot.js';
 import { webinarsRouter } from './webinars.js';
 import { intlScholarshipsRouter } from './intlScholarships.js';
 import { badgesRouter } from './badges.js';
+import { seoRouter } from './seo.js';
 
-export { healthRouter, jobsRouter, scholarshipsRouter, admissionsRouter, blogsRouter, foreignStudiesRouter, authRouter, adminRouter, trendingRouter, newsletterRouter, notificationsRouter, monetizationRouter, usersRouter, v1Router, examsRouter, internshipsRouter, chatbotRouter, webinarsRouter, intlScholarshipsRouter, badgesRouter };
+export { healthRouter, jobsRouter, scholarshipsRouter, admissionsRouter, blogsRouter, foreignStudiesRouter, authRouter, adminRouter, trendingRouter, newsletterRouter, notificationsRouter, monetizationRouter, usersRouter, v1Router, examsRouter, internshipsRouter, chatbotRouter, webinarsRouter, intlScholarshipsRouter, badgesRouter, seoRouter };

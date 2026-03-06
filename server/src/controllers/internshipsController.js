@@ -18,6 +18,9 @@ function buildQuery(q) {
   if (q.province) filter.province = new RegExp(sanitizeString(q.province), 'i');
   if (q.duration) filter.duration = new RegExp(sanitizeString(q.duration), 'i');
   if (q.organization) filter.organization = new RegExp(sanitizeString(q.organization), 'i');
+  if (q.isPaid !== undefined && q.isPaid !== '') {
+    filter.isPaid = q.isPaid === 'true' || q.isPaid === true;
+  }
   if (q.skillset && (Array.isArray(q.skillset) ? q.skillset.length : q.skillset)) {
     const skills = Array.isArray(q.skillset) ? q.skillset.map((s) => sanitizeString(s)).filter(Boolean) : [sanitizeString(q.skillset)].filter(Boolean);
     if (skills.length) filter.skillset = { $in: skills.map((s) => new RegExp(s, 'i')) };

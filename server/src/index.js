@@ -6,7 +6,8 @@ import compression from 'compression';
 import mongoSanitize from 'express-mongo-sanitize';
 import { connectDB } from './config/db.js';
 import { startScraperCron } from './scheduler/cron.js';
-import { healthRouter, jobsRouter, scholarshipsRouter, admissionsRouter, blogsRouter, foreignStudiesRouter, authRouter, adminRouter, trendingRouter, newsletterRouter, notificationsRouter, monetizationRouter, usersRouter, v1Router, examsRouter, internshipsRouter, chatbotRouter, webinarsRouter, intlScholarshipsRouter, badgesRouter } from './routes/index.js';
+import { healthRouter, jobsRouter, scholarshipsRouter, admissionsRouter, blogsRouter, foreignStudiesRouter, authRouter, adminRouter, trendingRouter, newsletterRouter, notificationsRouter, monetizationRouter, usersRouter, v1Router, examsRouter, internshipsRouter, chatbotRouter, webinarsRouter, intlScholarshipsRouter, badgesRouter, seoRouter } from './routes/index.js';
+import { getSitemap, getRobots } from './controllers/seoController.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { requestLogger } from './middleware/requestLogger.js';
 import { apiLimiter } from './middleware/rateLimit.js';
@@ -21,6 +22,9 @@ app.use(express.json({ limit: '1mb' }));
 app.use(mongoSanitize());
 app.use(requestLogger);
 app.use('/api', apiLimiter);
+
+app.get('/sitemap.xml', getSitemap);
+app.get('/robots.txt', getRobots);
 
 app.use('/api', healthRouter);
 app.use('/api', authRouter);
@@ -41,6 +45,7 @@ app.use('/api', chatbotRouter);
 app.use('/api', webinarsRouter);
 app.use('/api', intlScholarshipsRouter);
 app.use('/api', badgesRouter);
+app.use('/api', seoRouter);
 app.use('/api/v1', v1Router);
 
 app.use(errorHandler);

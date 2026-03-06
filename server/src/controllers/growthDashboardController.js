@@ -28,6 +28,8 @@ export const getGrowthDashboard = asyncHandler(async (req, res) => {
     scraperStats,
     newsletterLogs,
     scrapedJobsCount,
+    referralStats,
+    topReferrers,
   ] = await Promise.all([
     User.countDocuments(),
     User.countDocuments({ createdAt: { $gte: startOfDay } }),
@@ -46,6 +48,8 @@ export const getGrowthDashboard = asyncHandler(async (req, res) => {
     ]).then((r) => r[0] || { totalJobs: 0, totalAdmissions: 0, runs: 0 }),
     NewsletterLog.find().sort({ sentAt: -1 }).limit(10).lean(),
     Job.countDocuments({ source: 'scraper' }),
+    User.countDocuments({ referredBy: { $exists: true, $ne: null } }),
+    User.find({ role: 'User', referralCount: { $gt: 0 } }).sort({ referralCount: -1 }).limit(5).select('name email referralCount').lean(),
   ]);
 
   data = {
@@ -64,6 +68,10 @@ export const getGrowthDashboard = asyncHandler(async (req, res) => {
     newsletter: {
       lastLogs: newsletterLogs || [],
       totalSent: (newsletterLogs || []).reduce((acc, l) => acc + (l.sentCount || 0), 0),
+    },
+    referrals: {
+      totalReferrals: referralStats ?? 0,
+      topReferrers: (topReferrers || []).map((u) => ({ name: u.name, email: u.email, referralCount: u.referralCount || 0 })),
     },
   };
 

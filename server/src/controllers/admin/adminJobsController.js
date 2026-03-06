@@ -85,8 +85,19 @@ export const update = asyncHandler(async (req, res) => {
   if (body.logoUrl !== undefined) doc.logoUrl = sanitizeString(body.logoUrl);
   if (body.isFeatured !== undefined) doc.isFeatured = !!body.isFeatured;
   if (body.isSponsored !== undefined) doc.isSponsored = !!body.isSponsored;
+  if (body.approvalStatus !== undefined) doc.approvalStatus = body.approvalStatus;
   if (doc.isModified('title') || doc.isModified('province') || doc.isModified('location')) doc.slug = body.slug || jobSlug(doc.title, doc.province || doc.location || '');
   await doc.save();
+  await cacheDelPattern(CACHE_KEYS.PREFIX_TRENDING);
+  await cacheDelPattern(CACHE_KEYS.PREFIX_FEATURED);
+  res.json(doc);
+});
+
+export const approveJob = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({ error: 'Invalid id' });
+  const doc = await Job.findByIdAndUpdate(id, { status: 'active', approvalStatus: 'approved' }, { new: true });
+  if (!doc) return res.status(404).json({ error: 'Job not found' });
   await cacheDelPattern(CACHE_KEYS.PREFIX_TRENDING);
   await cacheDelPattern(CACHE_KEYS.PREFIX_FEATURED);
   res.json(doc);

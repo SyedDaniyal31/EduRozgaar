@@ -12,7 +12,7 @@ import * as adminWebinars from '../controllers/admin/adminWebinarsController.js'
 import * as adminIntl from '../controllers/admin/adminIntlScholarshipsController.js';
 import { generateJobDescription } from '../controllers/admin/aiJobController.js';
 import { getGrowthDashboard } from '../controllers/growthDashboardController.js';
-import { triggerScraper, getScraperRuns, getScraperSourcesList } from '../controllers/scraperController.js';
+import { triggerScraper, getScraperRuns, getScraperSourcesList, getScraperConfig, updateScraperConfig } from '../controllers/scraperController.js';
 
 export const adminRouter = Router();
 
@@ -26,11 +26,14 @@ adminRouter.get('/growth-dashboard', getGrowthDashboard);
 adminRouter.post('/scraper/run', triggerScraper);
 adminRouter.get('/scraper/runs', getScraperRuns);
 adminRouter.get('/scraper/sources', getScraperSourcesList);
+adminRouter.get('/scraper/config', getScraperConfig);
+adminRouter.patch('/scraper/config', updateScraperConfig);
 
 adminRouter.get('/jobs', adminJobs.list);
 adminRouter.post('/jobs/generate', generateJobDescription);
 adminRouter.post('/jobs', adminJobs.create);
 adminRouter.put('/jobs/:id', adminJobs.update);
+adminRouter.post('/jobs/:id/approve', adminJobs.approveJob);
 adminRouter.delete('/jobs/:id', adminJobs.remove);
 
 adminRouter.get('/scholarships', adminScholarships.list);

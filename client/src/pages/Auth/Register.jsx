@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { ROUTES } from '../../constants';
 import { validateEmail, validatePassword, validateName } from '../../utils/validation';
@@ -10,6 +10,8 @@ import { Alert } from '../../components/ui/Alerts';
 
 export default function Register() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const refCode = searchParams.get('ref') || '';
   const { register, error, setError } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -33,7 +35,7 @@ export default function Register() {
     setErrors({});
     setSubmitting(true);
     try {
-      await register({ name: name.trim(), email: email.trim().toLowerCase(), password });
+      await register({ name: name.trim(), email: email.trim().toLowerCase(), password, referralCode: refCode || undefined });
       navigate(ROUTES.PROFILE, { replace: true });
     } catch (err) {
       const data = err.response?.data;

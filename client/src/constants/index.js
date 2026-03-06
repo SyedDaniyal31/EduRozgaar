@@ -21,6 +21,8 @@ export const ROUTES = {
   WEBINARS: '/webinars',
   INTL_SCHOLARSHIPS: '/intl-scholarships',
   BADGES_LEADERBOARD: '/badges',
+  RESUME_BUILDER: '/resume-builder',
+  CAREER_GUIDANCE: '/career-guidance',
 };
 
 export const ROLES = { ADMIN: 'Admin', USER: 'User' };

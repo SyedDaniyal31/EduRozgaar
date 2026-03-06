@@ -9,8 +9,14 @@ const jobSchema = new mongoose.Schema(
     organization: { type: String }, // alias / display name
     location: { type: String },
     province: { type: String },
+    city: { type: String },
     category: { type: String },
     type: { type: String, enum: ['full-time', 'part-time', 'contract', 'internship'], default: 'full-time' },
+    jobType: { type: String, enum: ['Government', 'Private', 'Internship'], default: 'Private' },
+    educationRequirement: { type: String },
+    experience: { type: String },
+    applyType: { type: String, enum: ['external', 'internal'], default: 'external' },
+    applicationLink: { type: String }, // external apply URL (e.g. PPSC, university portal)
     description: { type: String },
     requirements: [{ type: String }],
     applicationInstructions: { type: String },
@@ -25,11 +31,16 @@ const jobSchema = new mongoose.Schema(
     source: { type: String, enum: ['manual', 'scraper'], default: 'manual' },
     scrapedAt: { type: Date },
     sourceUrl: { type: String },
+    sourceWebsite: { type: String }, // e.g. PPSC, FPSC, LinkedIn, Rozee.pk
+    externalId: { type: String, sparse: true }, // unique per source for dedup
+    approvalStatus: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'approved' },
   },
   { timestamps: true }
 );
 
 jobSchema.index({ slug: 1 });
+jobSchema.index({ externalId: 1 }, { sparse: true });
+jobSchema.index({ sourceWebsite: 1, status: 1 });
 jobSchema.index({ status: 1, createdAt: -1 });
 jobSchema.index({ status: 1, deadline: 1 });
 jobSchema.index({ province: 1, status: 1 });

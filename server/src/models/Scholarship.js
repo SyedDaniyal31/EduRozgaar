@@ -7,8 +7,11 @@ const scholarshipSchema = new mongoose.Schema(
     slug: { type: String, required: true, unique: true },
     provider: { type: String, required: true },
     level: { type: String, enum: ['Undergraduate', 'Graduate', 'PhD', 'Other'], default: 'Other' },
+    degreeLevel: { type: String }, // alias / display (e.g. Bachelor, Master, PhD)
+    university: { type: String },
     country: { type: String },
     amount: { type: String },
+    fundingType: { type: String, enum: ['Fully Funded', 'Partial', 'Other'], default: 'Other' },
     description: { type: String },
     eligibility: [{ type: String }],
     applicationInstructions: { type: String },

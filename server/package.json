@@ -15,6 +15,7 @@
     "seed:phase8": "node src/scripts/seedPhase8.js",
     "seed:exam-prep": "node src/scripts/seedExamPrep.js",
     "seed:phase9": "node src/scripts/seedPhase9.js",
+    "seed": "node src/seed/index.js",
     "lint": "eslint src --ext js"
   },
   "dependencies": {

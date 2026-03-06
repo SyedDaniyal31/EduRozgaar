@@ -6,10 +6,14 @@ const admissionSchema = new mongoose.Schema(
     program: { type: String, required: true },
     slug: { type: String, required: true, unique: true },
     institution: { type: String, required: true },
+    university: { type: String }, // alias for institution / display
     department: { type: String },
     province: { type: String },
+    city: { type: String },
     session: { type: String },
     deadline: { type: Date },
+    lastDate: { type: Date }, // alias for deadline
+    applyLink: { type: String }, // application URL
     description: { type: String },
     eligibility: [{ type: String }],
     applicationInstructions: { type: String },

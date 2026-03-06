@@ -11,6 +11,7 @@ import { getSaved } from '../controllers/savedController.js';
 import { getDashboard } from '../controllers/dashboardController.js';
 import { recordRecentlyViewed } from '../controllers/recentlyViewedController.js';
 import { registerFcmToken } from '../controllers/fcmController.js';
+import { getMyReferrals } from '../controllers/referralsController.js';
 import { requireAuth } from '../middleware/auth.js';
 
 export const authRouter = Router();
@@ -25,5 +26,6 @@ authRouter.patch('/auth/profile', requireAuth, updateProfile);
 authRouter.get('/auth/saved', requireAuth, getSaved);
 authRouter.get('/auth/bookmarks', requireAuth, getSaved);
 authRouter.get('/auth/dashboard', requireAuth, getDashboard);
+authRouter.get('/auth/referrals', requireAuth, getMyReferrals);
 authRouter.post('/auth/recently-viewed', requireAuth, recordRecentlyViewed);
 authRouter.post('/auth/fcm-token', requireAuth, registerFcmToken);

@@ -1,52 +1,74 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants';
+import { PROVINCES } from '../../constants/listings';
 import { SearchBar } from '../../components/ui/SearchBar';
-import { trendingApi, jobsApi, scholarshipsApi, admissionsApi, savedApi, recommendationsApi } from '../../services/listingsService';
+import { trendingApi, jobsApi, scholarshipsApi, admissionsApi, savedApi, recommendationsApi, blogsApi } from '../../services/listingsService';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { HomeJobCard, HomeScholarshipCard, HomeAdmissionCard } from '../../components/listings/HomeListingCard';
 import { ListingCardSkeleton } from '../../components/listings/ListingCardSkeleton';
 import { AdBanner, AdInFeed } from '../../components/ads';
 import { ScrollReveal } from '../../components/ui/ScrollReveal';
+import { formatDate } from '../../utils/formatDate';
 
 const SECTION_LIMIT = 6;
 const SKELETON_COUNT = 3;
+const BLOG_LIMIT = 6;
 
 const SITE_URL = import.meta.env.VITE_APP_URL || 'https://edurozgaar.pk';
 const DEFAULT_DESCRIPTION = "EduRozgaar – Pakistan's job and education portal. Find jobs, scholarships, admissions, and study abroad opportunities.";
 
+function readingTimeMinutes(content) {
+  if (!content || typeof content !== 'string') return 5;
+  const words = content.trim().split(/\s+/).length;
+  return Math.max(1, Math.ceil(words / 200));
+}
+
+const FOREIGN_STUDY_COUNTRIES = [
+  { name: 'Turkey', path: ROUTES.INTL_SCHOLARSHIPS, query: '?country=Turkey' },
+  { name: 'China', path: ROUTES.INTL_SCHOLARSHIPS, query: '?country=China' },
+  { name: 'Germany', path: ROUTES.INTL_SCHOLARSHIPS, query: '?country=Germany' },
+  { name: 'Italy', path: ROUTES.INTL_SCHOLARSHIPS, query: '?country=Italy' },
+  { name: 'Hungary', path: ROUTES.INTL_SCHOLARSHIPS, query: '?country=Hungary' },
+  { name: 'UK', path: ROUTES.INTL_SCHOLARSHIPS, query: '?country=UK' },
+  { name: 'Canada', path: ROUTES.INTL_SCHOLARSHIPS, query: '?country=Canada' },
+];
+
+const STUDENT_RESOURCES = [
+  { label: 'Resume Builder', to: ROUTES.RESUME_BUILDER, icon: '📄' },
+  { label: 'Career Guidance', to: ROUTES.CAREER_GUIDANCE, icon: '💡' },
+  { label: 'Exam Preparation', to: ROUTES.EXAM_PREP, icon: '📚' },
+  { label: 'Internships', to: ROUTES.INTERNSHIPS, icon: '🎯' },
+];
+
 export default function Home() {
+  const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const { t } = useLanguage();
   const [trendingJobs, setTrendingJobs] = useState([]);
-  const [trendingScholarships, setTrendingScholarships] = useState([]);
-  const [trendingAdmissions, setTrendingAdmissions] = useState([]);
-  const [featuredJobs, setFeaturedJobs] = useState([]);
   const [latestScholarships, setLatestScholarships] = useState([]);
   const [admissionDeadlines, setAdmissionDeadlines] = useState([]);
   const [recommended, setRecommended] = useState({ jobs: [], scholarships: [], admissions: [] });
+  const [blogs, setBlogs] = useState([]);
   const [loadingTrending, setLoadingTrending] = useState(true);
-  const [loadingFeatured, setLoadingFeatured] = useState(true);
   const [loadingRecommended, setLoadingRecommended] = useState(false);
+  const [loadingBlogs, setLoadingBlogs] = useState(true);
   const [savedIds, setSavedIds] = useState({ jobs: new Set(), scholarships: new Set(), admissions: new Set() });
+  const [province, setProvince] = useState('');
 
   useEffect(() => {
     Promise.all([
       trendingApi.jobs().then((r) => setTrendingJobs((r.data?.data || r.data || []).slice(0, SECTION_LIMIT))).catch(() => setTrendingJobs([])),
-      trendingApi.scholarships().then((r) => setTrendingScholarships((r.data?.data || r.data || []).slice(0, SECTION_LIMIT))).catch(() => setTrendingScholarships([])),
-      trendingApi.admissions().then((r) => setTrendingAdmissions((r.data?.data || r.data || []).slice(0, SECTION_LIMIT))).catch(() => setTrendingAdmissions([])),
+      scholarshipsApi.list({ limit: SECTION_LIMIT }).then((r) => setLatestScholarships(r.data?.data || r.data || [])).catch(() => setLatestScholarships([])),
+      admissionsApi.list({ limit: SECTION_LIMIT, sort: 'deadline' }).then((r) => setAdmissionDeadlines(r.data?.data || r.data || [])).catch(() => setAdmissionDeadlines([])),
     ]).finally(() => setLoadingTrending(false));
   }, []);
 
   useEffect(() => {
-    Promise.all([
-      jobsApi.list({ limit: SECTION_LIMIT, sort: 'newest' }).then((r) => setFeaturedJobs(r.data?.data || r.data || [])).catch(() => setFeaturedJobs([])),
-      scholarshipsApi.list({ limit: SECTION_LIMIT }).then((r) => setLatestScholarships(r.data?.data || r.data || [])).catch(() => setLatestScholarships([])),
-      admissionsApi.list({ limit: SECTION_LIMIT, sort: 'deadline' }).then((r) => setAdmissionDeadlines(r.data?.data || r.data || [])).catch(() => setAdmissionDeadlines([])),
-    ]).finally(() => setLoadingFeatured(false));
-  }, []);
+    jobsApi.list({ limit: SECTION_LIMIT, sort: 'newest', ...(province && { province }) }).then((r) => setTrendingJobs(r.data?.data || r.data || [])).catch(() => {});
+  }, [province]);
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -70,6 +92,14 @@ export default function Home() {
       });
     }).catch(() => setRecommended({ jobs: [], scholarships: [], admissions: [] })).finally(() => setLoadingRecommended(false));
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    blogsApi.list({ limit: BLOG_LIMIT, status: 'published' }).then((r) => setBlogs(r.data?.data || r.data || [])).catch(() => setBlogs([])).finally(() => setLoadingBlogs(false));
+  }, []);
+
+  const handleSearch = (q) => {
+    if (q?.trim()) navigate(`${ROUTES.JOBS}?search=${encodeURIComponent(q.trim())}`);
+  };
 
   const handleSaveJob = async (id, save) => {
     if (save) await jobsApi.save(id);
@@ -114,35 +144,61 @@ export default function Home() {
         <meta property="og:type" content="website" />
       </Helmet>
 
+      {/* 1. HERO */}
       <section className="bg-gradient-to-b from-mint/30 to-surface dark:from-surface-dark dark:to-gray-900 py-12 md:py-20 px-4">
         <div className="max-w-4xl mx-auto text-center animate-fade-in-up">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-            {t('home.heroTitle')}
+            Find Jobs, Scholarships & Admissions in Pakistan
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 dark:text-gray-300 mb-6 max-w-2xl mx-auto">
             {t('home.heroSub')}
           </p>
-          <SearchBar placeholder="Search jobs, scholarships, or programs..." className="max-w-xl mx-auto" />
+          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center max-w-2xl mx-auto mb-8">
+            <SearchBar placeholder="Search jobs, scholarships, or programs..." className="flex-1 w-full" onSearch={handleSearch} />
+            <select
+              value={province}
+              onChange={(e) => setProvince(e.target.value)}
+              className="w-full sm:w-48 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-3 text-sm focus:ring-2 focus:ring-primary outline-none"
+              aria-label="Province"
+            >
+              <option value="">All Provinces</option>
+              {PROVINCES.map((p) => (
+                <option key={p} value={p}>{p}</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex flex-wrap justify-center gap-3">
+            <Link to={ROUTES.JOBS} className="px-5 py-2.5 rounded-xl bg-primary text-white font-medium hover:bg-primary-hover shadow-md btn-theme">
+              Jobs
+            </Link>
+            <Link to={ROUTES.SCHOLARSHIPS} className="px-5 py-2.5 rounded-xl bg-white dark:bg-gray-800 border-2 border-primary text-primary dark:text-mint font-medium hover:bg-mint/20 btn-theme">
+              Scholarships
+            </Link>
+            <Link to={ROUTES.ADMISSIONS} className="px-5 py-2.5 rounded-xl bg-white dark:bg-gray-800 border-2 border-primary text-primary dark:text-mint font-medium hover:bg-mint/20 btn-theme">
+              Admissions
+            </Link>
+            <Link to={ROUTES.INTERNSHIPS} className="px-5 py-2.5 rounded-xl bg-white dark:bg-gray-800 border-2 border-primary text-primary dark:text-mint font-medium hover:bg-mint/20 btn-theme">
+              Internships
+            </Link>
+          </div>
         </div>
       </section>
 
-      {isAuthenticated && (
+      {isAuthenticated && (recommended.jobs.length > 0 || recommended.scholarships.length > 0 || recommended.admissions.length > 0) && (
         <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">{t('home.recommendedForYou')}</h2>
           {loadingRecommended ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[...Array(3)].map((_, i) => (
-                <ListingCardSkeleton key={i} />
-              ))}
+              {[...Array(3)].map((_, i) => <ListingCardSkeleton key={i} />)}
             </div>
-          ) : (recommended.jobs.length + recommended.scholarships.length + recommended.admissions.length) > 0 ? (
+          ) : (
             <div className="space-y-6">
               {recommended.jobs.length > 0 && (
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">Jobs</h3>
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {recommended.jobs.slice(0, 3).map((job) => (
-                      <HomeJobCard key={job._id} job={job} saved={savedIds.jobs.has(job._id)} onSaveToggle={handleSaveJob} />
+                      <HomeJobCard key={job._id} job={job} saved={savedIds.jobs.has(job._id)} onSaveToggle={handleSaveJob} showBadge />
                     ))}
                   </div>
                   <Link to={ROUTES.JOBS} className="text-sm text-primary dark:text-mint mt-2 inline-block">{t('home.viewAll')} jobs →</Link>
@@ -171,92 +227,43 @@ export default function Home() {
                 </div>
               )}
             </div>
-          ) : null}
+          )}
         </ScrollReveal>
       )}
 
       <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-6">
         <AdBanner slotId="home-top" className="mb-6" />
       </ScrollReveal>
-      <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-8">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">{t('home.quickLinks')}</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            { to: ROUTES.JOBS, label: 'Jobs' },
-            { to: ROUTES.SCHOLARSHIPS, label: 'Scholarships' },
-            { to: ROUTES.ADMISSIONS, label: 'Admissions' },
-            { to: ROUTES.BLOG, label: 'Blog' },
-          ].map(({ to, label }) => (
-            <Link
-              key={to}
-              to={to}
-              className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-md transition-shadow card-hover"
-            >
-              <span className="font-semibold text-gray-900 dark:text-white">{label}</span>
-            </Link>
-          ))}
-        </div>
-      </ScrollReveal>
 
+      {/* 2. TRENDING JOBS */}
       <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Trending Jobs</h2>
         {loadingTrending ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
-              <ListingCardSkeleton key={i} />
-            ))}
+            {Array.from({ length: SKELETON_COUNT }).map((_, i) => <ListingCardSkeleton key={i} />)}
           </div>
         ) : trendingJobs.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {trendingJobs.map((job) => (
-              <HomeJobCard key={job._id} job={job} saved={savedIds.jobs.has(job._id)} onSaveToggle={handleSaveJob} />
+              <HomeJobCard key={job._id} job={job} saved={savedIds.jobs.has(job._id)} onSaveToggle={handleSaveJob} showBadge />
             ))}
           </div>
         ) : (
           <p className="text-gray-500 dark:text-gray-400">No trending jobs right now.</p>
         )}
         <div className="mt-6 text-center">
-          <Link to={ROUTES.JOBS} className="text-primary dark:text-mint font-medium hover:underline">
-            View all jobs →
-          </Link>
+          <Link to={ROUTES.JOBS} className="text-primary dark:text-mint font-medium hover:underline">View all jobs →</Link>
         </div>
       </ScrollReveal>
 
-      <ScrollReveal>
-        <AdInFeed slotId="home-mid" index={1} />
-      </ScrollReveal>
+      <ScrollReveal><AdInFeed slotId="home-mid" index={1} /></ScrollReveal>
 
-      <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Featured Jobs</h2>
-        {loadingFeatured ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
-              <ListingCardSkeleton key={i} />
-            ))}
-          </div>
-        ) : featuredJobs.length > 0 ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {featuredJobs.map((job) => (
-              <HomeJobCard key={job._id} job={job} saved={savedIds.jobs.has(job._id)} onSaveToggle={handleSaveJob} />
-            ))}
-          </div>
-        ) : (
-          <p className="text-gray-500 dark:text-gray-400">No featured jobs.</p>
-        )}
-        <div className="mt-6 text-center">
-          <Link to={ROUTES.JOBS} className="text-primary dark:text-mint font-medium hover:underline">
-            View all jobs →
-          </Link>
-        </div>
-      </ScrollReveal>
-
+      {/* 3. LATEST SCHOLARSHIPS */}
       <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Latest Scholarships</h2>
-        {loadingFeatured ? (
+        {loadingTrending ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
-              <ListingCardSkeleton key={i} />
-            ))}
+            {Array.from({ length: SKELETON_COUNT }).map((_, i) => <ListingCardSkeleton key={i} />)}
           </div>
         ) : latestScholarships.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -268,19 +275,16 @@ export default function Home() {
           <p className="text-gray-500 dark:text-gray-400">No scholarships.</p>
         )}
         <div className="mt-6 text-center">
-          <Link to={ROUTES.SCHOLARSHIPS} className="text-primary dark:text-mint font-medium hover:underline">
-            View all scholarships →
-          </Link>
+          <Link to={ROUTES.SCHOLARSHIPS} className="text-primary dark:text-mint font-medium hover:underline">View all scholarships →</Link>
         </div>
       </ScrollReveal>
 
+      {/* 4. UPCOMING ADMISSIONS */}
       <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Admission Deadlines</h2>
-        {loadingFeatured ? (
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Upcoming Admissions</h2>
+        {loadingTrending ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
-              <ListingCardSkeleton key={i} />
-            ))}
+            {Array.from({ length: SKELETON_COUNT }).map((_, i) => <ListingCardSkeleton key={i} />)}
           </div>
         ) : admissionDeadlines.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -292,57 +296,73 @@ export default function Home() {
           <p className="text-gray-500 dark:text-gray-400">No admissions.</p>
         )}
         <div className="mt-6 text-center">
-          <Link to={ROUTES.ADMISSIONS} className="text-primary dark:text-mint font-medium hover:underline">
-            View all admissions →
-          </Link>
+          <Link to={ROUTES.ADMISSIONS} className="text-primary dark:text-mint font-medium hover:underline">View all admissions →</Link>
         </div>
       </ScrollReveal>
 
+      {/* 5. FOREIGN STUDY OPPORTUNITIES */}
       <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Trending Scholarships</h2>
-        {loadingTrending ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
-              <ListingCardSkeleton key={i} />
-            ))}
-          </div>
-        ) : trendingScholarships.length > 0 ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {trendingScholarships.map((item) => (
-              <HomeScholarshipCard key={item._id} item={item} saved={savedIds.scholarships.has(item._id)} onSaveToggle={handleSaveScholarship} />
-            ))}
-          </div>
-        ) : (
-          <p className="text-gray-500 dark:text-gray-400">No trending scholarships.</p>
-        )}
-        <div className="mt-6 text-center">
-          <Link to={ROUTES.SCHOLARSHIPS} className="text-primary dark:text-mint font-medium hover:underline">
-            View all scholarships →
-          </Link>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Foreign Study Opportunities</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
+          {FOREIGN_STUDY_COUNTRIES.map(({ name, path, query }) => (
+            <Link
+              key={name}
+              to={`${path}${query || ''}`}
+              className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-md hover:border-primary/50 card-hover text-center"
+            >
+              <span className="font-semibold text-gray-900 dark:text-white">{name}</span>
+            </Link>
+          ))}
+        </div>
+        <div className="mt-4 text-center">
+          <Link to={ROUTES.INTL_SCHOLARSHIPS} className="text-primary dark:text-mint font-medium hover:underline">View all international scholarships →</Link>
         </div>
       </ScrollReveal>
 
+      {/* 6. STUDENT RESOURCES */}
       <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Upcoming Admissions</h2>
-        {loadingTrending ? (
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Student Resources</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {STUDENT_RESOURCES.map(({ label, to, icon }) => (
+            <Link
+              key={to}
+              to={to}
+              className="p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-md hover:border-primary/50 card-hover text-center"
+            >
+              <span className="text-2xl block mb-2" aria-hidden>{icon}</span>
+              <span className="font-semibold text-gray-900 dark:text-white">{label}</span>
+            </Link>
+          ))}
+        </div>
+      </ScrollReveal>
+
+      {/* 7. BLOG / CAREER ADVICE */}
+      <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Blog & Career Advice</h2>
+        {loadingBlogs ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
-              <ListingCardSkeleton key={i} />
-            ))}
+            {Array.from({ length: SKELETON_COUNT }).map((_, i) => <ListingCardSkeleton key={i} />)}
           </div>
-        ) : trendingAdmissions.length > 0 ? (
+        ) : blogs.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {trendingAdmissions.map((item) => (
-              <HomeAdmissionCard key={item._id} item={item} saved={savedIds.admissions.has(item._id)} onSaveToggle={handleSaveAdmission} />
+            {blogs.map((post) => (
+              <Link
+                key={post._id}
+                to={`${ROUTES.BLOG}/${post.slug}`}
+                className="block p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-md card-hover"
+              >
+                <h3 className="font-semibold text-gray-900 dark:text-white line-clamp-2">{post.title}</h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                  {readingTimeMinutes(post.content)} min read · {post.publishedAt ? formatDate(post.publishedAt) : (post.createdAt ? formatDate(post.createdAt) : '')}
+                </p>
+              </Link>
             ))}
           </div>
         ) : (
-          <p className="text-gray-500 dark:text-gray-400">No upcoming admissions.</p>
+          <p className="text-gray-500 dark:text-gray-400">No blog posts yet.</p>
         )}
         <div className="mt-6 text-center">
-          <Link to={ROUTES.ADMISSIONS} className="text-primary dark:text-mint font-medium hover:underline">
-            View all admissions →
-          </Link>
+          <Link to={ROUTES.BLOG} className="text-primary dark:text-mint font-medium hover:underline">View all posts →</Link>
         </div>
       </ScrollReveal>
     </>

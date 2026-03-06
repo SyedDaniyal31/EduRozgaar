@@ -8,14 +8,19 @@ import { ListingCardSkeleton } from '../../components/listings/ListingCardSkelet
 export default function Badges() {
   const [badges, setBadges] = useState([]);
   const [leaderboard, setLeaderboard] = useState([]);
+  const [leaderboardBy, setLeaderboardBy] = useState('points');
   const [rank, setRank] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const fetchLeaderboard = (by = 'points') => {
+    badgesApi.leaderboard({ limit: 20, by }).then((r) => setLeaderboard(r.data?.data || [])).catch(() => setLeaderboard([]));
+  };
+
   useEffect(() => {
     Promise.all([
       badgesApi.myBadges().then((r) => r.data?.data || []),
-      badgesApi.leaderboard({ limit: 20 }).then((r) => r.data?.data || []),
+      badgesApi.leaderboard({ limit: 20, by: leaderboardBy }).then((r) => r.data?.data || []),
       badgesApi.myRank().then((r) => r.data).catch(() => null),
     ])
       .then(([b, l, rData]) => {
@@ -26,6 +31,7 @@ export default function Badges() {
       .catch((e) => setError(e.response?.data?.error || 'Failed to load'))
       .finally(() => setLoading(false));
   }, []);
+
 
   return (
     <>
@@ -73,7 +79,14 @@ export default function Badges() {
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Leaderboard</h2>
+          <div className="flex flex-wrap items-center gap-2 mb-4">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Leaderboard</h2>
+            <select value={leaderboardBy} onChange={(e) => { const v = e.target.value; setLeaderboardBy(v); fetchLeaderboard(v); }} className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-1.5 text-sm">
+              <option value="points">By points</option>
+              <option value="applications">By applications</option>
+              <option value="referrals">By referrals</option>
+            </select>
+          </div>
           {loading ? (
             <div className="space-y-2"><ListingCardSkeleton /><ListingCardSkeleton /><ListingCardSkeleton /></div>
           ) : leaderboard.length === 0 ? (
@@ -84,7 +97,9 @@ export default function Badges() {
                 <li key={u.userId} className="flex items-center gap-4 p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
                   <span className="font-bold text-gray-500 dark:text-gray-400 w-8">#{u.rank}</span>
                   <span className="font-medium text-gray-900 dark:text-white flex-1">{u.name || 'Anonymous'}</span>
-                  <span className="text-primary dark:text-mint font-semibold">{u.totalPoints || 0} pts</span>
+                  <span className="text-primary dark:text-mint font-semibold">
+                  {leaderboardBy === 'applications' ? `${u.applicationCount ?? 0} applications` : leaderboardBy === 'referrals' ? `${u.referralCount ?? 0} referrals` : `${u.totalPoints || 0} pts`}
+                </span>
                 </li>
               ))}
             </ol>

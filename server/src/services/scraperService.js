@@ -1,45 +1,12 @@
 /**
- * AI Job Scraper – Phase-8.
- * Simulates scraping PPSC, FPSC, NTS, WAPDA, Punjab Police, universities.
- * Replace fetchFromSource() with real HTTP + Cheerio/Puppeteer for production.
+ * Smart Job Scraper – runs modular scrapers with rate limiting, dedup, and config.
  */
 import { Job } from '../models/Job.js';
 import { Admission } from '../models/Admission.js';
 import { ScraperRun } from '../models/ScraperRun.js';
+import { ScraperConfig } from '../models/ScraperConfig.js';
 import { jobSlug } from '../utils/slugify.js';
-import { admissionSlug } from '../utils/slugify.js';
-
-const SOURCES = {
-  PPSC: { name: 'PPSC', url: 'https://www.ppsc.gop.pk', type: 'jobs' },
-  FPSC: { name: 'FPSC', url: 'https://www.fpsc.gov.pk', type: 'jobs' },
-  NTS: { name: 'NTS', url: 'https://www.nts.org.pk', type: 'jobs' },
-  WAPDA: { name: 'WAPDA', url: 'https://www.wapda.gov.pk', type: 'jobs' },
-  PUNJAB_POLICE: { name: 'Punjab Police', url: 'https://punjabpolice.gov.pk', type: 'jobs' },
-  PU: { name: 'University of Punjab', url: 'https://pu.edu.pk', type: 'admissions' },
-  UET: { name: 'UET Lahore', url: 'https://uet.edu.pk', type: 'admissions' },
-};
-
-/** Mock scrape result – replace with real HTTP + parse in production */
-function fetchFromSource(sourceKey) {
-  const source = SOURCES[sourceKey];
-  if (!source) return { jobs: [], admissions: [] };
-  const ts = new Date().toISOString().slice(0, 10);
-  if (source.type === 'jobs') {
-    return {
-      jobs: [
-        { title: `${source.name} Job ${ts} – Specialist`, company: source.name, organization: source.name, province: 'Punjab', category: 'Government', sourceUrl: source.url, sourceKey },
-        { title: `${source.name} Recruitment ${ts}`, company: source.name, organization: source.name, province: 'Punjab', category: 'Government', sourceUrl: source.url, sourceKey },
-      ],
-      admissions: [],
-    };
-  }
-  return {
-    jobs: [],
-    admissions: [
-      { program: `${source.name} Admissions ${ts}`, institution: source.name, province: 'Punjab', sourceUrl: source.url, sourceKey },
-    ],
-  };
-}
+import { SCRAPER_REGISTRY, delay, RATE_LIMIT_DELAY_MS } from './scrapers/index.js';
 
 function makeSlugUnique(baseSlug, existingSlugs, index = 0) {
   const slug = index === 0 ? baseSlug : `${baseSlug}-${index}`;
@@ -47,97 +14,112 @@ function makeSlugUnique(baseSlug, existingSlugs, index = 0) {
   return slug;
 }
 
-export async function runScraper() {
-  const run = await ScraperRun.create({ status: 'running', sources: Object.keys(SOURCES) });
+/**
+ * Get enabled source keys. If no config exists, all registry keys are enabled.
+ */
+async function getEnabledSourceKeys() {
+  const configs = await ScraperConfig.find({ enabled: true }).select('sourceKey').lean();
+  const configured = configs.map((c) => c.sourceKey);
+  if (configured.length > 0) return configured;
+  return Object.keys(SCRAPER_REGISTRY);
+}
+
+export async function runScraper(options = {}) {
+  const { onlySources = null, skipAdmissions = true } = options;
+  const run = await ScraperRun.create({
+    status: 'running',
+    sources: onlySources || Object.keys(SCRAPER_REGISTRY),
+    runAt: new Date(),
+  });
   const start = Date.now();
   let jobsAdded = 0;
   let admissionsAdded = 0;
   let jobsSkipped = 0;
-  let admissionsSkipped = 0;
   const errors = [];
 
-  try {
-    const existingJobSlugs = new Set((await Job.find({}).select('slug').lean()).map((j) => j.slug));
-    const existingJobTitleCompany = new Set((await Job.find({}).select('title company').lean()).map((j) => `${(j.title || '').toLowerCase()}|${(j.company || '').toLowerCase()}`));
-    const existingAdmissionSlugs = new Set((await Admission.find({}).select('slug').lean()).map((a) => a.slug));
-    const existingAdmissionKey = new Set((await Admission.find({}).select('program institution').lean()).map((a) => `${(a.program || '').toLowerCase()}|${(a.institution || '').toLowerCase()}`));
+  const existingExternalIds = new Set((await Job.find({ externalId: { $exists: true, $ne: null } }).select('externalId').lean()).map((j) => j.externalId));
+  const existingJobSlugs = new Set((await Job.find({}).select('slug').lean()).map((j) => j.slug));
 
-    for (const sourceKey of Object.keys(SOURCES)) {
-      try {
-        const { jobs, admissions } = fetchFromSource(sourceKey);
-        const scrapedAt = new Date();
+  const sourceKeys = onlySources && onlySources.length ? onlySources : await getEnabledSourceKeys();
 
-        for (const j of jobs) {
-          const key = `${(j.title || '').toLowerCase()}|${(j.company || '').toLowerCase()}`;
-          if (existingJobTitleCompany.has(key)) {
-            jobsSkipped++;
-            continue;
-          }
-          const baseSlug = jobSlug(j.title, j.province || j.location || '');
-          const slug = makeSlugUnique(baseSlug, existingJobSlugs);
-          existingJobSlugs.add(slug);
-          existingJobTitleCompany.add(key);
-          await Job.create({
-            title: j.title,
-            slug,
-            company: j.company,
-            organization: j.organization || j.company,
-            province: j.province,
-            category: j.category,
-            type: 'full-time',
-            status: 'active',
-            source: 'scraper',
-            scrapedAt,
-            sourceUrl: j.sourceUrl,
-          });
-          jobsAdded++;
-        }
+  for (let i = 0; i < sourceKeys.length; i++) {
+    const sourceKey = sourceKeys[i];
+    if (i > 0) await delay(RATE_LIMIT_DELAY_MS);
 
-        for (const a of admissions) {
-          const key = `${(a.program || '').toLowerCase()}|${(a.institution || '').toLowerCase()}`;
-          if (existingAdmissionKey.has(key)) {
-            admissionsSkipped++;
-            continue;
-          }
-          const baseSlug = admissionSlug(a.program, a.institution);
-          const slug = makeSlugUnique(baseSlug, existingAdmissionSlugs);
-          existingAdmissionSlugs.add(slug);
-          existingAdmissionKey.add(key);
-          await Admission.create({
-            program: a.program,
-            slug,
-            institution: a.institution,
-            province: a.province,
-            status: 'active',
-            source: 'scraper',
-            scrapedAt,
-            sourceUrl: a.sourceUrl,
-          });
-          admissionsAdded++;
-        }
-      } catch (err) {
-        errors.push(`${sourceKey}: ${err.message}`);
-      }
+    const entry = SCRAPER_REGISTRY[sourceKey];
+    if (!entry || !entry.scrape) {
+      errors.push(`${sourceKey}: scraper not found`);
+      continue;
     }
 
-    run.status = errors.length === 0 ? 'success' : 'partial';
-    run.jobsAdded = jobsAdded;
-    run.admissionsAdded = admissionsAdded;
-    run.jobsSkipped = jobsSkipped;
-    run.admissionsSkipped = admissionsSkipped;
-    run.errors = errors;
-    run.durationMs = Date.now() - start;
-    await run.save();
-    return { run, jobsAdded, admissionsAdded, jobsSkipped, admissionsSkipped, errors };
-  } catch (err) {
-    run.status = 'failed';
-    run.errors = [...(run.errors || []), err.message];
-    run.durationMs = Date.now() - start;
-    await run.save();
-    throw err;
+    try {
+      const jobs = await entry.scrape();
+      if (!Array.isArray(jobs)) continue;
+
+      for (const j of jobs) {
+        if (j.externalId && existingExternalIds.has(j.externalId)) {
+          jobsSkipped++;
+          continue;
+        }
+        const baseSlug = jobSlug(j.title, j.province || j.location || '');
+        const slug = makeSlugUnique(baseSlug, existingJobSlugs);
+        existingJobSlugs.add(slug);
+        if (j.externalId) existingExternalIds.add(j.externalId);
+
+        await Job.create({
+          title: j.title,
+          slug,
+          company: j.company || j.organization,
+          organization: j.organization,
+          location: j.location,
+          province: j.province,
+          city: j.city,
+          jobType: j.jobType || 'Private',
+          educationRequirement: j.educationRequirement,
+          experience: j.experience,
+          deadline: j.deadline,
+          applicationLink: j.applicationLink,
+          sourceUrl: j.sourceUrl,
+          sourceWebsite: j.sourceWebsite,
+          externalId: j.externalId,
+          description: j.description,
+          category: j.category,
+          type: 'full-time',
+          applyType: 'external',
+          status: 'active',
+          source: 'scraper',
+          scrapedAt: new Date(),
+          approvalStatus: 'approved',
+        });
+        jobsAdded++;
+      }
+
+      await ScraperConfig.findOneAndUpdate(
+        { sourceKey },
+        { $set: { lastRunAt: new Date(), lastJobCount: jobs.length } },
+        { upsert: true }
+      );
+    } catch (err) {
+      errors.push(`${sourceKey}: ${err.message}`);
+    }
   }
+
+  run.status = errors.length === 0 ? 'success' : 'partial';
+  run.jobsAdded = jobsAdded;
+  run.admissionsAdded = admissionsAdded;
+  run.jobsSkipped = jobsSkipped;
+  run.errors = errors;
+  run.durationMs = Date.now() - start;
+  await run.save();
+
+  return { run, jobsAdded, admissionsAdded, jobsSkipped, errors };
+}
+
+/** Legacy: fetchFromSource not used; scrapers are in ./scrapers/ */
+function fetchFromSource() {
+  return { jobs: [], admissions: [] };
 }
 
 export function getScraperSources() {
-  return Object.entries(SOURCES).map(([key, v]) => ({ key, ...v }));
+  return Object.entries(SCRAPER_REGISTRY).map(([key, v]) => ({ key, name: v.name }));
 }
