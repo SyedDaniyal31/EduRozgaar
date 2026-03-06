@@ -90,7 +90,7 @@ export default function Webinars() {
         <section>
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Recorded sessions</h2>
           {loading ? (
-            <div className="space-y-4"><ListingCardSkeleton /></ListingCardSkeleton /></div>
+            <div className="space-y-4"><ListingCardSkeleton /><ListingCardSkeleton /></div>
           ) : recorded.length === 0 ? (
             <p className="text-gray-500 dark:text-gray-400">No recorded sessions yet.</p>
           ) : (
