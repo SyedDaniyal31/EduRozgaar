@@ -174,3 +174,14 @@ export const examsApi = {
 export const resumeScansApi = {
   getHistory: (params) => axiosInstance.get('/users/resume-scans', { params }),
 };
+
+export const resumesApi = {
+  create: (body) => axiosInstance.post('/resumes', body),
+  getMy: () => axiosInstance.get('/resumes/user'),
+  getById: (id) => axiosInstance.get(`/resumes/${id}`),
+  update: (id, body) => axiosInstance.put(`/resumes/${id}`, body),
+  delete: (id) => axiosInstance.delete(`/resumes/${id}`),
+  aiSuggest: (body) => axiosInstance.post('/resumes/ai-suggest', body),
+  optimizeForJob: (resumeId, jobId, resumePayload) =>
+    axiosInstance.post('/resumes/optimize-for-job', resumeId != null ? { resumeId, jobId } : { jobId, resume: resumePayload }),
+};

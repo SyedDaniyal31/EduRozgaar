@@ -43,6 +43,15 @@ const ResumeBuilder = lazyLoad(() => import('../pages/ResumeBuilder/ResumeBuilde
 const CareerGuidance = lazyLoad(() => import('../pages/CareerGuidance/CareerGuidance'));
 const SEOJobsPage = lazyLoad(() => import('../pages/SEO/SEOJobsPage'));
 const SEOScholarshipsPage = lazyLoad(() => import('../pages/SEO/SEOScholarshipsPage'));
+const About = lazyLoad(() => import('../pages/Static/About'));
+const Services = lazyLoad(() => import('../pages/Static/Services'));
+const Advertise = lazyLoad(() => import('../pages/Static/Advertise'));
+const HelpCenter = lazyLoad(() => import('../pages/Static/HelpCenter'));
+const FAQ = lazyLoad(() => import('../pages/Static/FAQ'));
+const SubmitOpportunity = lazyLoad(() => import('../pages/Static/SubmitOpportunity'));
+const PrivacyPolicy = lazyLoad(() => import('../pages/Static/PrivacyPolicy'));
+const Terms = lazyLoad(() => import('../pages/Static/Terms'));
+const Cookies = lazyLoad(() => import('../pages/Static/Cookies'));
 
 function lazyLoad(importFn) {
   const Lazy = lazy(importFn);
@@ -87,6 +96,15 @@ export const routes = [
       { path: ROUTES.BLOG, element: <Blog /> },
       { path: `${ROUTES.BLOG}/:slug`, element: <BlogPost /> },
       { path: ROUTES.CONTACT, element: <Contact /> },
+      { path: ROUTES.ABOUT, element: <About /> },
+      { path: ROUTES.SERVICES, element: <Services /> },
+      { path: ROUTES.ADVERTISE, element: <Advertise /> },
+      { path: ROUTES.HELP_CENTER, element: <HelpCenter /> },
+      { path: ROUTES.FAQ, element: <FAQ /> },
+      { path: ROUTES.SUBMIT_OPPORTUNITY, element: <SubmitOpportunity /> },
+      { path: ROUTES.PRIVACY_POLICY, element: <PrivacyPolicy /> },
+      { path: ROUTES.TERMS, element: <Terms /> },
+      { path: ROUTES.COOKIES, element: <Cookies /> },
       { path: ROUTES.LOGIN, element: <Login /> },
       { path: ROUTES.REGISTER, element: <Register /> },
       {

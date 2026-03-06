@@ -3,11 +3,11 @@ import { Helmet } from 'react-helmet-async';
 import { Link, useParams } from 'react-router-dom';
 import { jobsApi, savedApi, recentViewedApi, coverLetterApi, recommendationsApi, applicationsApi } from '../../services/listingsService';
 import { ROUTES } from '../../constants';
+import { useAuth } from '../../context/AuthContext';
 import { SaveButton } from '../../components/listings/SaveButton';
 import { ListingCardSkeleton } from '../../components/listings/ListingCardSkeleton';
 import { Alert } from '../../components/ui/Alerts';
 import { formatDate } from '../../utils/formatDate';
-import { useAuth } from '../../context/AuthContext';
 
 const JOB_TYPE_BADGE = {
   Government: 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300',
@@ -138,6 +138,14 @@ export default function JobDetail() {
             </div>
             <div className="flex flex-wrap gap-2">
               <SaveButton type="job" id={job._id} saved={savedIds.has(job._id)} onToggle={handleSaveToggle} />
+              {isAuthenticated && (
+                <Link
+                  to={`${ROUTES.RESUME_BUILDER}?optimizeForJob=${job._id}`}
+                  className="inline-flex items-center px-4 py-2 rounded-lg border-2 border-primary text-primary dark:text-mint hover:bg-mint/20 dark:hover:bg-mint/10 font-medium btn-theme"
+                >
+                  Optimize Resume for this Job
+                </Link>
+              )}
               {isAuthenticated && (
                 <button
                   type="button"

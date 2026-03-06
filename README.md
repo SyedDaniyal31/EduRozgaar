@@ -43,7 +43,7 @@ root/
 │       ├── utils/
 │       └── validators/
 ├── docs/            # Documentation
-├── .env.example
+├── DEPLOYMENT.md    # Full setup, DB, env, deploy
 └── README.md
 ```
 
@@ -58,20 +58,15 @@ root/
    cd server && npm install && cd ..
    ```
 
-2. **Environment**
+2. **Environment & database**
 
-   Copy `.env.example` to `.env` in the **root** and in **server/** (or set `server/.env`):
+   For **full step-by-step setup** (MongoDB, env vars, seeding, production), see **[DEPLOYMENT.md](./DEPLOYMENT.md)**.
 
-   ```bash
-   cp .env.example .env
-   cp .env.example server/.env
-   ```
-
-   Set at least `PORT`, `MONGO_URI`, and `JWT_SECRET`. Optional: `JWT_EXPIRES_IN`, `REFRESH_EXPIRES_IN`, `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` for OAuth.
+   **Quick env setup:** Use the root **`.env.template`** — copy its SERVER section into `server/.env` and CLIENT section into `client/.env`; then set `MONGO_URI` and `JWT_SECRET` in `server/.env`.
 
 3. **MongoDB**
 
-   Ensure MongoDB is running locally (or use a cloud URI in `MONGO_URI`).
+   Start MongoDB locally or use MongoDB Atlas; set `MONGO_URI` in `server/.env`. See [DEPLOYMENT.md](./DEPLOYMENT.md) for install and connection strings.
 
 ## Running the Project
 

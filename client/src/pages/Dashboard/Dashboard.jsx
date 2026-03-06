@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { dashboardApi, applicationsApi, referralsApi } from '../../services/listingsService';
+import { dashboardApi, applicationsApi, referralsApi, resumesApi } from '../../services/listingsService';
 import { ROUTES } from '../../constants';
 import { formatDate } from '../../utils/formatDate';
 import { ListingCardSkeleton } from '../../components/listings/ListingCardSkeleton';
@@ -15,6 +15,7 @@ export default function Dashboard() {
   const [dashboard, setDashboard] = useState(null);
   const [applications, setApplications] = useState([]);
   const [referralData, setReferralData] = useState(null);
+  const [resumes, setResumes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -31,6 +32,9 @@ export default function Dashboard() {
   }, []);
   useEffect(() => {
     referralsApi.getMy().then(({ data }) => setReferralData(data)).catch(() => setReferralData(null));
+  }, []);
+  useEffect(() => {
+    resumesApi.getMy().then(({ data }) => setResumes(data || [])).catch(() => setResumes([]));
   }, []);
 
   if (loading) {
@@ -131,6 +135,32 @@ export default function Dashboard() {
                             Learn more →
                           </a>
                         )}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            {resumes.length > 0 && (
+              <section>
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white">My Resumes</h2>
+                  <Link to={ROUTES.RESUME_BUILDER} className="text-sm text-primary dark:text-mint hover:underline">
+                    Create New
+                  </Link>
+                </div>
+                <ul className="space-y-2 mb-6">
+                  {resumes.slice(0, 5).map((r) => (
+                    <li key={r._id}>
+                      <div className="flex flex-wrap items-center gap-2 p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                        <span className="font-medium text-gray-900 dark:text-white">{r.title || 'My Resume'}</span>
+                        <Link to={`${ROUTES.RESUME_BUILDER}?edit=${r._id}`} className="text-sm text-primary dark:text-mint hover:underline">
+                          Edit
+                        </Link>
+                        <Link to={`${ROUTES.RESUME_BUILDER}?edit=${r._id}`} className="text-sm text-gray-600 dark:text-gray-400 hover:underline">
+                          Download (open → PDF)
+                        </Link>
                       </div>
                     </li>
                   ))}

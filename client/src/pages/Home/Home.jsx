@@ -11,11 +11,14 @@ import { HomeJobCard, HomeScholarshipCard, HomeAdmissionCard } from '../../compo
 import { ListingCardSkeleton } from '../../components/listings/ListingCardSkeleton';
 import { AdBanner, AdInFeed } from '../../components/ads';
 import { ScrollReveal } from '../../components/ui/ScrollReveal';
+import { NewsletterSubscribe } from '../../components/newsletter/NewsletterSubscribe';
 import { formatDate } from '../../utils/formatDate';
 
-const SECTION_LIMIT = 6;
+const TRENDING_JOBS_LIMIT = 8;
+const SCHOLARSHIPS_LIMIT = 6;
+const ADMISSIONS_LIMIT = 6;
+const BLOG_LIMIT = 4;
 const SKELETON_COUNT = 3;
-const BLOG_LIMIT = 6;
 
 const SITE_URL = import.meta.env.VITE_APP_URL || 'https://edurozgaar.pk';
 const DEFAULT_DESCRIPTION = "EduRozgaar – Pakistan's job and education portal. Find jobs, scholarships, admissions, and study abroad opportunities.";
@@ -26,21 +29,27 @@ function readingTimeMinutes(content) {
   return Math.max(1, Math.ceil(words / 200));
 }
 
+const SEARCH_CATEGORIES = [
+  { value: 'jobs', label: 'Jobs', path: ROUTES.JOBS },
+  { value: 'scholarships', label: 'Scholarships', path: ROUTES.SCHOLARSHIPS },
+  { value: 'admissions', label: 'Admissions', path: ROUTES.ADMISSIONS },
+  { value: 'internships', label: 'Internships', path: ROUTES.INTERNSHIPS },
+];
+
 const FOREIGN_STUDY_COUNTRIES = [
   { name: 'Turkey', path: ROUTES.INTL_SCHOLARSHIPS, query: '?country=Turkey' },
-  { name: 'China', path: ROUTES.INTL_SCHOLARSHIPS, query: '?country=China' },
   { name: 'Germany', path: ROUTES.INTL_SCHOLARSHIPS, query: '?country=Germany' },
-  { name: 'Italy', path: ROUTES.INTL_SCHOLARSHIPS, query: '?country=Italy' },
+  { name: 'China', path: ROUTES.INTL_SCHOLARSHIPS, query: '?country=China' },
   { name: 'Hungary', path: ROUTES.INTL_SCHOLARSHIPS, query: '?country=Hungary' },
   { name: 'UK', path: ROUTES.INTL_SCHOLARSHIPS, query: '?country=UK' },
   { name: 'Canada', path: ROUTES.INTL_SCHOLARSHIPS, query: '?country=Canada' },
 ];
 
 const STUDENT_RESOURCES = [
-  { label: 'Resume Builder', to: ROUTES.RESUME_BUILDER, icon: '📄' },
-  { label: 'Career Guidance', to: ROUTES.CAREER_GUIDANCE, icon: '💡' },
-  { label: 'Exam Preparation', to: ROUTES.EXAM_PREP, icon: '📚' },
-  { label: 'Internships', to: ROUTES.INTERNSHIPS, icon: '🎯' },
+  { label: 'Resume Builder', to: ROUTES.RESUME_BUILDER, icon: '📄', description: 'Build a professional CV for jobs and scholarships.' },
+  { label: 'Career Guidance', to: ROUTES.CAREER_GUIDANCE, icon: '💡', description: 'Career paths, skills, and interview tips.' },
+  { label: 'Exam Preparation', to: ROUTES.EXAM_PREP, icon: '📚', description: 'PPSC, FPSC, NTS, CSS mock tests and past papers.' },
+  { label: 'Internships', to: ROUTES.INTERNSHIPS, icon: '🎯', description: 'Find internships and training programs.' },
 ];
 
 export default function Home() {
@@ -57,17 +66,18 @@ export default function Home() {
   const [loadingBlogs, setLoadingBlogs] = useState(true);
   const [savedIds, setSavedIds] = useState({ jobs: new Set(), scholarships: new Set(), admissions: new Set() });
   const [province, setProvince] = useState('');
+  const [searchCategory, setSearchCategory] = useState('jobs');
 
   useEffect(() => {
     Promise.all([
-      trendingApi.jobs().then((r) => setTrendingJobs((r.data?.data || r.data || []).slice(0, SECTION_LIMIT))).catch(() => setTrendingJobs([])),
-      scholarshipsApi.list({ limit: SECTION_LIMIT }).then((r) => setLatestScholarships(r.data?.data || r.data || [])).catch(() => setLatestScholarships([])),
-      admissionsApi.list({ limit: SECTION_LIMIT, sort: 'deadline' }).then((r) => setAdmissionDeadlines(r.data?.data || r.data || [])).catch(() => setAdmissionDeadlines([])),
+      trendingApi.jobs().then((r) => setTrendingJobs((r.data?.data || r.data || []).slice(0, TRENDING_JOBS_LIMIT))).catch(() => setTrendingJobs([])),
+      scholarshipsApi.list({ limit: SCHOLARSHIPS_LIMIT }).then((r) => setLatestScholarships(r.data?.data || r.data || [])).catch(() => setLatestScholarships([])),
+      admissionsApi.list({ limit: ADMISSIONS_LIMIT, sort: 'deadline' }).then((r) => setAdmissionDeadlines(r.data?.data || r.data || [])).catch(() => setAdmissionDeadlines([])),
     ]).finally(() => setLoadingTrending(false));
   }, []);
 
   useEffect(() => {
-    jobsApi.list({ limit: SECTION_LIMIT, sort: 'newest', ...(province && { province }) }).then((r) => setTrendingJobs(r.data?.data || r.data || [])).catch(() => {});
+    jobsApi.list({ limit: TRENDING_JOBS_LIMIT, sort: 'newest', ...(province && { province }) }).then((r) => setTrendingJobs(r.data?.data || r.data || [])).catch(() => {});
   }, [province]);
 
   useEffect(() => {
@@ -94,11 +104,15 @@ export default function Home() {
   }, [isAuthenticated]);
 
   useEffect(() => {
-    blogsApi.list({ limit: BLOG_LIMIT, status: 'published' }).then((r) => setBlogs(r.data?.data || r.data || [])).catch(() => setBlogs([])).finally(() => setLoadingBlogs(false));
+    blogsApi.list({ limit: BLOG_LIMIT, status: 'published' }).then((r) => setBlogs((r.data?.data || r.data || []).slice(0, BLOG_LIMIT))).catch(() => setBlogs([])).finally(() => setLoadingBlogs(false));
   }, []);
 
+  const categoryPath = SEARCH_CATEGORIES.find((c) => c.value === searchCategory)?.path || ROUTES.JOBS;
   const handleSearch = (q) => {
-    if (q?.trim()) navigate(`${ROUTES.JOBS}?search=${encodeURIComponent(q.trim())}`);
+    if (!q?.trim()) return;
+    const query = new URLSearchParams({ search: q.trim() });
+    if (province && searchCategory === 'jobs') query.set('province', province);
+    navigate(`${categoryPath}?${query.toString()}`);
   };
 
   const handleSaveJob = async (id, save) => {
@@ -145,42 +159,56 @@ export default function Home() {
       </Helmet>
 
       {/* 1. HERO */}
-      <section className="bg-gradient-to-b from-mint/30 to-surface dark:from-surface-dark dark:to-gray-900 py-12 md:py-20 px-4">
-        <div className="max-w-4xl mx-auto text-center animate-fade-in-up">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+      <section className="relative bg-gradient-to-br from-edur-steel via-edur-blue to-edur-steel dark:from-edur-steel dark:via-edur-blue dark:to-edur-steel py-14 md:py-24 px-4 overflow-hidden">
+        <div className="absolute inset-0 bg-[#31708E]/10 dark:bg-black/20" aria-hidden />
+        <div className="relative max-w-4xl mx-auto text-center animate-fade-in-up">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 drop-shadow-sm">
             Find Jobs, Scholarships & Admissions in Pakistan
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300 mb-6 max-w-2xl mx-auto">
+          <p className="text-lg text-edur-sky/95 text-white/95 mb-8 max-w-2xl mx-auto">
             {t('home.heroSub')}
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center max-w-2xl mx-auto mb-8">
-            <SearchBar placeholder="Search jobs, scholarships, or programs..." className="flex-1 w-full" onSearch={handleSearch} />
+          <div className="flex flex-col sm:flex-row gap-3 justify-center items-stretch max-w-3xl mx-auto mb-6">
+            <select
+              value={searchCategory}
+              onChange={(e) => setSearchCategory(e.target.value)}
+              className="rounded-xl border border-white/30 bg-white/10 text-white px-4 py-3 text-sm focus:ring-2 focus:ring-edur-sky outline-none backdrop-blur-sm sm:w-40"
+              aria-label="Category"
+            >
+              {SEARCH_CATEGORIES.map((c) => (
+                <option key={c.value} value={c.value} className="text-gray-900">{c.label}</option>
+              ))}
+            </select>
+            <SearchBar placeholder="Keyword search..." className="flex-1 w-full" onSearch={handleSearch} />
             <select
               value={province}
               onChange={(e) => setProvince(e.target.value)}
-              className="w-full sm:w-48 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-3 text-sm focus:ring-2 focus:ring-primary outline-none"
+              className="rounded-xl border border-white/30 bg-white/10 text-white px-4 py-3 text-sm focus:ring-2 focus:ring-edur-sky outline-none backdrop-blur-sm sm:w-44"
               aria-label="Province"
             >
-              <option value="">All Provinces</option>
+              <option value="" className="text-gray-900">All Provinces</option>
               {PROVINCES.map((p) => (
-                <option key={p} value={p}>{p}</option>
+                <option key={p} value={p} className="text-gray-900">{p}</option>
               ))}
             </select>
           </div>
-          <div className="flex flex-wrap justify-center gap-3">
-            <Link to={ROUTES.JOBS} className="px-5 py-2.5 rounded-xl bg-primary text-white font-medium hover:bg-primary-hover shadow-md btn-theme">
-              Jobs
+          <div className="flex flex-wrap justify-center gap-3 mb-8">
+            <Link to={ROUTES.JOBS} className="px-4 py-2 rounded-xl bg-white/20 hover:bg-white/30 text-white font-medium border border-white/30 btn-theme">
+              Government Jobs
             </Link>
-            <Link to={ROUTES.SCHOLARSHIPS} className="px-5 py-2.5 rounded-xl bg-white dark:bg-gray-800 border-2 border-primary text-primary dark:text-mint font-medium hover:bg-mint/20 btn-theme">
+            <Link to={ROUTES.SCHOLARSHIPS} className="px-4 py-2 rounded-xl bg-white/20 hover:bg-white/30 text-white font-medium border border-white/30 btn-theme">
               Scholarships
             </Link>
-            <Link to={ROUTES.ADMISSIONS} className="px-5 py-2.5 rounded-xl bg-white dark:bg-gray-800 border-2 border-primary text-primary dark:text-mint font-medium hover:bg-mint/20 btn-theme">
+            <Link to={ROUTES.ADMISSIONS} className="px-4 py-2 rounded-xl bg-white/20 hover:bg-white/30 text-white font-medium border border-white/30 btn-theme">
               Admissions
             </Link>
-            <Link to={ROUTES.INTERNSHIPS} className="px-5 py-2.5 rounded-xl bg-white dark:bg-gray-800 border-2 border-primary text-primary dark:text-mint font-medium hover:bg-mint/20 btn-theme">
+            <Link to={ROUTES.INTERNSHIPS} className="px-4 py-2 rounded-xl bg-white/20 hover:bg-white/30 text-white font-medium border border-white/30 btn-theme">
               Internships
             </Link>
           </div>
+          <Link to={ROUTES.JOBS} className="inline-flex items-center px-6 py-3 rounded-xl bg-white text-edur-steel font-semibold hover:bg-edur-bg shadow-lg btn-theme">
+            Start Exploring
+          </Link>
         </div>
       </section>
 
@@ -252,7 +280,9 @@ export default function Home() {
           <p className="text-gray-500 dark:text-gray-400">No trending jobs right now.</p>
         )}
         <div className="mt-6 text-center">
-          <Link to={ROUTES.JOBS} className="text-primary dark:text-mint font-medium hover:underline">View all jobs →</Link>
+          <Link to={ROUTES.JOBS} className="inline-flex items-center px-5 py-2.5 rounded-xl bg-edur-steel/10 dark:bg-edur-sky/10 text-edur-steel dark:text-edur-sky font-medium hover:bg-edur-steel/20 dark:hover:bg-edur-sky/20 btn-theme">
+            View All Jobs
+          </Link>
         </div>
       </ScrollReveal>
 
@@ -275,7 +305,9 @@ export default function Home() {
           <p className="text-gray-500 dark:text-gray-400">No scholarships.</p>
         )}
         <div className="mt-6 text-center">
-          <Link to={ROUTES.SCHOLARSHIPS} className="text-primary dark:text-mint font-medium hover:underline">View all scholarships →</Link>
+          <Link to={ROUTES.SCHOLARSHIPS} className="inline-flex items-center px-5 py-2.5 rounded-xl bg-edur-steel/10 dark:bg-edur-sky/10 text-edur-steel dark:text-edur-sky font-medium hover:bg-edur-steel/20 dark:hover:bg-edur-sky/20 btn-theme">
+            View All Scholarships
+          </Link>
         </div>
       </ScrollReveal>
 
@@ -296,7 +328,9 @@ export default function Home() {
           <p className="text-gray-500 dark:text-gray-400">No admissions.</p>
         )}
         <div className="mt-6 text-center">
-          <Link to={ROUTES.ADMISSIONS} className="text-primary dark:text-mint font-medium hover:underline">View all admissions →</Link>
+          <Link to={ROUTES.ADMISSIONS} className="inline-flex items-center px-5 py-2.5 rounded-xl bg-edur-steel/10 dark:bg-edur-sky/10 text-edur-steel dark:text-edur-sky font-medium hover:bg-edur-steel/20 dark:hover:bg-edur-sky/20 btn-theme">
+            View All Admissions
+          </Link>
         </div>
       </ScrollReveal>
 
@@ -323,37 +357,40 @@ export default function Home() {
       <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Student Resources</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {STUDENT_RESOURCES.map(({ label, to, icon }) => (
+          {STUDENT_RESOURCES.map(({ label, to, icon, description }) => (
             <Link
               key={to}
               to={to}
-              className="p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-md hover:border-primary/50 card-hover text-center"
+              className="p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-lg hover:border-edur-blue/50 dark:hover:border-edur-sky/50 card-hover text-center transition-all duration-200"
             >
               <span className="text-2xl block mb-2" aria-hidden>{icon}</span>
-              <span className="font-semibold text-gray-900 dark:text-white">{label}</span>
+              <span className="font-semibold text-gray-900 dark:text-white block">{label}</span>
+              {description && <span className="text-sm text-gray-500 dark:text-gray-400 mt-1 block">{description}</span>}
             </Link>
           ))}
         </div>
       </ScrollReveal>
 
-      {/* 7. BLOG / CAREER ADVICE */}
+      {/* 7. CAREER BLOG / ARTICLES */}
       <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Blog & Career Advice</h2>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Career Blog & Articles</h2>
         {loadingBlogs ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {Array.from({ length: SKELETON_COUNT }).map((_, i) => <ListingCardSkeleton key={i} />)}
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {Array.from({ length: 4 }).map((_, i) => <ListingCardSkeleton key={i} />)}
           </div>
         ) : blogs.length > 0 ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {blogs.map((post) => (
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {blogs.slice(0, 4).map((post) => (
               <Link
                 key={post._id}
                 to={`${ROUTES.BLOG}/${post.slug}`}
-                className="block p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-md card-hover"
+                className="block p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-lg hover:border-edur-blue/50 card-hover"
               >
-                <h3 className="font-semibold text-gray-900 dark:text-white line-clamp-2">{post.title}</h3>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                  {readingTimeMinutes(post.content)} min read · {post.publishedAt ? formatDate(post.publishedAt) : (post.createdAt ? formatDate(post.createdAt) : '')}
+                <span className="text-xs font-medium text-edur-steel dark:text-edur-sky">{post.category || 'Career'}</span>
+                <h3 className="font-semibold text-gray-900 dark:text-white line-clamp-2 mt-1">{post.title}</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-2">{post.excerpt}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
+                  {readingTimeMinutes(post.content || post.excerpt)} min read · {post.publishedAt ? formatDate(post.publishedAt) : (post.createdAt ? formatDate(post.createdAt) : '')}
                 </p>
               </Link>
             ))}
@@ -362,7 +399,18 @@ export default function Home() {
           <p className="text-gray-500 dark:text-gray-400">No blog posts yet.</p>
         )}
         <div className="mt-6 text-center">
-          <Link to={ROUTES.BLOG} className="text-primary dark:text-mint font-medium hover:underline">View all posts →</Link>
+          <Link to={ROUTES.BLOG} className="inline-flex items-center px-5 py-2.5 rounded-xl bg-edur-steel/10 dark:bg-edur-sky/10 text-edur-steel dark:text-edur-sky font-medium hover:bg-edur-steel/20 btn-theme">
+            Read more articles
+          </Link>
+        </div>
+      </ScrollReveal>
+
+      {/* 8. NEWSLETTER */}
+      <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-12 border-t border-gray-200 dark:border-gray-700">
+        <div className="max-w-xl mx-auto text-center p-8 rounded-2xl bg-gradient-to-br from-edur-steel/10 to-edur-blue/10 dark:from-edur-steel/20 dark:to-edur-blue/20 border border-edur-sky/30">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Get Daily Job & Scholarship Alerts</h2>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">Subscribe and we’ll send you the latest opportunities.</p>
+          <NewsletterSubscribe />
         </div>
       </ScrollReveal>
     </>

@@ -7,7 +7,7 @@
     @apply scroll-smooth;
   }
   body {
-    background-color: #EDEAE5; /* surface – theme background */
+    background-color: #F7F9FB; /* edur-bg – cool off-white */
     @apply text-gray-900 dark:text-gray-100 antialiased;
   }
   .dark body {

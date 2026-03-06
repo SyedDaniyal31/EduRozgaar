@@ -23,6 +23,15 @@ export const ROUTES = {
   BADGES_LEADERBOARD: '/badges',
   RESUME_BUILDER: '/resume-builder',
   CAREER_GUIDANCE: '/career-guidance',
+  ABOUT: '/about',
+  SERVICES: '/services',
+  ADVERTISE: '/advertise',
+  HELP_CENTER: '/help-center',
+  FAQ: '/faq',
+  SUBMIT_OPPORTUNITY: '/submit-opportunity',
+  PRIVACY_POLICY: '/privacy-policy',
+  TERMS: '/terms',
+  COOKIES: '/cookies',
 };
 
 export const ROLES = { ADMIN: 'Admin', USER: 'User' };

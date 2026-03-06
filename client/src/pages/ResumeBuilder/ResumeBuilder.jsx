@@ -1,115 +1,189 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { resumesApi } from '../../services/listingsService';
 import { ROUTES } from '../../constants';
-import { Button } from '../../components/common/Button';
-
-const defaultResume = {
-  name: '',
-  email: '',
-  phone: '',
-  education: '',
-  skills: '',
-  experience: '',
-  projects: '',
-  links: '',
-};
+import { defaultResume } from './resumeDefaults';
+import { TemplateSelector } from './TemplateSelector';
+import { ResumeWizard } from './ResumeWizard';
+import { ResumePreview } from './ResumePreview';
+import { ResumeScore } from './ResumeScore';
+import { ResumeDownload } from './ResumeDownload';
+import { useToast } from '../../context/ToastContext';
 
 export default function ResumeBuilder() {
-  const [form, setForm] = useState(defaultResume);
+  const { isAuthenticated } = useAuth();
+  const [searchParams] = useSearchParams();
+  const editId = searchParams.get('edit') || searchParams.get('id');
+  const optimizeForJobId = searchParams.get('optimizeForJob');
+  const [resume, setResume] = useState(defaultResume);
+  const [resumeId, setResumeId] = useState(null);
+  const [stepIndex, setStepIndex] = useState(0);
+  const [loading, setLoading] = useState(!!editId);
+  const [saving, setSaving] = useState(false);
+  const [optimizeResult, setOptimizeResult] = useState(null);
+  const previewRef = useRef(null);
+  const { toast } = useToast();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const buildHtml = () => {
-    const lines = [];
-    if (form.name) lines.push(`<h1>${form.name}</h1>`);
-    if (form.email) lines.push(`<p>Email: ${form.email}</p>`);
-    if (form.phone) lines.push(`<p>Phone: ${form.phone}</p>`);
-    if (form.education) lines.push(`<h2>Education</h2><p>${form.education.replace(/\n/g, '<br>')}</p>`);
-    if (form.skills) lines.push(`<h2>Skills</h2><p>${form.skills.replace(/\n/g, '<br>')}</p>`);
-    if (form.experience) lines.push(`<h2>Experience</h2><p>${form.experience.replace(/\n/g, '<br>')}</p>`);
-    if (form.projects) lines.push(`<h2>Projects</h2><p>${form.projects.replace(/\n/g, '<br>')}</p>`);
-    if (form.links) lines.push(`<h2>Links</h2><p>${form.links.replace(/\n/g, '<br>')}</p>`);
-    return lines.join('');
-  };
-
-  const handleDownloadPDF = () => {
-    const html = buildHtml();
-    if (!html) {
-      window.alert('Add some content to generate your resume.');
+  useEffect(() => {
+    if (!editId || !isAuthenticated) {
+      if (!editId) setLoading(false);
       return;
     }
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(`
-      <!DOCTYPE html>
-      <html>
-        <head><title>Resume - ${form.name || 'My Resume'}</title>
-        <style>
-          body { font-family: system-ui, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
-          h1 { font-size: 1.75rem; margin-bottom: 0.5rem; }
-          h2 { font-size: 1.1rem; margin-top: 1rem; color: #026670; }
-          p { margin: 0.25rem 0; line-height: 1.5; }
-        </style>
-        </head>
-        <body>${html}</body>
-      </html>
-    `);
-    printWindow.document.close();
-    printWindow.print();
-    printWindow.close();
+    resumesApi
+      .getById(editId)
+      .then(({ data }) => {
+        const r = data;
+        setResume({
+          title: r.title || 'My Resume',
+          template: r.template || 'modern-professional',
+          personalInfo: r.personalInfo || {},
+          careerObjective: r.careerObjective || '',
+          education: r.education || [],
+          skills: r.skills || { technical: [], soft: [] },
+          experience: r.experience || [],
+          projects: r.projects || [],
+          certifications: r.certifications || [],
+          languages: r.languages || [],
+        });
+        setResumeId(r._id);
+      })
+      .catch(() => toast.error('Could not load resume.'))
+      .finally(() => setLoading(false));
+  }, [editId, isAuthenticated, toast]);
+
+  useEffect(() => {
+    if (!optimizeForJobId || !isAuthenticated) return;
+    const call = resumeId
+      ? resumesApi.optimizeForJob(resumeId, optimizeForJobId)
+      : resumesApi.optimizeForJob(null, optimizeForJobId, resume);
+    call.then(({ data }) => setOptimizeResult(data)).catch(() => setOptimizeResult(null));
+  }, [optimizeForJobId, isAuthenticated, resumeId]);
+
+  const handleSave = async () => {
+    if (!isAuthenticated) {
+      toast.error('Login to save your resume.');
+      return;
+    }
+    setSaving(true);
+    try {
+      const payload = {
+        title: resume.title,
+        template: resume.template,
+        personalInfo: resume.personalInfo,
+        careerObjective: resume.careerObjective,
+        education: resume.education,
+        skills: resume.skills,
+        experience: resume.experience,
+        projects: resume.projects,
+        certifications: (resume.certifications || []).filter(Boolean),
+        languages: (resume.languages || []).filter(Boolean),
+      };
+      if (resumeId) {
+        await resumesApi.update(resumeId, payload);
+        toast.success('Resume updated.');
+      } else {
+        const { data } = await resumesApi.create(payload);
+        setResumeId(data._id);
+        toast.success('Resume saved.');
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to save resume.');
+    } finally {
+      setSaving(false);
+    }
   };
+
+  const fileName = (resume.personalInfo?.fullName || 'Resume').replace(/\s+/g, '-') + '-EduRozgaar';
+
+  if (loading) {
+    return (
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3" />
+          <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
       <Helmet>
         <title>Resume Builder – EduRozgaar</title>
-        <meta name="description" content="Build your CV with our simple resume builder. Download as PDF." />
+        <meta name="description" content="Build a professional CV for jobs, scholarships, and admissions. Multiple templates, AI suggestions, PDF export." />
       </Helmet>
-      <div className="max-w-3xl mx-auto px-4 py-8">
-        <Link to={ROUTES.DASHBOARD} className="text-primary dark:text-mint hover:underline text-sm mb-6 inline-block">← Dashboard</Link>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Resume Builder</h1>
-        <p className="text-gray-600 dark:text-gray-400 mb-8">Fill in your details and download your resume as PDF.</p>
+      <div className="max-w-6xl mx-auto px-4 py-6 md:py-8">
+        <Link to={ROUTES.DASHBOARD} className="text-primary dark:text-mint hover:underline text-sm mb-4 inline-block">← Dashboard</Link>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">Resume Builder</h1>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
+          Create a professional resume for jobs, internships, scholarships, and university admissions. Choose a template and fill in the steps below.
+        </p>
 
-        <div className="space-y-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label>
-            <input type="text" name="name" value={form.name} onChange={handleChange} placeholder="Full name" className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary outline-none" />
+        {optimizeResult && (
+          <div className="mb-6 p-4 rounded-xl border border-primary/30 dark:border-mint/30 bg-primary/5 dark:bg-mint/10">
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Optimize for: {optimizeResult.jobTitle}</h3>
+            {optimizeResult.missingKeywords?.length > 0 && (
+              <p className="text-sm text-gray-700 dark:text-gray-300 mb-1">
+                <strong>Consider adding:</strong> {optimizeResult.missingKeywords.join(', ')}
+              </p>
+            )}
+            {optimizeResult.suggestions?.map((s, i) => (
+              <p key={i} className="text-sm text-gray-600 dark:text-gray-400">{s}</p>
+            ))}
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
-            <input type="email" name="email" value={form.email} onChange={handleChange} placeholder="email@example.com" className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary outline-none" />
+        )}
+
+        <div className="grid lg:grid-cols-5 gap-8">
+          <div className="lg:col-span-3 space-y-6">
+            <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+              <div className="mb-3">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Resume name</label>
+                <input
+                  type="text"
+                  value={resume.title || ''}
+                  onChange={(e) => setResume({ ...resume, title: e.target.value })}
+                  placeholder="e.g. Resume for Internships"
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-primary outline-none"
+                />
+              </div>
+              <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Choose template</h2>
+              <TemplateSelector value={resume.template} onChange={(t) => setResume({ ...resume, template: t })} />
+            </div>
+            <ResumeWizard
+              resume={resume}
+              onChange={setResume}
+              stepIndex={stepIndex}
+              setStepIndex={setStepIndex}
+            />
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={saving || !isAuthenticated}
+                className="px-4 py-2 rounded-lg bg-primary text-white font-medium hover:bg-primary-hover disabled:opacity-50 dark:bg-mint dark:text-gray-900 dark:hover:bg-mint/90"
+              >
+                {saving ? 'Saving…' : resumeId ? 'Update resume' : 'Save resume'}
+              </button>
+              {!isAuthenticated && (
+                <Link to={ROUTES.LOGIN} className="text-sm text-primary dark:text-mint hover:underline">
+                  Login to save and manage multiple resumes
+                </Link>
+              )}
+            </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Phone</label>
-            <input type="tel" name="phone" value={form.phone} onChange={handleChange} placeholder="+92 300 1234567" className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary outline-none" />
+          <div className="lg:col-span-2 space-y-4">
+            <ResumePreview ref={previewRef} resume={resume} template={resume.template} />
+            <ResumeScore resume={resume} />
+            <ResumeDownload previewRef={previewRef} fileName={fileName} />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Education</label>
-            <textarea name="education" value={form.education} onChange={handleChange} rows={3} placeholder="Degree, institution, year" className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary outline-none" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Skills</label>
-            <textarea name="skills" value={form.skills} onChange={handleChange} rows={2} placeholder="e.g. React, Python, Communication" className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary outline-none" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Experience</label>
-            <textarea name="experience" value={form.experience} onChange={handleChange} rows={4} placeholder="Job title, company, duration, responsibilities" className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary outline-none" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Projects</label>
-            <textarea name="projects" value={form.projects} onChange={handleChange} rows={3} placeholder="Project name, tech, description" className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary outline-none" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Links (LinkedIn, GitHub, portfolio)</label>
-            <textarea name="links" value={form.links} onChange={handleChange} rows={2} placeholder="One per line" className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary outline-none" />
-          </div>
-          <div className="flex gap-3 pt-4">
-            <Button onClick={handleDownloadPDF}>Download as PDF</Button>
-            <Link to={ROUTES.RESUME_ANALYZER} className="px-4 py-2 rounded-lg border-2 border-primary text-primary dark:text-mint hover:bg-mint/20 btn-theme inline-block">Analyze Resume (AI)</Link>
-          </div>
+        </div>
+
+        <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+          <Link to={ROUTES.RESUME_ANALYZER} className="text-primary dark:text-mint hover:underline text-sm">
+            Analyze your resume with AI →
+          </Link>
         </div>
       </div>
     </>

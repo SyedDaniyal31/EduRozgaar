@@ -1,14 +1,29 @@
+import { Helmet } from 'react-helmet-async';
+import { Link } from 'react-router-dom';
+import { ROUTES } from '../../constants';
+
 export default function Contact() {
   return (
     <>
-      <meta name="description" content="Contact EduRozgaar. Get in touch for support or partnerships." />
-      <div className="max-w-2xl mx-auto px-4 py-8">
+      <Helmet>
+        <title>Contact Us – EduRozgaar</title>
+        <meta name="description" content="Contact EduRozgaar for support, partnerships, or to submit opportunities." />
+      </Helmet>
+      <div className="max-w-2xl mx-auto px-4 py-10">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Contact Us</h1>
-        <p className="text-gray-600 dark:text-gray-400 mb-8">We’d love to hear from you. Contact form and details will be added here.</p>
-        <div className="p-8 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-          <p className="text-gray-500 dark:text-gray-400">Email: contact@edurozgaar.pk (placeholder)</p>
-          <p className="text-gray-500 dark:text-gray-400 mt-2">Contact form coming in Phase-2.</p>
+        <p className="text-gray-600 dark:text-gray-400 mb-8">
+          Get in touch for support, advertising, or to submit a job or scholarship opportunity. We aim to respond within 1–2 business days.
+        </p>
+        <div className="p-8 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 space-y-4">
+          <p className="text-gray-700 dark:text-gray-300"><strong>Email support:</strong> contact@edurozgaar.pk</p>
+          <p className="text-gray-600 dark:text-gray-400 text-sm">For general inquiries, report an issue, submit an opportunity, or advertise with us, email the address above with a clear subject line.</p>
+          <p className="text-gray-600 dark:text-gray-400 text-sm">
+            You can also reach us via <a href="https://t.me/edurozgaar" target="_blank" rel="noopener noreferrer" className="text-primary dark:text-mint hover:underline">Telegram</a> or follow us on <a href="https://twitter.com/edurozgaar" target="_blank" rel="noopener noreferrer" className="text-primary dark:text-mint hover:underline">X (Twitter)</a> and <a href="https://linkedin.com/company/edurozgaar" target="_blank" rel="noopener noreferrer" className="text-primary dark:text-mint hover:underline">LinkedIn</a>.
+          </p>
         </div>
+        <p className="mt-6 text-sm text-gray-500 dark:text-gray-400">
+          <Link to={ROUTES.FAQ} className="text-primary dark:text-mint hover:underline">Check our FAQ</Link> for quick answers.
+        </p>
       </div>
     </>
   );

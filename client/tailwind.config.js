@@ -10,14 +10,20 @@ export default {
   theme: {
     extend: {
       colors: {
-        // QED-inspired palette: modern, serene, minimal
-        primary: '#026670',       // dark teal – main actions, links
+        // EduRozgaar brand palette (startup-grade)
+        primary: '#026670',       // dark teal – main actions, links (kept for compatibility)
         'primary-hover': '#035a63',
         mint: '#9FEDD7',          // light aqua – hover, accents
-        cream: '#FEF9C7',         // light yellow – soft accents
-        golden: '#FCE181',        // golden yellow – highlights
-        surface: '#EDEAE5',       // off-white – page background
-        'surface-dark': '#1a2528', // dark mode surface (teal-tinted)
+        cream: '#FEF9C7',
+        golden: '#FCE181',
+        surface: '#EDEAE5',
+        'surface-dark': '#1a2528',
+        // Image-inspired palette: professional blues & cool grey
+        'edur-olive': '#687864',   // muted green-grey – accents, secondary bg
+        'edur-steel': '#31708E',   // deep steel blue – hero, primary dark
+        'edur-blue': '#5085A5',    // medium blue – secondary buttons, links
+        'edur-sky': '#8FC1E3',     // light pastel blue – hover, highlights
+        'edur-bg': '#F7F9FB',      // cool off-white – sections, cards
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

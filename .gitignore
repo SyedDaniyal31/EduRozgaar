@@ -1,9 +1,11 @@
 # Dependencies
 node_modules/
 
-# Environment
+# Environment (never commit secrets)
 .env
 .env.local
+server/.env
+client/.env
 .env.development.local
 .env.test.local
 .env.production.local
