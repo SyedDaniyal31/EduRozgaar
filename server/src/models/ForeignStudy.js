@@ -18,7 +18,6 @@ const foreignStudySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-foreignStudySchema.index({ slug: 1 });
 foreignStudySchema.index({ country: 1, status: 1 });
 foreignStudySchema.index({ level: 1, status: 1 });
 foreignStudySchema.index({ deadline: 1, status: 1 });

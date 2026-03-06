@@ -24,7 +24,6 @@ const internshipSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-internshipSchema.index({ slug: 1 });
 internshipSchema.index({ status: 1, createdAt: -1 });
 internshipSchema.index({ province: 1, status: 1 });
 internshipSchema.index({ organization: 1 });

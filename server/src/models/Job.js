@@ -32,14 +32,12 @@ const jobSchema = new mongoose.Schema(
     scrapedAt: { type: Date },
     sourceUrl: { type: String },
     sourceWebsite: { type: String }, // e.g. PPSC, FPSC, LinkedIn, Rozee.pk
-    externalId: { type: String, sparse: true }, // unique per source for dedup
+    externalId: { type: String, unique: true, sparse: true }, // unique per source for dedup
     approvalStatus: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'approved' },
   },
   { timestamps: true }
 );
 
-jobSchema.index({ slug: 1 });
-jobSchema.index({ externalId: 1 }, { sparse: true });
 jobSchema.index({ sourceWebsite: 1, status: 1 });
 jobSchema.index({ status: 1, createdAt: -1 });
 jobSchema.index({ status: 1, deadline: 1 });

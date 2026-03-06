@@ -26,7 +26,6 @@ const scholarshipSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-scholarshipSchema.index({ slug: 1 });
 scholarshipSchema.index({ deadline: 1, status: 1 });
 scholarshipSchema.index({ level: 1, status: 1 });
 scholarshipSchema.index({ country: 1, status: 1 });

@@ -42,10 +42,28 @@ function JobCard({ job, saved, onSaveToggle, showBadge = true }) {
   );
 }
 
-const COUNTRY_FLAGS = { Pakistan: '🇵🇰', Turkey: '🇹🇷', China: '🇨🇳', Germany: '🇩🇪', UK: '🇬🇧', USA: '🇺🇸', Australia: '🇦🇺', Canada: '🇨🇦', Hungary: '🇭🇺', Italy: '🇮🇹', Japan: '🇯🇵', Korea: '🇰🇷', Sweden: '🇸🇪', Netherlands: '🇳🇱', Malaysia: '🇲🇾', New Zealand: '🇳🇿', Multiple: '🌍' };
+const COUNTRY_FLAGS = {
+  Pakistan: '\uD83C\uDDF5\uD83C\uDDF0',
+  Turkey: '\uD83C\uDDF9\uD83C\uDDF7',
+  China: '\uD83C\uDDE8\uD83C\uDDF3',
+  Germany: '\uD83C\uDDE9\uD83C\uDDEA',
+  UK: '\uD83C\uDDEC\uD83C\uDDE7',
+  USA: '\uD83C\uDDFA\uD83C\uDDF8',
+  Australia: '\uD83C\uDDE6\uD83C\uDDFA',
+  Canada: '\uD83C\uDDE8\uD83C\uDDE6',
+  Hungary: '\uD83C\uDDED\uD83C\uDDFA',
+  Italy: '\uD83C\uDDEE\uD83C\uDDF9',
+  Japan: '\uD83C\uDDEF\uD83C\uDDF5',
+  Korea: '\uD83C\uDDF0\uD83C\uDDF7',
+  Sweden: '\uD83C\uDDF8\uD83C\uDDEA',
+  Netherlands: '\uD83C\uDDF3\uD83C\uDDF1',
+  Malaysia: '\uD83C\uDDF2\uD83C\uDDFE',
+  'New Zealand': '\uD83C\uDDF3\uD83C\uDDFF',
+  Multiple: '\uD83C\uDF0D',
+};
 
 function ScholarshipCard({ item, saved, onSaveToggle }) {
-  const flag = item.country ? (COUNTRY_FLAGS[item.country] || '') : '';
+  const flag = item.country && COUNTRY_FLAGS[item.country] ? COUNTRY_FLAGS[item.country] : '';
   return (
     <Link
       to={`${ROUTES.SCHOLARSHIPS}/${item.slug || item._id}`}

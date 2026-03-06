@@ -15,7 +15,6 @@ const examSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-examSchema.index({ slug: 1 });
 examSchema.index({ status: 1 });
 
 examSchema.pre('save', function (next) {

@@ -28,7 +28,6 @@ const admissionSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-admissionSchema.index({ slug: 1 });
 admissionSchema.index({ deadline: 1, status: 1 });
 admissionSchema.index({ institution: 1, status: 1 });
 admissionSchema.index({ program: 'text', institution: 'text', department: 'text' });
