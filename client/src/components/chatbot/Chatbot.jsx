@@ -60,7 +60,7 @@ export function Chatbot({ onClose, className = '' }) {
         )}
         {messages.map((m, i) => (
           <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[85%] rounded-lg px-3 py-2 text-sm ${m.role === 'user' ? 'bg-emerald-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'}`}>
+            <div className={`max-w-[85%] rounded-lg px-3 py-2 text-sm ${m.role === 'user' ? 'bg-primary text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'}`}>
               {m.message}
             </div>
           </div>
@@ -81,7 +81,7 @@ export function Chatbot({ onClose, className = '' }) {
           placeholder="Ask about jobs, scholarships, exams..."
           className="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2 text-sm"
         />
-        <button type="button" onClick={handleSend} disabled={loading} className="px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 disabled:opacity-50">
+        <button type="button" onClick={handleSend} disabled={loading} className="px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary-hover btn-theme disabled:opacity-50">
           Send
         </button>
       </div>

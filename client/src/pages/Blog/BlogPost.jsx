@@ -81,7 +81,7 @@ export default function BlogPost() {
     return (
       <div className="max-w-3xl mx-auto px-4 py-12 text-center">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Post not found</h1>
-        <Link to={ROUTES.BLOG} className="text-emerald-600 dark:text-emerald-400 mt-4 inline-block">← Back to Blog</Link>
+        <Link to={ROUTES.BLOG} className="text-primary dark:text-mint mt-4 inline-block">← Back to Blog</Link>
       </div>
     );
   }
@@ -99,7 +99,7 @@ export default function BlogPost() {
         <meta property="og:url" content={canonicalUrl} />
       </Helmet>
       <article className="max-w-3xl mx-auto px-4 py-8">
-        <Link to={ROUTES.BLOG} className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline mb-4 inline-block">← Back to Blog</Link>
+        <Link to={ROUTES.BLOG} className="text-sm text-primary dark:text-mint hover:underline mb-4 inline-block">← Back to Blog</Link>
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{post.title}</h1>
         {post.publishedAt && (
           <p className="text-gray-500 dark:text-gray-400 mt-2">{new Date(post.publishedAt).toLocaleDateString()}</p>

@@ -60,7 +60,7 @@ export default function GrowthDashboard() {
             type="button"
             onClick={runScraper}
             disabled={scraperRunning}
-            className="px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50 text-sm"
+            className="px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary-hover btn-theme disabled:opacity-50 text-sm"
           >
             {scraperRunning ? 'Running...' : 'Run scraper now'}
           </button>

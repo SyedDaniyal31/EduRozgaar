@@ -16,12 +16,12 @@ export function SearchBar({ placeholder = 'Search...', className = '', onSearch 
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={placeholder}
-          className="w-full pl-4 pr-10 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition"
+          className="w-full pl-4 pr-10 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
           aria-label="Search"
         />
         <button
           type="submit"
-          className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400 rounded-lg"
+          className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-gray-500 hover:text-primary dark:hover:text-mint rounded-lg transition-colors duration-200"
           aria-label="Submit search"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

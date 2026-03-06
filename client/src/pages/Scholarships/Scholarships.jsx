@@ -58,7 +58,7 @@ export default function Scholarships() {
         <p className="text-gray-600 dark:text-gray-400 mb-6">Funding opportunities for your education.</p>
 
         {isAuthenticated && recommendedScholarships.length > 0 && (
-          <section className="mb-8 p-4 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-900/10">
+          <section className="mb-8 p-4 rounded-xl border border-primary/30 dark:border-mint/30 bg-mint/20 dark:bg-mint/10">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Recommended for You</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {recommendedScholarships.slice(0, 3).map((item) => (
@@ -123,7 +123,7 @@ export default function Scholarships() {
                         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{s.title}</h2>
                         <p className="text-gray-600 dark:text-gray-400">{s.provider}</p>
                         <p className="text-sm text-gray-500">{[s.level, s.country].filter(Boolean).join(' · ')}</p>
-                        {s.amount && <p className="text-sm text-emerald-600 dark:text-emerald-400 mt-1">{s.amount}</p>}
+                        {s.amount && <p className="text-sm text-primary dark:text-mint mt-1">{s.amount}</p>}
                         {s.deadline && <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">Deadline: {formatDate(s.deadline)}</p>}
                       </Link>
                       <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">

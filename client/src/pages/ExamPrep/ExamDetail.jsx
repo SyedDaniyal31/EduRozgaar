@@ -39,7 +39,7 @@ export default function ExamDetail() {
     return (
       <div className="max-w-4xl mx-auto px-4 py-8">
         <p className="text-red-600 dark:text-red-400">Exam not found.</p>
-        <Link to={ROUTES.EXAM_PREP} className="text-emerald-600 dark:text-emerald-400 mt-2 inline-block">← Back to Exam Prep</Link>
+        <Link to={ROUTES.EXAM_PREP} className="text-primary dark:text-mint mt-2 inline-block">← Back to Exam Prep</Link>
       </div>
     );
   }
@@ -51,7 +51,7 @@ export default function ExamDetail() {
         <meta name="description" content={exam.description || `${exam.name} syllabus, past papers, and practice quizzes.`} />
       </Helmet>
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <Link to={ROUTES.EXAM_PREP} className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline mb-4 inline-block">← Exam Prep</Link>
+        <Link to={ROUTES.EXAM_PREP} className="text-sm text-primary dark:text-mint hover:underline mb-4 inline-block">← Exam Prep</Link>
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">{exam.name}</h1>
         {exam.description && <p className="text-gray-600 dark:text-gray-400 mb-6">{exam.description}</p>}
 

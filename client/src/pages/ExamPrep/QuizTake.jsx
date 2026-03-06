@@ -75,12 +75,12 @@ export default function QuizTake() {
     return (
       <div className="max-w-2xl mx-auto px-4 py-8">
         <Helmet><title>Quiz Result – EduRozgaar</title></Helmet>
-        <div className="p-6 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-900/10 text-center">
+        <div className="p-6 rounded-xl border border-primary/30 dark:border-mint/30 bg-mint/20 dark:bg-mint/10 text-center">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Your Score: {submitted.score}%</h2>
           <p className="text-gray-600 dark:text-gray-400 mt-2">{submitted.correctCount} / {submitted.totalQuestions} correct</p>
         </div>
         <div className="mt-6 flex gap-4">
-          <Link to={ROUTES.EXAM_PREP} className="text-emerald-600 dark:text-emerald-400 hover:underline">← Exam Prep</Link>
+          <Link to={ROUTES.EXAM_PREP} className="text-primary dark:text-mint hover:underline">← Exam Prep</Link>
         </div>
       </div>
     );
@@ -95,12 +95,12 @@ export default function QuizTake() {
         <button
           type="button"
           onClick={() => setStarted(true)}
-          className="rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 font-medium"
+          className="rounded-lg bg-primary hover:bg-primary-hover text-white btn-theme px-6 py-3 font-medium"
         >
           Start Quiz
         </button>
         <div className="mt-6">
-          <Link to={ROUTES.EXAM_PREP} className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline">← Back</Link>
+          <Link to={ROUTES.EXAM_PREP} className="text-sm text-primary dark:text-mint hover:underline">← Back</Link>
         </div>
       </div>
     );
@@ -131,7 +131,7 @@ export default function QuizTake() {
                       name={`q-${i}`}
                       checked={answers[i] === j}
                       onChange={() => setAnswers((prev) => { const n = [...prev]; n[i] = j; return n; })}
-                      className="rounded-full border-gray-300 dark:border-gray-600 text-emerald-600"
+                      className="rounded-full border-gray-300 dark:border-gray-600 text-primary"
                     />
                     <span className="text-gray-700 dark:text-gray-300">{opt}</span>
                   </label>
@@ -143,12 +143,12 @@ export default function QuizTake() {
       </div>
 
       <div className="mt-8 flex justify-between">
-        <Link to={ROUTES.EXAM_PREP} className="text-emerald-600 dark:text-emerald-400 hover:underline">← Cancel</Link>
+        <Link to={ROUTES.EXAM_PREP} className="text-primary dark:text-mint hover:underline">← Cancel</Link>
         <button
           type="button"
           onClick={handleSubmit}
           disabled={submitting || answers.some((a) => a === null)}
-          className="rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 font-medium disabled:opacity-50"
+          className="rounded-lg bg-primary hover:bg-primary-hover text-white btn-theme px-6 py-2 font-medium disabled:opacity-50"
         >
           {submitting ? 'Submitting…' : 'Submit'}
         </button>

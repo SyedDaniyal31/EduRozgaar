@@ -66,7 +66,7 @@ export default function Webinars() {
                   {w.description && <p className="text-gray-600 dark:text-gray-400 mt-2 text-sm">{w.description}</p>}
                   <div className="mt-3 flex flex-wrap gap-2">
                     {w.meetingUrl && (
-                      <a href={w.meetingUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline">
+                      <a href={w.meetingUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-primary dark:text-mint hover:underline">
                         Join link
                       </a>
                     )}
@@ -75,7 +75,7 @@ export default function Webinars() {
                         type="button"
                         onClick={() => handleRegister(w._id)}
                         disabled={registering === w._id || w.registered}
-                        className="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 disabled:opacity-50"
+                        className="px-3 py-1.5 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary-hover btn-theme disabled:opacity-50"
                       >
                         {w.registered ? 'Registered' : registering === w._id ? 'Registering…' : 'Register'}
                       </button>
@@ -100,7 +100,7 @@ export default function Webinars() {
                   <h3 className="font-semibold text-gray-900 dark:text-white">{w.title}</h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{formatDate(w.scheduledAt)} · {w.durationMinutes || 60} min</p>
                   {w.recordingUrl && (
-                    <a href={w.recordingUrl} target="_blank" rel="noopener noreferrer" className="inline-block mt-2 text-sm text-emerald-600 dark:text-emerald-400 hover:underline">
+                    <a href={w.recordingUrl} target="_blank" rel="noopener noreferrer" className="inline-block mt-2 text-sm text-primary dark:text-mint hover:underline">
                       Watch recording →
                     </a>
                   )}

@@ -28,7 +28,7 @@ export function Footer() {
             <ul className="space-y-2">
               {Object.entries(footerLinks).slice(0, 4).map(([label, path]) => (
                 <li key={path}>
-                  <Link to={path} className="text-sm text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400">
+                  <Link to={path} className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-mint link-hover">
                     {label}
                   </Link>
                 </li>
@@ -40,7 +40,7 @@ export function Footer() {
             <ul className="space-y-2">
               {Object.entries(footerLinks).slice(4).map(([label, path]) => (
                 <li key={path}>
-                  <Link to={path} className="text-sm text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400">
+                  <Link to={path} className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-mint link-hover">
                     {label}
                   </Link>
                 </li>

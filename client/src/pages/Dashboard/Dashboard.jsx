@@ -80,10 +80,10 @@ export default function Dashboard() {
         <p className="text-gray-600 dark:text-gray-400 mb-6">Welcome back, {profile?.name || profile?.email}.</p>
 
         <div className="flex flex-wrap gap-3 mb-8">
-          <Link to={ROUTES.RESUME_ANALYZER} className="inline-flex items-center px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 text-sm font-medium">
+          <Link to={ROUTES.RESUME_ANALYZER} className="inline-flex items-center px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary-hover btn-theme text-sm font-medium">
             Resume Scanner
           </Link>
-          <Link to={ROUTES.EXAM_PREP} className="inline-flex items-center px-4 py-2 rounded-lg border border-emerald-600 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 text-sm font-medium">
+          <Link to={ROUTES.EXAM_PREP} className="inline-flex items-center px-4 py-2 rounded-lg border-2 border-primary text-primary dark:text-mint hover:bg-mint/20 dark:hover:bg-mint/10 btn-theme text-sm font-medium">
             Exam Preparation
           </Link>
           <Link to={ROUTES.INTERNSHIPS} className="inline-flex items-center px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 text-sm font-medium">
@@ -112,7 +112,7 @@ export default function Dashboard() {
                         <p className="font-medium text-gray-900 dark:text-white">{n.title}</p>
                         <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{n.message}</p>
                         {n.link && (
-                          <a href={n.link} className="text-sm text-emerald-600 dark:text-emerald-400 mt-2 inline-block hover:underline">
+                          <a href={n.link} className="text-sm text-primary dark:text-mint mt-2 inline-block hover:underline">
                             Learn more →
                           </a>
                         )}
@@ -126,7 +126,7 @@ export default function Dashboard() {
             <section>
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Saved listings</h2>
-                <Link to={ROUTES.SAVED_JOBS} className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline">
+                <Link to={ROUTES.SAVED_JOBS} className="text-sm text-primary dark:text-mint hover:underline">
                   View all →
                 </Link>
               </div>
@@ -245,7 +245,7 @@ export default function Dashboard() {
                   <dd className="text-gray-900 dark:text-white">{(profile?.interests || []).length ? profile.interests.join(', ') : '—'}</dd>
                 </div>
               </dl>
-              <Link to={ROUTES.PROFILE} className="mt-3 inline-block text-sm text-emerald-600 dark:text-emerald-400 hover:underline">
+              <Link to={ROUTES.PROFILE} className="mt-3 inline-block text-sm text-primary dark:text-mint hover:underline">
                 Edit profile →
               </Link>
             </section>
@@ -255,7 +255,7 @@ export default function Dashboard() {
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">Choose how you want to receive alerts (managed in Profile).</p>
               <ul className="space-y-2 text-sm">
                 <li className="flex items-center gap-2">
-                  <span className={`inline-block w-3 h-3 rounded-full ${profile?.notifications?.email ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-gray-600'}`} aria-hidden />
+                  <span className={`inline-block w-3 h-3 rounded-full ${profile?.notifications?.email ? 'bg-primary' : 'bg-gray-300 dark:bg-gray-600'}`} aria-hidden />
                   Email alerts {profile?.notifications?.email ? 'On' : 'Off'}
                 </li>
                 <li className="flex items-center gap-2">
@@ -271,7 +271,7 @@ export default function Dashboard() {
                   Telegram (Phase-6)
                 </li>
               </ul>
-              <Link to={ROUTES.PROFILE} className="mt-3 inline-block text-sm text-emerald-600 dark:text-emerald-400 hover:underline">
+              <Link to={ROUTES.PROFILE} className="mt-3 inline-block text-sm text-primary dark:text-mint hover:underline">
                 Update in Profile →
               </Link>
             </section>

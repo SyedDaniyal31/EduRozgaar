@@ -99,7 +99,7 @@ export default function AlertsAdmin() {
           <button
             type="submit"
             disabled={loading}
-            className="px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50"
+            className="px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary-hover btn-theme disabled:opacity-50"
           >
             {loading ? 'Sending...' : `Send ${channel === 'telegram' ? 'Telegram' : 'WhatsApp'} alert`}
           </button>

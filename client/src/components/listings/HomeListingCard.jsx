@@ -7,7 +7,7 @@ function JobCard({ job, saved, onSaveToggle }) {
   return (
     <Link
       to={`${ROUTES.JOBS}/${job.slug || job._id}`}
-      className="block p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-md hover:border-emerald-200 dark:hover:border-emerald-800 transition-all"
+      className="block p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-primary/50 dark:hover:border-mint/50 transition-all duration-200 ease-out card-hover"
     >
       <div className="flex justify-between gap-2">
         <div className="min-w-0 flex-1">
@@ -32,7 +32,7 @@ function ScholarshipCard({ item, saved, onSaveToggle }) {
   return (
     <Link
       to={`${ROUTES.SCHOLARSHIPS}/${item.slug || item._id}`}
-      className="block p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-md hover:border-emerald-200 dark:hover:border-emerald-800 transition-all"
+      className="block p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-primary/50 dark:hover:border-mint/50 transition-all duration-200 ease-out card-hover"
     >
       <div className="flex justify-between gap-2">
         <div className="min-w-0 flex-1">
@@ -58,7 +58,7 @@ function AdmissionCard({ item, saved, onSaveToggle }) {
   return (
     <Link
       to={`${ROUTES.ADMISSIONS}/${item.slug || item._id}`}
-      className="block p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-md hover:border-emerald-200 dark:hover:border-emerald-800 transition-all"
+      className="block p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-primary/50 dark:hover:border-mint/50 transition-all duration-200 ease-out card-hover"
     >
       <div className="flex justify-between gap-2">
         <div className="min-w-0 flex-1">

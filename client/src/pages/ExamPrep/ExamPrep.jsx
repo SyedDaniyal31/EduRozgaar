@@ -50,7 +50,7 @@ export default function ExamPrep() {
         )}
 
         <div className="mt-8 flex gap-4">
-          <Link to={ROUTES.DASHBOARD} className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline">← Dashboard</Link>
+          <Link to={ROUTES.DASHBOARD} className="text-sm text-primary dark:text-mint hover:underline">← Dashboard</Link>
         </div>
       </div>
     </>

@@ -50,7 +50,7 @@ export default function IntlScholarshipDetail() {
     return (
       <div className="max-w-3xl mx-auto px-4 py-8">
         <p className="text-red-600 dark:text-red-400">{error || 'Not found.'}</p>
-        <Link to={ROUTES.INTL_SCHOLARSHIPS} className="text-emerald-600 dark:text-emerald-400 hover:underline mt-2 inline-block">← International Scholarships</Link>
+        <Link to={ROUTES.INTL_SCHOLARSHIPS} className="text-primary dark:text-mint hover:underline mt-2 inline-block">← International Scholarships</Link>
       </div>
     );
   }
@@ -62,7 +62,7 @@ export default function IntlScholarshipDetail() {
         <meta name="description" content={`${item.title} - ${item.country}. Deadline ${item.deadline ? formatDate(item.deadline) : 'TBA'}.`} />
       </Helmet>
       <div className="max-w-3xl mx-auto px-4 py-6 md:py-8">
-        <Link to={ROUTES.INTL_SCHOLARSHIPS} className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline mb-4 inline-block">← International Scholarships</Link>
+        <Link to={ROUTES.INTL_SCHOLARSHIPS} className="text-sm text-primary dark:text-mint hover:underline mb-4 inline-block">← International Scholarships</Link>
 
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -99,7 +99,7 @@ export default function IntlScholarshipDetail() {
         )}
 
         {item.link && (
-          <a href={item.link} target="_blank" rel="noopener noreferrer" className="inline-block mt-6 px-4 py-2 rounded-lg bg-emerald-600 text-white font-medium hover:bg-emerald-700">
+          <a href={item.link} target="_blank" rel="noopener noreferrer" className="inline-block mt-6 px-4 py-2 rounded-lg bg-primary text-white font-medium hover:bg-primary-hover btn-theme">
             Apply on official site →
           </a>
         )}

@@ -52,7 +52,7 @@ function ToastContainer({ toasts, onClose }) {
           role="alert"
           className={`rounded-lg border px-4 py-3 shadow-lg flex items-center justify-between gap-3 ${
             t.variant === 'success'
-              ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200'
+              ? 'bg-mint/20 dark:bg-mint/10 border-primary/30 dark:border-mint/30 text-primary dark:text-mint'
               : t.variant === 'error'
               ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-800 dark:text-red-200'
               : t.variant === 'warning'

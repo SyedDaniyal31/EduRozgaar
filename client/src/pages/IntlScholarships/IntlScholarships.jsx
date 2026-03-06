@@ -91,7 +91,7 @@ export default function IntlScholarships() {
                 <article className="p-4 md:p-5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-md transition">
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
-                      <Link to={`${ROUTES.INTL_SCHOLARSHIPS}/${item._id}`} className="font-semibold text-lg text-gray-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400">
+                      <Link to={`${ROUTES.INTL_SCHOLARSHIPS}/${item._id}`} className="font-semibold text-lg text-gray-900 dark:text-white hover:text-primary dark:hover:text-mint">
                         {item.title}
                       </Link>
                       <p className="text-gray-600 dark:text-gray-400 mt-1">{item.country}{item.university ? ` · ${item.university}` : ''}</p>
@@ -102,7 +102,7 @@ export default function IntlScholarships() {
                     </div>
                     {isAuthenticated && <SaveButton saved={savedIds.has(item._id)} onToggle={() => handleSaveToggle(item._id, !savedIds.has(item._id))} />}
                   </div>
-                  <Link to={`${ROUTES.INTL_SCHOLARSHIPS}/${item._id}`} className="inline-block mt-3 text-sm text-emerald-600 dark:text-emerald-400 hover:underline">
+                  <Link to={`${ROUTES.INTL_SCHOLARSHIPS}/${item._id}`} className="inline-block mt-3 text-sm text-primary dark:text-mint hover:underline">
                     View details →
                   </Link>
                 </article>

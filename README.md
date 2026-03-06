@@ -78,14 +78,32 @@ root/
 | Command           | Description                    |
 | ----------------- | ------------------------------ |
 | `npm run dev`     | Start React dev server (Vite)  |
-| `npm run server`  | Start Express API server       |
+| `npm run client`  | Same as dev (from root)        |
+| `npm run server`  | Start Express API server (from root) |
+| **`npm run dev:all`** / **`npm run dev-all`** | **Run backend + frontend in one terminal** |
 | `npm run build`   | Build frontend for production  |
 | `npm run start:server` | Run backend in production |
 
-**Development:** Open two terminals:
+### Quick start (one-command dev)
 
-- Terminal 1: `npm run server` (API at `http://localhost:5000`)
-- Terminal 2: `npm run dev` (App at `http://localhost:5173`)
+**Step 1 — Start MongoDB** (required once; Cursor cannot start system services for you)
+
+- **Windows:** `net start MongoDB`
+- **Mac/Linux:** `mongod` or `sudo systemctl start mongod`
+
+**Step 2 — Run the app** (from project root)
+
+```bash
+npm run dev:all
+```
+
+This starts the API and the React app in one terminal. If MongoDB is not running, the backend will exit with a clear message telling you to start it.
+
+- **Backend:** http://localhost:5000  
+- **Frontend:** http://localhost:5173  
+- **API health check:** http://localhost:5000/api/health  
+
+**Or use two terminals:** Terminal 1: `npm run server` · Terminal 2: `npm run dev`
 
 Frontend is configured to call `http://localhost:5000/api` via Axios.
 

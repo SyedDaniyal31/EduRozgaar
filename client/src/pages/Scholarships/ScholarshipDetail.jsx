@@ -35,7 +35,7 @@ export default function ScholarshipDetail() {
   };
 
   if (loading) return <div className="max-w-3xl mx-auto px-4 py-8"><ListingCardSkeleton /></div>;
-  if (error || !item) return <div className="max-w-3xl mx-auto px-4 py-8"><Alert variant="error">{error || 'Not found'}</Alert><Link to={ROUTES.SCHOLARSHIPS} className="text-emerald-600 dark:text-emerald-400 mt-4 inline-block">← Back to Scholarships</Link></div>;
+  if (error || !item) return <div className="max-w-3xl mx-auto px-4 py-8"><Alert variant="error">{error || 'Not found'}</Alert><Link to={ROUTES.SCHOLARSHIPS} className="text-primary dark:text-mint mt-4 inline-block">← Back to Scholarships</Link></div>;
 
   const related = item.related || [];
   const canonicalUrl = `${import.meta.env.VITE_APP_URL || 'https://edurozgaar.pk'}${ROUTES.SCHOLARSHIPS}/${item.slug || item._id}`;
@@ -48,19 +48,19 @@ export default function ScholarshipDetail() {
         <meta property="og:title" content={`${item.title} – EduRozgaar`} />
       </Helmet>
       <article className="max-w-3xl mx-auto px-4 py-6 md:py-8">
-        <Link to={ROUTES.SCHOLARSHIPS} className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline mb-4 inline-block">← Back to Scholarships</Link>
+        <Link to={ROUTES.SCHOLARSHIPS} className="text-sm text-primary dark:text-mint hover:underline mb-4 inline-block">← Back to Scholarships</Link>
         <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 md:p-8">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{item.title}</h1>
               <p className="text-lg text-gray-600 dark:text-gray-400 mt-1">{item.provider}</p>
               <p className="text-sm text-gray-500">{(item.level || '') + (item.country ? ` · ${item.country}` : '')}</p>
-              {item.amount && <p className="text-emerald-600 dark:text-emerald-400 font-medium mt-1">{item.amount}</p>}
+              {item.amount && <p className="text-primary dark:text-mint font-medium mt-1">{item.amount}</p>}
               {item.deadline && <p className="text-sm text-amber-600 dark:text-amber-400 mt-2">Deadline: {formatDate(item.deadline)}</p>}
             </div>
             <div className="flex flex-wrap gap-2">
               <SaveButton type="scholarship" id={item._id} saved={savedIds.has(item._id)} onToggle={handleSaveToggle} />
-              <a href={item.link || '#'} className="inline-flex items-center px-4 py-2 rounded-lg bg-emerald-600 text-white font-medium hover:bg-emerald-700" target="_blank" rel="noopener noreferrer">Apply</a>
+              <a href={item.link || '#'} className="inline-flex items-center px-4 py-2 rounded-lg bg-primary text-white font-medium hover:bg-primary-hover btn-theme" target="_blank" rel="noopener noreferrer">Apply</a>
             </div>
           </div>
           {item.description && <section className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700"><h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Description</h2><p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{item.description}</p></section>}

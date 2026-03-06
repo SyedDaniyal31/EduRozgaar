@@ -40,7 +40,7 @@ export default function Admin() {
               to={path}
               className={`pb-2 px-1 text-sm font-medium border-b-2 -mb-px ${
                 (path === ROUTES.ADMIN ? isOverview : location.pathname === path)
-                  ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400'
+                  ? 'border-primary text-primary dark:text-mint'
                   : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
               }`}
             >

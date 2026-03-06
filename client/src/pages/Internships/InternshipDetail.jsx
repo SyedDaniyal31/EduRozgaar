@@ -66,7 +66,7 @@ export default function InternshipDetail() {
     return (
       <div className="max-w-3xl mx-auto px-4 py-8">
         <p className="text-red-600 dark:text-red-400">{error || 'Internship not found.'}</p>
-        <Link to={ROUTES.INTERNSHIPS} className="text-emerald-600 dark:text-emerald-400 hover:underline mt-2 inline-block">← Back to Internships</Link>
+        <Link to={ROUTES.INTERNSHIPS} className="text-primary dark:text-mint hover:underline mt-2 inline-block">← Back to Internships</Link>
       </div>
     );
   }
@@ -78,7 +78,7 @@ export default function InternshipDetail() {
         <meta name="description" content={`${internship.title} at ${internship.organization}. ${internship.duration || ''}`} />
       </Helmet>
       <div className="max-w-3xl mx-auto px-4 py-6 md:py-8">
-        <Link to={ROUTES.INTERNSHIPS} className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline mb-4 inline-block">← Internships</Link>
+        <Link to={ROUTES.INTERNSHIPS} className="text-sm text-primary dark:text-mint hover:underline mb-4 inline-block">← Internships</Link>
 
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -115,7 +115,7 @@ export default function InternshipDetail() {
               type="button"
               onClick={handleApply}
               disabled={applying || applied}
-              className="inline-flex items-center px-4 py-2 rounded-lg bg-emerald-600 text-white font-medium hover:bg-emerald-700 disabled:opacity-50"
+              className="inline-flex items-center px-4 py-2 rounded-lg bg-primary text-white font-medium hover:bg-primary-hover btn-theme disabled:opacity-50"
             >
               {applied ? 'Applied' : applying ? 'Applying…' : 'Apply on platform'}
             </button>
@@ -125,7 +125,7 @@ export default function InternshipDetail() {
               href={internship.applicationLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center px-4 py-2 rounded-lg border border-emerald-600 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+              className="inline-flex items-center px-4 py-2 rounded-lg border-2 border-primary text-primary dark:text-mint hover:bg-mint/20 dark:hover:bg-mint/10 btn-theme"
             >
               Apply on company portal →
             </a>

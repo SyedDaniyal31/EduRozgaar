@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { ROUTES } from '../../constants';
 import { validateEmail, validatePassword, validateName } from '../../utils/validation';
 import { Button } from '../../components/common/Button';
+import { SocialAuthButton } from '../../components/auth/SocialAuthButton';
 import { FormField } from '../../components/common/FormField';
 import { Alert } from '../../components/ui/Alerts';
 
@@ -75,7 +76,7 @@ export default function Register() {
               autoComplete="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none"
+              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow duration-200"
               placeholder="Your name"
             />
           </FormField>
@@ -86,7 +87,7 @@ export default function Register() {
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none"
+              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow duration-200"
               placeholder="you@example.com"
             />
           </FormField>
@@ -97,7 +98,7 @@ export default function Register() {
               autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none"
+              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow duration-200"
               placeholder="Min 8 chars, upper, lower, number"
             />
           </FormField>
@@ -108,7 +109,7 @@ export default function Register() {
               autoComplete="new-password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none"
+              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow duration-200"
               placeholder="Repeat password"
             />
           </FormField>
@@ -117,16 +118,14 @@ export default function Register() {
           </Button>
         </form>
 
-        <div className="mt-6">
+        <div className="mt-6 animate-fade-in">
           <p className="text-sm text-gray-500 dark:text-gray-400 text-center mb-3">Or sign up with</p>
-          <Button type="button" variant="outline" className="w-full" onClick={handleGoogleSignUp}>
-            Google (coming soon)
-          </Button>
+          <SocialAuthButton provider="Google" onClick={handleGoogleSignUp} comingSoon />
         </div>
 
         <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
           Already have an account?{' '}
-          <Link to={ROUTES.LOGIN} className="text-emerald-600 dark:text-emerald-400 font-medium hover:underline">
+          <Link to={ROUTES.LOGIN} className="text-primary dark:text-mint font-medium hover:underline link-hover">
             Login
           </Link>
         </p>

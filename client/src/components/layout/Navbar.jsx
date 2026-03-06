@@ -33,10 +33,10 @@ export function Navbar() {
   const { lang, setLang, t } = useLanguage();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-gray-200 dark:border-gray-800 bg-surface/98 dark:bg-surface-dark/98 backdrop-blur">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-14 md:h-16">
-          <Link to={ROUTES.HOME} className="font-bold text-lg text-gray-900 dark:text-white">
+          <Link to={ROUTES.HOME} className="font-bold text-lg text-gray-900 dark:text-white link-hover hover:text-primary dark:hover:text-mint">
             EduRozgaar
           </Link>
 
@@ -52,18 +52,18 @@ export function Navbar() {
                 >
                   <button
                     type="button"
-                    className="px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 rounded-lg"
+                    className="px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-mint rounded-lg link-hover"
                   >
                     {item.labelKey ? t(item.labelKey) : 'Education'} ▾
                   </button>
                   {megaOpen === (item.labelKey || 'edu') && (
-                    <div className="absolute left-0 top-full pt-1 w-56">
+                    <div className="absolute left-0 top-full pt-1 w-56 animate-fade-in">
                       <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg py-2">
                         {item.mega.map((sub) => (
                           <Link
                             key={sub.path}
                             to={sub.path}
-                            className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                            className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 link-hover rounded-lg"
                           >
                             {sub.labelKey ? t(sub.labelKey) : sub.label || ''}
                           </Link>
@@ -76,7 +76,7 @@ export function Navbar() {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className="px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 rounded-lg"
+                  className="px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-mint rounded-lg link-hover"
                 >
                   {item.labelKey ? t(item.labelKey) : item.label}
                 </Link>
@@ -89,7 +89,7 @@ export function Navbar() {
               <button
                 type="button"
                 onClick={() => setLang('en')}
-                className={`px-2 py-1 text-sm ${lang === 'en' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' : 'text-gray-600 dark:text-gray-400'}`}
+                className={`px-2 py-1 text-sm ${lang === 'en' ? 'bg-mint/30 dark:bg-mint/20 text-primary dark:text-mint' : 'text-gray-600 dark:text-gray-400'}`}
                 aria-label="English"
               >
                 EN
@@ -97,7 +97,7 @@ export function Navbar() {
               <button
                 type="button"
                 onClick={() => setLang('ur')}
-                className={`px-2 py-1 text-sm ${lang === 'ur' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' : 'text-gray-600 dark:text-gray-400'}`}
+                className={`px-2 py-1 text-sm ${lang === 'ur' ? 'bg-mint/30 dark:bg-mint/20 text-primary dark:text-mint' : 'text-gray-600 dark:text-gray-400'}`}
                 aria-label="Urdu"
               >
                 UR
@@ -115,26 +115,26 @@ export function Navbar() {
               <>
                 <Link
                   to={ROUTES.DASHBOARD}
-                  className="hidden sm:inline px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-emerald-600"
+                  className="hidden sm:inline px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-primary"
                 >
                   Dashboard
                 </Link>
                 <Link
                   to={ROUTES.RESUME_ANALYZER}
-                  className="hidden sm:inline px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-emerald-600"
+                  className="hidden sm:inline px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-primary"
                 >
                   Resume
                 </Link>
                 <Link
                   to={ROUTES.PROFILE}
-                  className="hidden sm:inline px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-emerald-600"
+                  className="hidden sm:inline px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-primary"
                 >
                   Profile
                 </Link>
                 {user?.role === 'Admin' && (
                   <Link
                     to={ROUTES.ADMIN}
-                    className="hidden sm:inline px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-emerald-600"
+                    className="hidden sm:inline px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-primary"
                   >
                     Admin
                   </Link>
@@ -142,7 +142,7 @@ export function Navbar() {
                 <button
                   type="button"
                   onClick={() => logout()}
-                  className="hidden sm:inline px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-emerald-600"
+                  className="hidden sm:inline px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-primary"
                 >
                   Logout
                 </button>
@@ -150,7 +150,7 @@ export function Navbar() {
             ) : (
               <Link
                 to={ROUTES.LOGIN}
-                className="hidden sm:inline px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-emerald-600"
+                className="hidden sm:inline px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-primary"
               >
                 Login
               </Link>

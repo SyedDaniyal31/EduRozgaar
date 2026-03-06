@@ -40,9 +40,9 @@ export default function Badges() {
         {error && <p className="text-red-600 dark:text-red-400 mb-4">{error}</p>}
 
         {rank && (
-          <section className="mb-8 p-4 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-900/10">
+          <section className="mb-8 p-4 rounded-xl border border-primary/30 dark:border-mint/30 bg-mint/20 dark:bg-mint/10">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Your rank</h2>
-            <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">#{rank.rank}</p>
+            <p className="text-2xl font-bold text-primary dark:text-mint">#{rank.rank}</p>
             <p className="text-sm text-gray-600 dark:text-gray-400">{rank.totalPoints || 0} points</p>
           </section>
         )}
@@ -84,7 +84,7 @@ export default function Badges() {
                 <li key={u.userId} className="flex items-center gap-4 p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
                   <span className="font-bold text-gray-500 dark:text-gray-400 w-8">#{u.rank}</span>
                   <span className="font-medium text-gray-900 dark:text-white flex-1">{u.name || 'Anonymous'}</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{u.totalPoints || 0} pts</span>
+                  <span className="text-primary dark:text-mint font-semibold">{u.totalPoints || 0} pts</span>
                 </li>
               ))}
             </ol>
@@ -92,7 +92,7 @@ export default function Badges() {
         </section>
 
         <p className="mt-6 text-sm text-gray-500 dark:text-gray-400">
-          <Link to={ROUTES.DASHBOARD} className="text-emerald-600 dark:text-emerald-400 hover:underline">← Dashboard</Link>
+          <Link to={ROUTES.DASHBOARD} className="text-primary dark:text-mint hover:underline">← Dashboard</Link>
         </p>
       </div>
     </>

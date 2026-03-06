@@ -47,9 +47,9 @@ export default function SavedJobs() {
           <div className="p-8 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 text-center text-gray-500 dark:text-gray-400">
             <p className="mb-4">You haven&apos;t saved any listings yet.</p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Link to={ROUTES.JOBS} className="text-emerald-600 dark:text-emerald-400 font-medium hover:underline">Browse jobs →</Link>
-              <Link to={ROUTES.SCHOLARSHIPS} className="text-emerald-600 dark:text-emerald-400 font-medium hover:underline">Browse scholarships →</Link>
-              <Link to={ROUTES.ADMISSIONS} className="text-emerald-600 dark:text-emerald-400 font-medium hover:underline">Browse admissions →</Link>
+              <Link to={ROUTES.JOBS} className="text-primary dark:text-mint font-medium hover:underline">Browse jobs →</Link>
+              <Link to={ROUTES.SCHOLARSHIPS} className="text-primary dark:text-mint font-medium hover:underline">Browse scholarships →</Link>
+              <Link to={ROUTES.ADMISSIONS} className="text-primary dark:text-mint font-medium hover:underline">Browse admissions →</Link>
             </div>
           </div>
         ) : (

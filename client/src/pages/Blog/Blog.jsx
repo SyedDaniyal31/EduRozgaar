@@ -5,6 +5,7 @@ import { blogsApi } from '../../services/listingsService';
 import { ROUTES } from '../../constants';
 import { SAMPLE_BLOGS } from '../../constants/seedData';
 import { ListingCardSkeleton } from '../../components/listings/ListingCardSkeleton';
+import { ScrollReveal } from '../../components/ui/ScrollReveal';
 
 export default function Blog() {
   const [posts, setPosts] = useState([]);
@@ -26,9 +27,10 @@ export default function Blog() {
         <meta name="description" content="EduRozgaar blog – career tips, admission guides, and education news for Pakistan." />
       </Helmet>
       <div className="max-w-6xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Blog</h1>
-        <p className="text-gray-600 dark:text-gray-400 mb-8">Tips, guides, and updates for students and job seekers. Auto-generated SEO posts from latest opportunities.</p>
-
+        <ScrollReveal>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Blog</h1>
+          <p className="text-gray-600 dark:text-gray-400 mb-8">Tips, guides, and updates for students and job seekers. Auto-generated SEO posts from latest opportunities.</p>
+        </ScrollReveal>
         {loading ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[...Array(6)].map((_, i) => (
@@ -36,8 +38,9 @@ export default function Blog() {
             ))}
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {list.map((post) => (
+          <ScrollReveal>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {list.map((post) => (
               <Link
                 key={post._id || post.slug}
                 to={`${ROUTES.BLOG}/${post.slug}`}
@@ -49,8 +52,9 @@ export default function Blog() {
                   {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : post.createdAt ? new Date(post.createdAt).toLocaleDateString() : ''}
                 </p>
               </Link>
-            ))}
-          </div>
+              ))}
+            </div>
+          </ScrollReveal>
         )}
       </div>
     </>

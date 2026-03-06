@@ -7,6 +7,69 @@
     @apply scroll-smooth;
   }
   body {
-    @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 antialiased;
+    background-color: #EDEAE5; /* surface – theme background */
+    @apply text-gray-900 dark:text-gray-100 antialiased;
+  }
+  .dark body {
+    background-color: #1a2528; /* surface-dark */
+  }
+}
+
+@layer components {
+  /* Unified button animation: slight lift + shadow, press down – same on all pages */
+  .btn-theme {
+    @apply transition-all duration-200 ease-out;
+  }
+  .btn-theme:hover:not(:disabled) {
+    @apply -translate-y-0.5 shadow-md;
+  }
+  .btn-theme:active:not(:disabled) {
+    @apply translate-y-0 scale-[0.98];
+  }
+  .btn-hover-lift {
+    @apply transition-all duration-200 ease-out;
+  }
+  .btn-hover-lift:hover:not(:disabled) {
+    @apply -translate-y-0.5;
+  }
+  .btn-hover-lift:active:not(:disabled) {
+    @apply translate-y-0 scale-[0.98];
+  }
+  .card-hover {
+    @apply transition-all duration-200 ease-out;
+  }
+  .card-hover:hover {
+    @apply -translate-y-0.5 shadow-lg;
+  }
+  .link-hover {
+    @apply transition-colors duration-200;
+  }
+  .input-focus {
+    @apply transition-shadow duration-200;
+  }
+}
+
+@layer utilities {
+  .animate-in {
+    @apply animate-fade-in;
+  }
+  .animate-in-up {
+    @apply animate-fade-in-up;
+  }
+  /* Scroll-triggered reveal (Victor Sin–style): hidden until in view, then animate in */
+  .scroll-reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .scroll-reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .scroll-reveal--fade {
+    transform: none;
+  }
+  .scroll-reveal--fade.is-visible {
+    transform: none;
   }
 }

@@ -9,6 +9,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { HomeJobCard, HomeScholarshipCard, HomeAdmissionCard } from '../../components/listings/HomeListingCard';
 import { ListingCardSkeleton } from '../../components/listings/ListingCardSkeleton';
 import { AdBanner, AdInFeed } from '../../components/ads';
+import { ScrollReveal } from '../../components/ui/ScrollReveal';
 
 const SECTION_LIMIT = 6;
 const SKELETON_COUNT = 3;
@@ -113,8 +114,8 @@ export default function Home() {
         <meta property="og:type" content="website" />
       </Helmet>
 
-      <section className="bg-gradient-to-b from-emerald-50 to-white dark:from-gray-800 dark:to-gray-900 py-12 md:py-20 px-4">
-        <div className="max-w-4xl mx-auto text-center">
+      <section className="bg-gradient-to-b from-mint/30 to-surface dark:from-surface-dark dark:to-gray-900 py-12 md:py-20 px-4">
+        <div className="max-w-4xl mx-auto text-center animate-fade-in-up">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
             {t('home.heroTitle')}
           </h1>
@@ -126,7 +127,7 @@ export default function Home() {
       </section>
 
       {isAuthenticated && (
-        <section className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
+        <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">{t('home.recommendedForYou')}</h2>
           {loadingRecommended ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -144,7 +145,7 @@ export default function Home() {
                       <HomeJobCard key={job._id} job={job} saved={savedIds.jobs.has(job._id)} onSaveToggle={handleSaveJob} />
                     ))}
                   </div>
-                  <Link to={ROUTES.JOBS} className="text-sm text-emerald-600 dark:text-emerald-400 mt-2 inline-block">{t('home.viewAll')} jobs →</Link>
+                  <Link to={ROUTES.JOBS} className="text-sm text-primary dark:text-mint mt-2 inline-block">{t('home.viewAll')} jobs →</Link>
                 </div>
               )}
               {recommended.scholarships.length > 0 && (
@@ -155,7 +156,7 @@ export default function Home() {
                       <HomeScholarshipCard key={item._id} item={item} saved={savedIds.scholarships.has(item._id)} onSaveToggle={handleSaveScholarship} />
                     ))}
                   </div>
-                  <Link to={ROUTES.SCHOLARSHIPS} className="text-sm text-emerald-600 dark:text-emerald-400 mt-2 inline-block">{t('home.viewAll')} scholarships →</Link>
+                  <Link to={ROUTES.SCHOLARSHIPS} className="text-sm text-primary dark:text-mint mt-2 inline-block">{t('home.viewAll')} scholarships →</Link>
                 </div>
               )}
               {recommended.admissions.length > 0 && (
@@ -166,18 +167,18 @@ export default function Home() {
                       <HomeAdmissionCard key={item._id} item={item} saved={savedIds.admissions.has(item._id)} onSaveToggle={handleSaveAdmission} />
                     ))}
                   </div>
-                  <Link to={ROUTES.ADMISSIONS} className="text-sm text-emerald-600 dark:text-emerald-400 mt-2 inline-block">{t('home.viewAll')} admissions →</Link>
+                  <Link to={ROUTES.ADMISSIONS} className="text-sm text-primary dark:text-mint mt-2 inline-block">{t('home.viewAll')} admissions →</Link>
                 </div>
               )}
             </div>
           ) : null}
-        </section>
+        </ScrollReveal>
       )}
 
-      <section className="max-w-6xl mx-auto px-4 py-6">
+      <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-6">
         <AdBanner slotId="home-top" className="mb-6" />
-      </section>
-      <section className="max-w-6xl mx-auto px-4 py-8">
+      </ScrollReveal>
+      <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-8">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">{t('home.quickLinks')}</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
@@ -189,15 +190,15 @@ export default function Home() {
             <Link
               key={to}
               to={to}
-              className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-md transition-shadow"
+              className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-md transition-shadow card-hover"
             >
               <span className="font-semibold text-gray-900 dark:text-white">{label}</span>
             </Link>
           ))}
         </div>
-      </section>
+      </ScrollReveal>
 
-      <section className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
+      <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Trending Jobs</h2>
         {loadingTrending ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -215,15 +216,17 @@ export default function Home() {
           <p className="text-gray-500 dark:text-gray-400">No trending jobs right now.</p>
         )}
         <div className="mt-6 text-center">
-          <Link to={ROUTES.JOBS} className="text-emerald-600 dark:text-emerald-400 font-medium hover:underline">
+          <Link to={ROUTES.JOBS} className="text-primary dark:text-mint font-medium hover:underline">
             View all jobs →
           </Link>
         </div>
-      </section>
+      </ScrollReveal>
 
-      <AdInFeed slotId="home-mid" index={1} />
+      <ScrollReveal>
+        <AdInFeed slotId="home-mid" index={1} />
+      </ScrollReveal>
 
-      <section className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
+      <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Featured Jobs</h2>
         {loadingFeatured ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -241,13 +244,13 @@ export default function Home() {
           <p className="text-gray-500 dark:text-gray-400">No featured jobs.</p>
         )}
         <div className="mt-6 text-center">
-          <Link to={ROUTES.JOBS} className="text-emerald-600 dark:text-emerald-400 font-medium hover:underline">
+          <Link to={ROUTES.JOBS} className="text-primary dark:text-mint font-medium hover:underline">
             View all jobs →
           </Link>
         </div>
-      </section>
+      </ScrollReveal>
 
-      <section className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
+      <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Latest Scholarships</h2>
         {loadingFeatured ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -265,13 +268,13 @@ export default function Home() {
           <p className="text-gray-500 dark:text-gray-400">No scholarships.</p>
         )}
         <div className="mt-6 text-center">
-          <Link to={ROUTES.SCHOLARSHIPS} className="text-emerald-600 dark:text-emerald-400 font-medium hover:underline">
+          <Link to={ROUTES.SCHOLARSHIPS} className="text-primary dark:text-mint font-medium hover:underline">
             View all scholarships →
           </Link>
         </div>
-      </section>
+      </ScrollReveal>
 
-      <section className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
+      <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Admission Deadlines</h2>
         {loadingFeatured ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -289,13 +292,13 @@ export default function Home() {
           <p className="text-gray-500 dark:text-gray-400">No admissions.</p>
         )}
         <div className="mt-6 text-center">
-          <Link to={ROUTES.ADMISSIONS} className="text-emerald-600 dark:text-emerald-400 font-medium hover:underline">
+          <Link to={ROUTES.ADMISSIONS} className="text-primary dark:text-mint font-medium hover:underline">
             View all admissions →
           </Link>
         </div>
-      </section>
+      </ScrollReveal>
 
-      <section className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
+      <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Trending Scholarships</h2>
         {loadingTrending ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -313,13 +316,13 @@ export default function Home() {
           <p className="text-gray-500 dark:text-gray-400">No trending scholarships.</p>
         )}
         <div className="mt-6 text-center">
-          <Link to={ROUTES.SCHOLARSHIPS} className="text-emerald-600 dark:text-emerald-400 font-medium hover:underline">
+          <Link to={ROUTES.SCHOLARSHIPS} className="text-primary dark:text-mint font-medium hover:underline">
             View all scholarships →
           </Link>
         </div>
-      </section>
+      </ScrollReveal>
 
-      <section className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
+      <ScrollReveal as="section" className="max-w-6xl mx-auto px-4 py-10 border-t border-gray-200 dark:border-gray-700">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Upcoming Admissions</h2>
         {loadingTrending ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -337,11 +340,11 @@ export default function Home() {
           <p className="text-gray-500 dark:text-gray-400">No upcoming admissions.</p>
         )}
         <div className="mt-6 text-center">
-          <Link to={ROUTES.ADMISSIONS} className="text-emerald-600 dark:text-emerald-400 font-medium hover:underline">
+          <Link to={ROUTES.ADMISSIONS} className="text-primary dark:text-mint font-medium hover:underline">
             View all admissions →
           </Link>
         </div>
-      </section>
+      </ScrollReveal>
     </>
   );
 }

@@ -49,12 +49,12 @@ export default function ResumeAnalyzer() {
             type="file"
             accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             onChange={(e) => setFile(e.target.files?.[0] || null)}
-            className="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-emerald-50 file:text-emerald-700 dark:file:bg-emerald-900/30 dark:file:text-emerald-300"
+            className="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-mint/30 file:text-primary dark:file:bg-mint/20 dark:file:text-mint"
           />
           <button
             type="submit"
             disabled={loading || !file}
-            className="mt-4 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 font-medium disabled:opacity-50"
+            className="mt-4 rounded-lg bg-primary hover:bg-primary-hover text-white btn-theme px-4 py-2 font-medium disabled:opacity-50"
           >
             {loading ? 'Analyzing…' : 'Analyze resume'}
           </button>
@@ -128,7 +128,7 @@ export default function ResumeAnalyzer() {
                         <span className="font-semibold text-gray-900 dark:text-white">{job.title}</span>
                         <span className="text-gray-600 dark:text-gray-400"> · {job.organization || job.company}</span>
                         {matched?.matched?.length > 0 && (
-                          <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1">Matched skills: {matched.matched.join(', ')}</p>
+                          <p className="text-xs text-primary dark:text-mint mt-1">Matched skills: {matched.matched.join(', ')}</p>
                         )}
                       </Link>
                     </li>
@@ -138,7 +138,7 @@ export default function ResumeAnalyzer() {
             </section>
 
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">
-          <Link to={ROUTES.DASHBOARD} className="text-emerald-600 dark:text-emerald-400 hover:underline">← Back to Dashboard</Link>
+          <Link to={ROUTES.DASHBOARD} className="text-primary dark:text-mint hover:underline">← Back to Dashboard</Link>
         </p>
           </div>
         )}

@@ -116,7 +116,7 @@ export default function Profile() {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none"
+              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary outline-none"
             />
           </FormField>
 
@@ -125,7 +125,7 @@ export default function Profile() {
               id="profile-province"
               value={province}
               onChange={(e) => setProvince(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none"
+              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary outline-none"
             >
               <option value="">Select province</option>
               {PROVINCES.map((p) => (
@@ -148,8 +148,8 @@ export default function Profile() {
                   onClick={() => toggleInterest(item)}
                   className={`px-3 py-1.5 rounded-full text-sm border transition ${
                     interests.includes(item)
-                      ? 'bg-emerald-600 text-white border-emerald-600 dark:bg-emerald-500 dark:border-emerald-500'
-                      : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-emerald-500'
+                      ? 'bg-primary text-white border-primary dark:bg-primary dark:border-primary'
+                      : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-primary'
                   }`}
                 >
                   {item}
@@ -163,7 +163,7 @@ export default function Profile() {
               id="profile-lang"
               value={preferredLanguage}
               onChange={(e) => setPreferredLanguage(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none"
+              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary outline-none"
             >
               <option value="en">English</option>
               <option value="ur">Urdu</option>
@@ -188,7 +188,7 @@ export default function Profile() {
                     onChange={(e) =>
                       setNotifications((n) => ({ ...n, [key]: e.target.checked }))
                     }
-                    className="rounded border-gray-300 dark:border-gray-600 text-emerald-600 focus:ring-emerald-500"
+                    className="rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary"
                   />
                   <span className="text-gray-700 dark:text-gray-300">{label}</span>
                 </label>
@@ -205,13 +205,13 @@ export default function Profile() {
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Saved jobs</h2>
           {savedJobs.length === 0 ? (
             <p className="text-gray-500 dark:text-gray-400 text-sm">
-              No saved jobs. Save jobs from the <Link to={ROUTES.JOBS} className="text-emerald-600 dark:text-emerald-400 hover:underline">Jobs</Link> page.
+              No saved jobs. Save jobs from the <Link to={ROUTES.JOBS} className="text-primary dark:text-mint hover:underline">Jobs</Link> page.
             </p>
           ) : (
             <ul className="space-y-2">
               {savedJobs.map((j) => (
                 <li key={j._id}>
-                  <Link to={`${ROUTES.JOBS}/${j.slug || j._id}`} className="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400">{j.title}</Link>
+                  <Link to={`${ROUTES.JOBS}/${j.slug || j._id}`} className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-mint">{j.title}</Link>
                   {j.deadline && <span className="text-xs text-gray-500 ml-2">({formatDate(j.deadline)})</span>}
                 </li>
               ))}
@@ -223,13 +223,13 @@ export default function Profile() {
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Saved scholarships</h2>
           {savedScholarships.length === 0 ? (
             <p className="text-gray-500 dark:text-gray-400 text-sm">
-              No saved scholarships. Save from the <Link to={ROUTES.SCHOLARSHIPS} className="text-emerald-600 dark:text-emerald-400 hover:underline">Scholarships</Link> page.
+              No saved scholarships. Save from the <Link to={ROUTES.SCHOLARSHIPS} className="text-primary dark:text-mint hover:underline">Scholarships</Link> page.
             </p>
           ) : (
             <ul className="space-y-2">
               {savedScholarships.map((s) => (
                 <li key={s._id}>
-                  <Link to={`${ROUTES.SCHOLARSHIPS}/${s.slug || s._id}`} className="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400">{s.title}</Link>
+                  <Link to={`${ROUTES.SCHOLARSHIPS}/${s.slug || s._id}`} className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-mint">{s.title}</Link>
                   {s.deadline && <span className="text-xs text-gray-500 ml-2">({formatDate(s.deadline)})</span>}
                 </li>
               ))}
@@ -241,13 +241,13 @@ export default function Profile() {
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Saved admissions</h2>
           {savedAdmissions.length === 0 ? (
             <p className="text-gray-500 dark:text-gray-400 text-sm">
-              No saved admissions. Save from the <Link to={ROUTES.ADMISSIONS} className="text-emerald-600 dark:text-emerald-400 hover:underline">Admissions</Link> page.
+              No saved admissions. Save from the <Link to={ROUTES.ADMISSIONS} className="text-primary dark:text-mint hover:underline">Admissions</Link> page.
             </p>
           ) : (
             <ul className="space-y-2">
               {savedAdmissions.map((a) => (
                 <li key={a._id}>
-                  <Link to={`${ROUTES.ADMISSIONS}/${a.slug || a._id}`} className="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400">{a.program} – {a.institution}</Link>
+                  <Link to={`${ROUTES.ADMISSIONS}/${a.slug || a._id}`} className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-mint">{a.program} – {a.institution}</Link>
                   {a.deadline && <span className="text-xs text-gray-500 ml-2">({formatDate(a.deadline)})</span>}
                 </li>
               ))}

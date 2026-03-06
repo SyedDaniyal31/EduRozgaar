@@ -53,6 +53,9 @@ connectDB()
     });
   })
   .catch((err) => {
-    console.error('DB connection failed:', err);
+    console.error('\n❌ MongoDB connection failed:', err.message);
+    console.error('\n👉 Start MongoDB first:');
+    console.error('   Windows:  net start MongoDB');
+    console.error('   Mac/Linux:  mongod (or sudo systemctl start mongod)\n');
     process.exit(1);
   });

@@ -13,6 +13,7 @@ import { Alert } from '../../components/ui/Alerts';
 import { formatDate } from '../../utils/formatDate';
 import { useAuth } from '../../context/AuthContext';
 import { AdBanner, AdSidebar, AdInFeed } from '../../components/ads';
+import { ScrollReveal } from '../../components/ui/ScrollReveal';
 
 const PER_PAGE = 10;
 
@@ -81,7 +82,7 @@ export default function Jobs() {
         <p className="text-gray-600 dark:text-gray-400 mb-6">Find your next opportunity across Pakistan.</p>
 
         {isAuthenticated && recommendedJobs.length > 0 && (
-          <section className="mb-8 p-4 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-900/10">
+          <ScrollReveal as="section" className="mb-8 p-4 rounded-xl border border-primary/30 dark:border-mint/30 bg-mint/20 dark:bg-mint/10">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Recommended for You</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {recommendedJobs.slice(0, 3).map((job) => (
@@ -91,7 +92,7 @@ export default function Jobs() {
                 </Link>
               ))}
             </div>
-          </section>
+          </ScrollReveal>
         )}
 
         <div className="flex flex-col lg:flex-row gap-4 mb-6">
@@ -188,11 +189,11 @@ export default function Jobs() {
                     <Fragment key={job._id}>
                       {index > 0 && index % 5 === 0 && <AdInFeed slotId="jobs-infeed" index={index} />}
                       <article
-                      className={`p-4 rounded-xl border flex flex-col transition-shadow ${job.source === 'scraper' && job.scrapedAt ? 'border-emerald-400 dark:border-emerald-600 bg-emerald-50/30 dark:bg-emerald-900/10' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'} hover:shadow-md`}
+                      className={`p-4 rounded-xl border flex flex-col transition-shadow ${job.source === 'scraper' && job.scrapedAt ? 'border-primary/50 dark:border-mint/50 bg-mint/20 dark:bg-mint/10' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'} hover:shadow-md`}
                     >
                       <Link to={`${ROUTES.JOBS}/${job.slug || job._id}`} className="flex-1 block">
                         {job.source === 'scraper' && job.scrapedAt && (
-                          <span className="inline-block text-xs font-medium px-2 py-0.5 rounded bg-emerald-500 text-white dark:bg-emerald-600 mb-2">New</span>
+                          <span className="inline-block text-xs font-medium px-2 py-0.5 rounded bg-primary text-white dark:bg-primary mb-2">New</span>
                         )}
                         {job.logoUrl && (
                           <div className="h-10 w-10 rounded-lg bg-gray-100 dark:bg-gray-700 mb-2 flex items-center justify-center text-xs text-gray-400">Logo</div>

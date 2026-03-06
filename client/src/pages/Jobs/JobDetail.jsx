@@ -43,7 +43,7 @@ export default function JobDetail() {
   };
 
   if (loading) return <div className="max-w-3xl mx-auto px-4 py-8"><ListingCardSkeleton /></div>;
-  if (error || !job) return <div className="max-w-3xl mx-auto px-4 py-8"><Alert variant="error">{error || 'Job not found'}</Alert><Link to={ROUTES.JOBS} className="text-emerald-600 dark:text-emerald-400 mt-4 inline-block">← Back to Jobs</Link></div>;
+  if (error || !job) return <div className="max-w-3xl mx-auto px-4 py-8"><Alert variant="error">{error || 'Job not found'}</Alert><Link to={ROUTES.JOBS} className="text-primary dark:text-mint mt-4 inline-block">← Back to Jobs</Link></div>;
 
   const related = job.related || [];
 
@@ -71,7 +71,7 @@ export default function JobDetail() {
         <meta property="og:url" content={canonicalUrl} />
       </Helmet>
       <article className="max-w-3xl mx-auto px-4 py-6 md:py-8">
-        <Link to={ROUTES.JOBS} className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline mb-4 inline-block">← Back to Jobs</Link>
+        <Link to={ROUTES.JOBS} className="text-sm text-primary dark:text-mint hover:underline mb-4 inline-block">← Back to Jobs</Link>
         <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 md:p-8">
           {job.logoUrl && <div className="h-12 w-12 rounded-lg bg-gray-100 dark:bg-gray-700 mb-4 flex items-center justify-center text-xs text-gray-400">Logo</div>}
           <div className="flex flex-wrap items-start justify-between gap-4">
@@ -101,12 +101,12 @@ export default function JobDetail() {
                     }
                   }}
                   disabled={coverLetterLoading}
-                  className="inline-flex items-center px-4 py-2 rounded-lg border border-emerald-600 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 font-medium disabled:opacity-50"
+                  className="inline-flex items-center px-4 py-2 rounded-lg border-2 border-primary text-primary dark:text-mint hover:bg-mint/20 dark:hover:bg-mint/10 font-medium disabled:opacity-50"
                 >
                   {coverLetterLoading ? 'Generating…' : 'Generate cover letter'}
                 </button>
               )}
-              <a href={job.applicationLink || '#'} className="inline-flex items-center px-4 py-2 rounded-lg bg-emerald-600 text-white font-medium hover:bg-emerald-700" target="_blank" rel="noopener noreferrer">Apply</a>
+              <a href={job.applicationLink || '#'} className="inline-flex items-center px-4 py-2 rounded-lg bg-primary text-white font-medium hover:bg-primary-hover btn-theme" target="_blank" rel="noopener noreferrer">Apply</a>
             </div>
             {coverLetter && (
               <section className="mt-6 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
