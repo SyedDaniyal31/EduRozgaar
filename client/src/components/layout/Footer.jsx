@@ -8,6 +8,7 @@ const quickLinks = [
   { label: 'Exam Preparation', path: ROUTES.EXAM_PREP },
   { label: 'Career Guidance', path: ROUTES.CAREER_GUIDANCE },
   { label: 'Blog', path: ROUTES.BLOG },
+  { label: 'For Employers', path: ROUTES.EMPLOYER_LOGIN },
 ];
 
 const studentResourcesLinks = [

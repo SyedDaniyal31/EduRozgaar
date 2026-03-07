@@ -8,6 +8,10 @@ export function signAccessToken(payload) {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 }
 
+export function signEmployerToken(employerId) {
+  return jwt.sign({ employerId: employerId.toString(), role: 'employer' }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+}
+
 export function signRefreshToken(payload) {
   return jwt.sign({ ...payload, type: 'refresh' }, JWT_SECRET, { expiresIn: REFRESH_EXPIRES_IN });
 }

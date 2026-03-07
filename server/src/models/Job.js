@@ -21,14 +21,25 @@ const jobSchema = new mongoose.Schema(
     requirements: [{ type: String }],
     applicationInstructions: { type: String },
     postedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    employerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Employer' },
+    planId: { type: mongoose.Schema.Types.ObjectId, ref: 'JobPlan' },
+    planType: { type: String, enum: ['free', 'starter', 'standard', 'premium'], default: null },
+    expiresAt: { type: Date },
     status: { type: String, enum: ['draft', 'active', 'closed'], default: 'active' },
     deadline: { type: Date },
     logoUrl: { type: String },
     views: { type: Number, default: 0 },
+    applicationsCount: { type: Number, default: 0 },
     isFeatured: { type: Boolean, default: false },
     isSponsored: { type: Boolean, default: false },
+    priority: { type: Number, default: 0 },
+    urgent: { type: Boolean, default: false },
+    boostLevel: { type: Number, default: 0 },
     paidUntil: { type: Date },
-    source: { type: String, enum: ['manual', 'scraper'], default: 'manual' },
+    source: { type: String, enum: ['manual', 'scraper', 'employer'], default: 'manual' },
+    salaryRange: { type: String },
+    skillsRequired: [{ type: String }],
+    applyEmail: { type: String },
     scrapedAt: { type: Date },
     sourceUrl: { type: String },
     sourceWebsite: { type: String }, // e.g. PPSC, FPSC, LinkedIn, Rozee.pk
@@ -44,6 +55,9 @@ jobSchema.index({ status: 1, deadline: 1 });
 jobSchema.index({ province: 1, status: 1 });
 jobSchema.index({ category: 1, status: 1 });
 jobSchema.index({ title: 'text', company: 'text', location: 'text', province: 'text' });
+jobSchema.index({ employerId: 1, status: 1 });
+jobSchema.index({ status: 1, approvalStatus: 1 });
+jobSchema.index({ expiresAt: 1 });
 
 jobSchema.pre('save', function (next) {
   if (!this.slug || this.isModified('title') || this.isModified('location') || this.isModified('province')) {

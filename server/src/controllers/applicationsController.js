@@ -22,9 +22,11 @@ export const applyToJob = asyncHandler(async (req, res) => {
   const application = await Application.create({
     userId,
     jobId,
-    resumeURL,
+    resumeURL: resumeURL || req.body?.resumeURL,
+    coverLetter: req.body?.coverLetter,
     status: 'submitted',
   });
+  await Job.findByIdAndUpdate(jobId, { $inc: { applicationsCount: 1 } });
 
   const appCount = await Application.countDocuments({ userId });
   await awardBadge(userId, 'job_applied', 'First Application', 'Applied to your first job');

@@ -34,6 +34,7 @@ adminRouter.post('/jobs/generate', generateJobDescription);
 adminRouter.post('/jobs', adminJobs.create);
 adminRouter.put('/jobs/:id', adminJobs.update);
 adminRouter.post('/jobs/:id/approve', adminJobs.approveJob);
+adminRouter.post('/jobs/:id/reject', adminJobs.rejectJob);
 adminRouter.delete('/jobs/:id', adminJobs.remove);
 
 adminRouter.get('/scholarships', adminScholarships.list);

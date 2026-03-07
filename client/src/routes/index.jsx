@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 import { Navigate } from 'react-router-dom';
 import { MainLayoutWrapper } from '../layouts/MainLayout';
 import { ProtectedRoute } from '../components/auth/ProtectedRoute';
+import { ProtectedEmployerRoute } from '../components/employer/ProtectedEmployerRoute';
 import { ROUTES } from '../constants';
 import { ROLES } from '../constants';
 
@@ -54,6 +55,15 @@ const SubmitOpportunity = lazyLoad(() => import('../pages/Static/SubmitOpportuni
 const PrivacyPolicy = lazyLoad(() => import('../pages/Static/PrivacyPolicy'));
 const Terms = lazyLoad(() => import('../pages/Static/Terms'));
 const Cookies = lazyLoad(() => import('../pages/Static/Cookies'));
+const EmployerLogin = lazyLoad(() => import('../pages/Employer/EmployerLogin'));
+const EmployerRegister = lazyLoad(() => import('../pages/Employer/EmployerRegister'));
+const EmployerLayout = lazyLoad(() => import('../pages/Employer/EmployerLayout'));
+const EmployerDashboard = lazyLoad(() => import('../pages/Employer/EmployerDashboard'));
+const EmployerJobs = lazyLoad(() => import('../pages/Employer/EmployerJobs'));
+const EmployerPostJob = lazyLoad(() => import('../pages/Employer/EmployerPostJob'));
+const EmployerApplications = lazyLoad(() => import('../pages/Employer/EmployerApplications'));
+const EmployerAnalytics = lazyLoad(() => import('../pages/Employer/EmployerAnalytics'));
+const EmployerSettings = lazyLoad(() => import('../pages/Employer/EmployerSettings'));
 
 function lazyLoad(importFn) {
   const Lazy = lazy(importFn);
@@ -114,6 +124,24 @@ export const routes = [
       { path: ROUTES.COOKIES, element: <Cookies /> },
       { path: ROUTES.LOGIN, element: <Login /> },
       { path: ROUTES.REGISTER, element: <Register /> },
+      { path: ROUTES.EMPLOYER_LOGIN, element: <EmployerLogin /> },
+      { path: ROUTES.EMPLOYER_REGISTER, element: <EmployerRegister /> },
+      {
+        path: ROUTES.EMPLOYER_DASHBOARD,
+        element: (
+          <ProtectedEmployerRoute>
+            <EmployerLayout />
+          </ProtectedEmployerRoute>
+        ),
+        children: [
+          { index: true, element: <EmployerDashboard /> },
+          { path: 'jobs', element: <EmployerJobs /> },
+          { path: 'jobs/new', element: <EmployerPostJob /> },
+          { path: 'applications', element: <EmployerApplications /> },
+          { path: 'analytics', element: <EmployerAnalytics /> },
+          { path: 'settings', element: <EmployerSettings /> },
+        ],
+      },
       { path: ROUTES.FORGOT_PASSWORD, element: <ForgotPassword /> },
       { path: ROUTES.RESET_PASSWORD, element: <ResetPassword /> },
       {

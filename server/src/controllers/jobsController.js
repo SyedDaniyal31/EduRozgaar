@@ -7,7 +7,10 @@ const DEFAULT_LIMIT = 10;
 const MAX_LIMIT = 50;
 
 function buildJobQuery(q) {
-  const filter = { status: 'active' };
+  const filter = {
+    status: 'active',
+    $or: [{ approvalStatus: 'approved' }, { approvalStatus: { $exists: false } }],
+  };
   if (q.province) filter.province = new RegExp(q.province.trim(), 'i');
   if (q.category) filter.category = new RegExp(q.category.trim(), 'i');
   if (q.organization) {
@@ -52,9 +55,13 @@ export const getJobs = asyncHandler(async (req, res) => {
 export const getJobByIdOrSlug = asyncHandler(async (req, res) => {
   const { idOrSlug } = req.params;
   const isId = mongoose.Types.ObjectId.isValid(idOrSlug) && String(new mongoose.Types.ObjectId(idOrSlug)) === idOrSlug;
+  const publicFilter = {
+    status: 'active',
+    $or: [{ approvalStatus: 'approved' }, { approvalStatus: { $exists: false } }],
+  };
   const job = isId
-    ? await Job.findOne({ _id: idOrSlug, status: 'active' }).lean()
-    : await Job.findOne({ slug: idOrSlug, status: 'active' }).lean();
+    ? await Job.findOne({ _id: idOrSlug, ...publicFilter }).lean()
+    : await Job.findOne({ slug: idOrSlug, ...publicFilter }).lean();
   if (!job) return res.status(404).json({ error: 'Job not found' });
   await Job.findByIdAndUpdate(job._id, { $inc: { views: 1 } });
   const relatedFilter = { status: 'active', _id: { $ne: job._id } };

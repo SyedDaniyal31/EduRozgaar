@@ -34,6 +34,14 @@ export const ROUTES = {
   PRIVACY_POLICY: '/privacy-policy',
   TERMS: '/terms',
   COOKIES: '/cookies',
+  EMPLOYER_LOGIN: '/employer/login',
+  EMPLOYER_REGISTER: '/employer/register',
+  EMPLOYER_DASHBOARD: '/employer',
+  EMPLOYER_JOBS: '/employer/jobs',
+  EMPLOYER_POST_JOB: '/employer/jobs/new',
+  EMPLOYER_APPLICATIONS: '/employer/applications',
+  EMPLOYER_ANALYTICS: '/employer/analytics',
+  EMPLOYER_SETTINGS: '/employer/settings',
 };
 
 export const ROLES = { ADMIN: 'Admin', USER: 'User' };

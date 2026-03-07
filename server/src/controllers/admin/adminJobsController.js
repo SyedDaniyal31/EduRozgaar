@@ -103,6 +103,16 @@ export const approveJob = asyncHandler(async (req, res) => {
   res.json(doc);
 });
 
+export const rejectJob = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({ error: 'Invalid id' });
+  const doc = await Job.findByIdAndUpdate(id, { approvalStatus: 'rejected' }, { new: true });
+  if (!doc) return res.status(404).json({ error: 'Job not found' });
+  await cacheDelPattern(CACHE_KEYS.PREFIX_TRENDING);
+  await cacheDelPattern(CACHE_KEYS.PREFIX_FEATURED);
+  res.json(doc);
+});
+
 export const remove = asyncHandler(async (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({ error: 'Invalid id' });

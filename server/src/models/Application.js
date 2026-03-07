@@ -5,7 +5,12 @@ const applicationSchema = new mongoose.Schema(
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     jobId: { type: mongoose.Schema.Types.ObjectId, ref: 'Job', required: true },
     resumeURL: { type: String },
-    status: { type: String, enum: ['submitted', 'viewed', 'shortlisted', 'rejected'], default: 'submitted' },
+    coverLetter: { type: String },
+    status: {
+      type: String,
+      enum: ['submitted', 'applied', 'viewed', 'shortlisted', 'rejected', 'interview', 'hired'],
+      default: 'submitted',
+    },
     appliedDate: { type: Date, default: Date.now },
     note: { type: String },
   },

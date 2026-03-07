@@ -6,7 +6,7 @@ import compression from 'compression';
 import mongoSanitize from 'express-mongo-sanitize';
 import { connectDB } from './config/db.js';
 import { startScraperCron } from './scheduler/cron.js';
-import { healthRouter, jobsRouter, scholarshipsRouter, admissionsRouter, blogsRouter, foreignStudiesRouter, authRouter, adminRouter, trendingRouter, newsletterRouter, notificationsRouter, monetizationRouter, usersRouter, v1Router, examsRouter, internshipsRouter, chatbotRouter, webinarsRouter, intlScholarshipsRouter, badgesRouter, seoRouter, resumesRouter } from './routes/index.js';
+import { healthRouter, jobsRouter, scholarshipsRouter, admissionsRouter, blogsRouter, foreignStudiesRouter, authRouter, adminRouter, trendingRouter, newsletterRouter, notificationsRouter, monetizationRouter, usersRouter, v1Router, examsRouter, internshipsRouter, chatbotRouter, webinarsRouter, intlScholarshipsRouter, badgesRouter, seoRouter, resumesRouter, employerRouter } from './routes/index.js';
 import { getSitemap, getRobots } from './controllers/seoController.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { requestLogger } from './middleware/requestLogger.js';
@@ -51,12 +51,15 @@ app.use('/api', intlScholarshipsRouter);
 app.use('/api', badgesRouter);
 app.use('/api', seoRouter);
 app.use('/api', resumesRouter);
+app.use('/api', employerRouter);
 app.use('/api/v1', v1Router);
 
 app.use(errorHandler);
 
 connectDB()
-  .then(() => {
+  .then(async () => {
+    const { seedJobPlans } = await import('./seed/jobPlans.js');
+    await seedJobPlans().catch((e) => console.warn('Job plans seed:', e.message));
     startScraperCron();
     app.listen(PORT, () => {
       console.log(`EduRozgaar API running at http://localhost:${PORT}`);
