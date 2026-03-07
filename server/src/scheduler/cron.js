@@ -1,9 +1,8 @@
 /**
- * Phase-8: Run scraper every 6 hours.
- * Uses node-cron. Disable with DISABLE_SCRAPER_CRON=1.
+ * Run government job scraper every 6 hours. Disable with DISABLE_SCRAPER_CRON=1.
  */
 import cron from 'node-cron';
-import { runScraper } from '../services/scraperService.js';
+import { runGovernmentJobScraper } from './jobScraper.js';
 import { generateBlogFromListings } from '../services/blogAutoGenerateService.js';
 
 const CRON_SCHEDULE = '0 */6 * * *'; // every 6 hours at minute 0
@@ -16,11 +15,11 @@ export function startScraperCron() {
     return;
   }
   task = cron.schedule(CRON_SCHEDULE, async () => {
-    console.log('[Cron] Starting scheduled scraper run...');
+    console.log('[Cron] Starting government job scraper...');
     try {
-      const result = await runScraper();
-      console.log('[Cron] Scraper done:', result.jobsAdded, 'jobs,', result.admissionsAdded, 'admissions');
-      if (result.jobsAdded > 0 || result.admissionsAdded > 0) {
+      const result = await runGovernmentJobScraper();
+      console.log('[Cron] Government scraper done:', result.jobsAdded, 'jobs added');
+      if (result.jobsAdded > 0) {
         try {
           await generateBlogFromListings();
           console.log('[Cron] Auto blog generated');
@@ -32,7 +31,7 @@ export function startScraperCron() {
       console.error('[Cron] Scraper error:', err.message);
     }
   });
-  console.log('[Cron] Scraper scheduled every 6 hours');
+  console.log('[Cron] Government job scraper scheduled every 6 hours');
 }
 
 export function stopScraperCron() {

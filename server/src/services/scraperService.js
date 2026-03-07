@@ -40,6 +40,16 @@ export async function runScraper(options = {}) {
   const existingExternalIds = new Set((await Job.find({ externalId: { $exists: true, $ne: null } }).select('externalId').lean()).map((j) => j.externalId));
   const existingJobSlugs = new Set((await Job.find({}).select('slug').lean()).map((j) => j.slug));
 
+  /** Duplicate rule: title + organization + deadline (used when externalId is missing) */
+  async function isDuplicateByTitleOrgDeadline(title, organization, deadline) {
+    const org = (organization || '').trim();
+    const q = { title: (title || '').trim(), $or: [{ organization: org }, { company: org }] };
+    if (deadline) q.deadline = deadline;
+    else q.deadline = { $in: [null, undefined] };
+    const existing = await Job.findOne(q).select('_id').lean();
+    return !!existing;
+  }
+
   const sourceKeys = onlySources && onlySources.length ? onlySources : await getEnabledSourceKeys();
 
   for (let i = 0; i < sourceKeys.length; i++) {
@@ -58,6 +68,10 @@ export async function runScraper(options = {}) {
 
       for (const j of jobs) {
         if (j.externalId && existingExternalIds.has(j.externalId)) {
+          jobsSkipped++;
+          continue;
+        }
+        if (!j.externalId && (await isDuplicateByTitleOrgDeadline(j.title, j.organization || j.company, j.deadline))) {
           jobsSkipped++;
           continue;
         }

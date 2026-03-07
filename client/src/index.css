@@ -10,7 +10,7 @@
   }
   body {
     background-color: #F8FAFC;
-    color: #334155;
+    color: #475569;
     font-size: 16px;
     line-height: 1.6;
     @apply antialiased overflow-x-hidden min-w-0;
@@ -19,6 +19,9 @@
   .dark body {
     background-color: #0F172A;
     color: #e2e8f0;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight text-[#0F172A] dark:text-white;
   }
   /* Better touch response on mobile: remove 300ms tap delay */
   button,

@@ -19,17 +19,18 @@ export default {
     },
     extend: {
       colors: {
-        // Professional startup palette (LinkedIn / Stripe style)
-        primary: '#2563EB',
-        'primary-hover': '#1D4ED8',
-        'primary-light': '#DBEAFE',
+        // Stripe-style SaaS palette
+        primary: '#635BFF',
+        'primary-hover': '#4F46E5',
+        'primary-light': '#E0E7FF',
         secondary: '#0F172A',
         'secondary-light': '#1E293B',
         // Backgrounds
         'bg-main': '#F8FAFC',
         'bg-card': '#FFFFFF',
         'bg-section': '#F1F5F9',
-        // Text
+        // Border & text
+        'border-default': '#E5E7EB',
         'text-heading': '#0F172A',
         'text-body': '#334155',
         'text-muted': '#64748B',
@@ -37,17 +38,20 @@ export default {
         'footer-bg': '#020617',
         'footer-text': '#94A3B8',
         'footer-heading': '#CBD5F5',
-        // Legacy aliases (map to new palette for compatibility)
+        // Legacy aliases
         surface: '#F8FAFC',
         'surface-dark': '#0F172A',
-        mint: '#DBEAFE',
-        'edur-steel': '#1D4ED8',
-        'edur-blue': '#2563EB',
-        'edur-sky': '#DBEAFE',
+        mint: '#E0E7FF',
+        'edur-steel': '#4F46E5',
+        'edur-blue': '#635BFF',
+        'edur-sky': '#E0E7FF',
         'edur-bg': '#F8FAFC',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+      },
+      letterSpacing: {
+        'tight': '-0.025em',
       },
       fontSize: {
         'h1': ['2.25rem', { lineHeight: '1.2' }],

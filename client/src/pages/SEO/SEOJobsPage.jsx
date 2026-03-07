@@ -22,10 +22,18 @@ export default function SEOJobsPage() {
   const [savedIds, setSavedIds] = useState(new Set());
 
   const isCategory = ['government-jobs', 'private-jobs', 'internship-jobs'].includes(slug);
+  const isLatestGov = pathSlug === 'latest-government-jobs';
+  const sourceSlug = ['fpsc-jobs', 'nts-jobs', 'ppsc-jobs', 'wapda-jobs'].includes(pathSlug)
+    ? pathSlug.replace(/-jobs$/, '')
+    : null;
 
   useEffect(() => {
-    if (!slug) return;
-    const api = isCategory ? () => seoApi.jobsByCategory(slug) : () => seoApi.jobsIn(slug);
+    if (!slug && !isLatestGov && !sourceSlug) return;
+    let api;
+    if (isLatestGov) api = () => seoApi.latestGovernmentJobs();
+    else if (sourceSlug) api = () => seoApi.jobsBySource(sourceSlug);
+    else if (isCategory) api = () => seoApi.jobsByCategory(slug);
+    else api = () => seoApi.jobsIn(slug);
     api()
       .then(({ data }) => {
         setMeta(data.meta);
@@ -33,7 +41,7 @@ export default function SEOJobsPage() {
       })
       .catch(() => setMeta({ title: 'Jobs – EduRozgaar', description: 'Find jobs in Pakistan.' }))
       .finally(() => setLoading(false));
-  }, [slug, isCategory]);
+  }, [slug, isCategory, isLatestGov, sourceSlug]);
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -51,7 +59,26 @@ export default function SEOJobsPage() {
     });
   };
 
-  const canonical = meta?.canonical || `${SITE_URL}/${isCategory ? slug : `jobs-in-${slug}`}`;
+  const canonical = meta?.canonical || (isLatestGov ? `${SITE_URL}/latest-government-jobs` : sourceSlug ? `${SITE_URL}/${sourceSlug}-jobs` : isCategory ? `${SITE_URL}/${slug}` : `${SITE_URL}/jobs-in-${slug}`);
+
+  const schemaMarkup = meta && jobs.length > 0 ? {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: meta.title?.split('|')[0]?.trim(),
+    description: meta.description,
+    numberOfItems: jobs.length,
+    itemListElement: jobs.slice(0, 10).map((job, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      item: {
+        '@type': 'JobPosting',
+        title: job.title,
+        datePosted: job.createdAt,
+        validThrough: job.deadline,
+        hiringOrganization: { '@type': 'Organization', name: job.organization || job.company },
+      },
+    })),
+  } : null;
 
   return (
     <>
@@ -64,6 +91,9 @@ export default function SEOJobsPage() {
           <meta property="og:description" content={meta.description} />
           <meta property="og:url" content={canonical} />
           <meta property="og:type" content="website" />
+          {schemaMarkup && (
+            <script type="application/ld+json">{JSON.stringify(schemaMarkup)}</script>
+          )}
         </Helmet>
       )}
       <div className="max-w-6xl mx-auto px-4 py-8">

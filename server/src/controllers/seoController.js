@@ -7,13 +7,15 @@ const CITIES = ['lahore', 'karachi', 'islamabad', 'rawalpindi', 'faisalabad', 'm
 const PROVINCES = ['punjab', 'sindh', 'khyber-pakhtunkhwa', 'balochistan', 'islamabad', 'gilgit-baltistan'];
 const JOB_CATEGORIES = ['government-jobs', 'private-jobs', 'internships'];
 const SCHOLARSHIP_COUNTRIES = ['turkey', 'germany', 'china', 'uk', 'usa', 'australia', 'canada', 'hungary', 'italy'];
+/** Source slugs for jobs-by-source SEO pages (must match sourceWebsite in DB) */
+const JOB_SOURCE_SLUGS = ['fpsc', 'ppsc', 'nts', 'wapda'];
 
 /**
  * GET /sitemap.xml - Dynamic sitemap for SEO pages and listing pages.
  */
 export const getSitemap = asyncHandler(async (_req, res) => {
   const base = SITE_URL.replace(/\/$/, '');
-  const urls = [
+  const   urls = [
     { loc: base + '/', changefreq: 'daily', priority: '1.0' },
     { loc: base + '/jobs', changefreq: 'daily', priority: '0.9' },
     { loc: base + '/scholarships', changefreq: 'daily', priority: '0.9' },
@@ -23,7 +25,9 @@ export const getSitemap = asyncHandler(async (_req, res) => {
     { loc: base + '/exam-prep', changefreq: 'weekly', priority: '0.8' },
     { loc: base + '/resume-builder', changefreq: 'monthly', priority: '0.7' },
     { loc: base + '/career-guidance', changefreq: 'monthly', priority: '0.7' },
+    { loc: base + '/latest-government-jobs', changefreq: 'daily', priority: '0.9' },
   ];
+  JOB_SOURCE_SLUGS.forEach((src) => urls.push({ loc: `${base}/${src}-jobs`, changefreq: 'daily', priority: '0.8' }));
   CITIES.forEach((city) => urls.push({ loc: `${base}/jobs-in-${city}`, changefreq: 'daily', priority: '0.8' }));
   PROVINCES.forEach((prov) => urls.push({ loc: `${base}/jobs-in-${prov}`, changefreq: 'daily', priority: '0.8' }));
   JOB_CATEGORIES.forEach((cat) => urls.push({ loc: `${base}/${cat}`, changefreq: 'daily', priority: '0.8' }));
@@ -97,6 +101,48 @@ export const getSeoJobsByCategory = asyncHandler(async (req, res) => {
   const base = SITE_URL.replace(/\/$/, '');
   res.json({
     meta: { title, description, canonical: `${base}/${slug}` },
+    data: jobs,
+    total: jobs.length,
+  });
+});
+
+/**
+ * GET /api/seo/jobs-by-source/:source - Jobs by source (fpsc, ppsc, nts, wapda).
+ */
+export const getSeoJobsBySource = asyncHandler(async (req, res) => {
+  const source = (req.params.source || '').toLowerCase().replace(/\s+/g, '-');
+  if (!JOB_SOURCE_SLUGS.includes(source)) return res.status(404).json({ error: 'Invalid source' });
+  const limit = Math.min(50, parseInt(req.query.limit, 10) || 24);
+  const sourceWebsite = source.toUpperCase().replace(/-/g, ' ');
+  const jobs = await Job.find({ status: 'active', sourceWebsite: new RegExp(sourceWebsite, 'i') })
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .lean();
+  const sourceName = source.toUpperCase();
+  const title = `Latest ${sourceName} Jobs in Pakistan 2026 | EduRozgaar`;
+  const description = `Find the latest ${sourceName} jobs and vacancies. Apply before deadline. Updated regularly.`;
+  const base = SITE_URL.replace(/\/$/, '');
+  res.json({
+    meta: { title, description, canonical: `${base}/${source}-jobs` },
+    data: jobs,
+    total: jobs.length,
+  });
+});
+
+/**
+ * GET /api/seo/latest-government-jobs - Latest government jobs (all sources).
+ */
+export const getLatestGovernmentJobs = asyncHandler(async (req, res) => {
+  const limit = Math.min(50, parseInt(req.query.limit, 10) || 24);
+  const jobs = await Job.find({ status: 'active', jobType: 'Government' })
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .lean();
+  const title = 'Latest Government Jobs in Pakistan 2026 | FPSC, PPSC, NTS, WAPDA | EduRozgaar';
+  const description = 'Find the latest government jobs in Pakistan. FPSC, PPSC, NTS, WAPDA and more. Updated every 6 hours.';
+  const base = SITE_URL.replace(/\/$/, '');
+  res.json({
+    meta: { title, description, canonical: `${base}/latest-government-jobs` },
     data: jobs,
     total: jobs.length,
   });

@@ -28,6 +28,8 @@ export const referralsApi = {
 export const seoApi = {
   jobsIn: (slug) => axiosInstance.get(`/seo/jobs-in/${encodeURIComponent(slug)}`),
   jobsByCategory: (slug) => axiosInstance.get(`/seo/jobs-by-category/${encodeURIComponent(slug)}`),
+  jobsBySource: (source) => axiosInstance.get(`/seo/jobs-by-source/${encodeURIComponent(source)}`),
+  latestGovernmentJobs: () => axiosInstance.get('/seo/latest-government-jobs'),
   scholarshipsIn: (country) => axiosInstance.get(`/seo/scholarships-in/${encodeURIComponent(country)}`),
 };
 
