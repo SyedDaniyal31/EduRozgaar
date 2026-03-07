@@ -18,6 +18,7 @@ export default function Login() {
   const [submitting, setSubmitting] = useState(false);
 
   const from = location.state?.from?.pathname || ROUTES.HOME;
+  const isFromAdmin = from === ROUTES.ADMIN;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -54,7 +55,11 @@ export default function Login() {
       <meta name="description" content="Login to EduRozgaar account." />
       <div className="max-w-md mx-auto px-4 sm:px-6 py-8 md:py-12">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">Login</h1>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">Sign in to access your profile and saved items.</p>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
+          {isFromAdmin
+            ? 'Sign in with an admin account to access the admin panel.'
+            : 'Sign in to access your profile and saved items.'}
+        </p>
 
         {error && (
           <Alert variant="error" title="Error" className="mb-6">
